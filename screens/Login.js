@@ -1,10 +1,12 @@
-import { useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
+import { useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "../services/api";
+import IconButton from "../components/IconButton";
+import login from "../assets/styles/loginCSS";
 import {
   View,
   Text,
   Pressable,
-  StyleSheet,
   TextInput
 } from "react-native";
 
@@ -13,22 +15,36 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false)
 
-  const handleLogin = () => {
-    alert(`Matric No: ${matricNo}`);
+  const handleLogin = async () => {
+    try {
+      const response = await api.post("/login", {
+        matricNo,
+        password,
+      });
+
+      await AsyncStorage.setItem(
+        "user",
+        JSON.stringify(response.data.user)
+      );
+
+      navigation.navigate("Dashboard");
+    } catch (error) {
+      alert(
+        error.response?.data?.error || "Login failed"
+      );
+    }
   };
 
-  const details = (matricNo && password) === '';
+  const details = !matricNo || !password;
 
   return (
-    <View style={styles.container}>
-      <Pressable onPress={() => navigation.navigate('Home')}>
-        <Ionicons name="arrow-back" size={28} color="black" />
-      </Pressable>
+    <View style={login.container}>
+      <IconButton name="arrow-back" size={28} onPress={() => navigation.navigate('Home')} />
 
-      <Text style={styles.text}>Login</Text>
+      <Text style={login.text}>Login</Text>
 
       <TextInput 
-        style={styles.input}
+        style={login.input}
         placeholder="Enter your matric no"
         keyboardType="phone-pad"
         autoCapitalize="none"
@@ -36,101 +52,32 @@ export default function Login({ navigation }) {
         onChangeText={setMatricNo}
       />
 
-      <View style={styles.inputContainer}>
+      <View style={login.inputContainer}>
         <TextInput
-          style={styles.inputs}
+          style={login.inputs}
           placeholder="Enter your password"
           secureTextEntry={!showPassword}
           value={password}
           onChangeText={setPassword}
         />
 
-        <Pressable onPress={() => setShowPassword(!showPassword)}>
-          <Text>{showPassword ? "Hide" : "Show"}</Text>
-        </Pressable>
+        <IconButton name={showPassword ? "eye" : "eye-off"} onPress={() => setShowPassword(!showPassword)} />
       </View>
 
       <Pressable
         style={[
-          styles.button,
+          login.button,
           { opacity: details ? 0.5 : 1 }
         ]}
         onPress={handleLogin}
       >
-        <Text style={styles.buttonText}>Login</Text>
+        <Text style={login.buttonText}>Login</Text>
       </Pressable>
 
-      <Text style={styles.footerText}>
+      <Text style={login.footerText}>
         Don't have an account?{" "}
-        <Text style={styles.link} onPress={() => navigation.navigate("Register")}>Register</Text>
+        <Text style={login.link} onPress={() => navigation.navigate("Register")}>Register</Text>
       </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingVertical: 50,
-    paddingHorizontal: 20,
-  },
-
-  button: {
-    backgroundColor: '#c70e0e',
-    paddingVertical: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-
-  footerText: {
-    fontSize: 16,
-    color: "#555",
-  },
-
-  link: {
-    color: "#007BFF",
-    fontWeight: "bold",
-  },
-
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    height: 55,
-    paddingHorizontal: 15,
-    marginBottom: 20,
-    fontSize: 16,
-  },
-
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    height: 50,
-    paddingHorizontal: 15,
-    marginBottom: 20,
-  },
-
-  inputs: {
-    flex: 1,
-    fontSize: 16,
-  },
-});
