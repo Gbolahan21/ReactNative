@@ -35,6 +35,7 @@ export default StyleSheet.create({
     padding: 20,
     marginTop: 20,
     elevation: 4,
+    marginBottom: 20,
   },
 
   cardTitle: {
@@ -104,6 +105,7 @@ export default StyleSheet.create({
     padding: 18,
     marginTop: 20,
     elevation: 4,
+    marginBottom: 20,
   },
 
   statusTitle: {

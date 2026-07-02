@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../services/api";
+import Toast from "react-native-toast-message";
 import IconButton from "../components/IconButton";
+import Button from "../components/Button";
 import login from "../assets/styles/loginCSS";
 import {
   View,
@@ -13,7 +15,8 @@ import {
 export default function Login({ navigation }) {
   const [matricNo, setMatricNo] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleLogin = async () => {
     try {
@@ -22,18 +25,56 @@ export default function Login({ navigation }) {
         password,
       });
 
+      if (rememberMe) {
+        await AsyncStorage.setItem("token", response.data.token);
+        await AsyncStorage.setItem("savedMatricNo", matricNo);
+      } else {
+        await AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem("savedMatricNo");
+      }
+
       await AsyncStorage.setItem(
         "user",
         JSON.stringify(response.data.user)
       );
 
+      Toast.show({
+        type: "success",
+        text1: "Login Successful",
+        text2: "Welcome back!",
+      });
+
       navigation.navigate("Dashboard");
     } catch (error) {
-      alert(
-        error.response?.data?.error || "Login failed"
-      );
+      Toast.show({
+        type: "error",
+        text1: "Login Failed",
+        text2: error.response?.data?.error || "Something went wrong",
+      });
     }
   };
+
+  const checkLogin = async () => {
+    const token = await AsyncStorage.getItem("token");
+
+    if (token) {
+      navigation.replace("Dashboard");
+    }
+  };
+
+  const loadSavedMatricNo = async () => {
+    const savedMatricNo = await AsyncStorage.getItem("savedMatricNo");
+
+    if (savedMatricNo) {
+      setMatricNo(savedMatricNo);
+      setRememberMe(true);
+    }
+  };
+
+  useEffect(() => {
+    checkLogin();
+    loadSavedMatricNo();
+  }, []);
 
   const details = !matricNo || !password;
 
@@ -64,15 +105,22 @@ export default function Login({ navigation }) {
         <IconButton name={showPassword ? "eye" : "eye-off"} onPress={() => setShowPassword(!showPassword)} />
       </View>
 
-      <Pressable
-        style={[
-          login.button,
-          { opacity: details ? 0.5 : 1 }
-        ]}
-        onPress={handleLogin}
-      >
-        <Text style={login.buttonText}>Login</Text>
-      </Pressable>
+      <View style={login.rememberContainer}>
+        <Pressable
+          style={login.rememberButton}
+          onPress={() => setRememberMe(!rememberMe)}
+        >
+          <IconButton
+            name={rememberMe ? "checkbox" : "square-outline"}
+            size={22}
+          />
+          <Text style={login.rememberText}>
+            Remember Me
+          </Text>
+        </Pressable>
+      </View>
+
+      <Button title="Login" onPress={handleLogin} disabled={details} />
 
       <Text style={login.footerText}>
         Don't have an account?{" "}

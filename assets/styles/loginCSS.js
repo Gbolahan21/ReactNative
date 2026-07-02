@@ -34,6 +34,7 @@ export default StyleSheet.create({
   footerText: {
     fontSize: 16,
     color: COLORS.text,
+    marginTop: 10,
   },
 
   link: {
@@ -64,6 +65,20 @@ export default StyleSheet.create({
 
   inputs: {
     flex: 1,
+    fontSize: 16,
+  },
+
+  rememberContainer: {
+    marginBottom: 20,
+  },
+
+  rememberButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  rememberText: {
+    marginLeft: 8,
     fontSize: 16,
   },
 });

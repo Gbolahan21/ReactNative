@@ -1,6 +1,8 @@
 import { useState } from "react";
 import api from "../services/api";
+import Toast from "react-native-toast-message";
 import IconButton from "../components/IconButton";
+import Button from "../components/Button";
 import register from "../assets/styles/registerCSS";
 import {
   View,
@@ -42,12 +44,19 @@ export default function Register({ navigation }) {
       setPassword("");
       setConfirmPassword("");
 
+      Toast.show({
+        type: "success",
+        text1: "Registration Successful",
+        text2: "Welcome aboard!",
+      });
+
       navigation.navigate("Login");
     } catch (error) {
-      console.log(error.response?.data);
-      alert(
-        error.response?.data?.error || "Unable to connect to server."
-      );
+      Toast.show({
+        type: "error",
+        text1: "Registration Failed",
+        text2: error.response?.data?.error || "Something went wrong",
+      });
     }
   };
 
@@ -148,16 +157,7 @@ export default function Register({ navigation }) {
           )}
         </View>
 
-        <Pressable
-          style={[
-            register.button,
-            { opacity: details ? 0.5 : 1 }
-          ]}
-          onPress={handleRegister}
-          disabled={details}
-        >
-          <Text style={register.buttonText}>Register</Text>
-        </Pressable>
+        <Button title="Register" onPress={handleRegister} disabled={details} />
 
         <Text style={register.footerText}>
           Already have an account.{" "}

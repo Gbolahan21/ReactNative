@@ -2434,6 +2434,13 @@ expo-keep-awake@~15.0.8:
   resolved "https://registry.npmjs.org/expo-keep-awake/-/expo-keep-awake-15.0.8.tgz#911c5effeba9baff2ccde79ef0ff5bf856215f8d"
   integrity sha512-YK9M1VrnoH1vLJiQzChZgzDvVimVoriibiDIFLbQMpjYBnvyfUeHJcin/Gx1a+XgupNXy92EQJLgI/9ZuXajYQ==
 
+expo-local-authentication@~17.0.8:
+  version "17.0.8"
+  resolved "https://registry.npmjs.org/expo-local-authentication/-/expo-local-authentication-17.0.8.tgz#ca1ffee71566a02995f4a10d2181803724619db7"
+  integrity sha512-Q5fXHhu6w3pVPlFCibU72SYIAN+9wX7QpFn9h49IUqs0Equ44QgswtGrxeh7fdnDqJrrYGPet5iBzjnE70uolA==
+  dependencies:
+    invariant "^2.2.4"
+
 expo-modules-autolinking@3.0.26:
   version "3.0.26"
   resolved "https://registry.npmjs.org/expo-modules-autolinking/-/expo-modules-autolinking-3.0.26.tgz#bfbb0d0422e32d3fe8d201c9a287cc82279ada71"
@@ -4093,6 +4100,11 @@ react-native-screens@~4.16.0:
     react-freeze "^1.0.0"
     react-native-is-edge-to-edge "^1.2.1"
     warn-once "^0.1.0"
+
+react-native-toast-message@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.npmjs.org/react-native-toast-message/-/react-native-toast-message-2.3.3.tgz#e301508d386a9902ff6b4559ecc6674f8cfdf97a"
+  integrity sha512-4IIUHwUPvKHu4gjD0Vj2aGQzqPATiblL1ey8tOqsxOWRPGGu52iIbL8M/mCz4uyqecvPdIcMY38AfwRuUADfQQ==
 
 react-native@0.81.5:
   version "0.81.5"

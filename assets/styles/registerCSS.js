@@ -34,6 +34,7 @@ export default StyleSheet.create({
   footerText: {
     fontSize: 16,
     color: COLORS.text,
+    marginTop: 10,
   },
 
   link: {
