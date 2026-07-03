@@ -16,29 +16,9 @@ export default StyleSheet.create({
     textAlign: "center",
   },
 
-  card: {
-    backgroundColor: COLORS.background,
-    borderRadius: 15,
-    padding: 20,
-    marginTop: 20,
-    elevation: 4,
-    marginBottom: 20,
-  },
-
   date: {
     marginBottom: 8,
     color: COLORS.secondaryText,
-  },
-
-  label: {
-    color: COLORS.secondaryText,
-    marginTop: 10,
-  },
-
-  value: {
-    fontSize: 17,
-    color: COLORS.text,
-    fontWeight: "600",
   },
 
   emptyText: {
@@ -51,11 +31,125 @@ export default StyleSheet.create({
   },
 
   search: {
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.background,
     borderRadius: 10,
     paddingHorizontal: 15,
     height: 50,
+    width: "85%",
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: COLORS.border,
+  },
+
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: COLORS.modalBackground,
+  },
+
+  cardFilter: {
+    backgroundColor: COLORS.background,
+    borderRadius: 10,
+    padding: 20,
+    width: "80%",
+  },
+
+  labelFilter: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+
+  labelFilters: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+
+  statusButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  summaryContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginVertical: 20,
+  },
+
+  summaryCard: {
+    width: "48%",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 18,
+    marginBottom: 15,
+    elevation: 3,
+  },
+
+  summaryLabel: {
+    color: "#777",
+    fontSize: 14,
+  },
+
+  summaryValue: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginTop: 8,
+  },
+
+  tableHeader: {
+    flexDirection: "row",
+    backgroundColor: "#C70E0E",
+    paddingVertical: 12,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+  },
+
+  headerCell: {
+    flex: 1,
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 14,
+    textAlign: "center",
+  },
+
+  tableRow: {
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E5E5",
+    alignItems: "center",
+  },
+
+  statusCell: {
+    flex: 1,
+    textAlign: "center",
+    fontSize: 13,
+  },
+
+  dateCell: {
+    flex: 1,
+    textAlign: "center",
+    fontSize: 13,
+  },
+
+  timeCell: {
+    flex: 1,
+    textAlign: "center",
+    fontSize: 13,
   },
 });

@@ -26,4 +26,32 @@ export default StyleSheet.create({
   disabledButton: {
     opacity: 0.5,
   },
+
+  paginationContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 30,
+    alignItems: "center",
+    marginTop: 20,
+    marginBottom: 20,
+  },
+
+  pageButton: {
+    width: 45,
+    height: 45,
+    borderRadius: 10,
+    backgroundColor: COLORS.primary,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  disabledPageButton: {
+    backgroundColor: "#D9D9D9",
+  },
+
+  pageText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: COLORS.black,
+  },
 });

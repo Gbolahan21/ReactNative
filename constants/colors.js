@@ -9,4 +9,5 @@ export const COLORS = {
   success: "#16A34A",
   warning: "#F59E0B",
   danger: "#DC2626",
+  modalBackground: "rgba(0, 0, 0, 0.5)",
 };
