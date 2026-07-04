@@ -17,6 +17,14 @@ export default function HomeScreen({ navigation }) {
           <Pressable onPress={() => navigation.navigate("Register")}>
             <Text style={home.link}>Register</Text>
           </Pressable>
+
+          <Pressable onPress={() => navigation.navigate("AdminRegister")}>
+            <Text style={home.link}>AdminRegister</Text>
+          </Pressable>
+
+          <Pressable onPress={() => navigation.navigate("AdminLogin")}>
+            <Text style={home.link}>AdminLogin</Text>
+          </Pressable>
         </View>
       </View>
 

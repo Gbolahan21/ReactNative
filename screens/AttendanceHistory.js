@@ -5,7 +5,7 @@ import {
   FlatList,
   TextInput,
   Modal,
-  Pressable
+  RefreshControl
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -30,11 +30,20 @@ export default function AttendanceHistoryScreen({ navigation }) {
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [refreshing, setRefreshing] = useState(false);
   const totalRecords = history.length;
 
   useEffect(() => {
     loadHistory();
   }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    await loadHistory();
+
+    setRefreshing(false);
+  };
 
   const presentCount = history.filter(
     (item) => item.status === "Present"
@@ -242,6 +251,12 @@ export default function AttendanceHistoryScreen({ navigation }) {
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
       />
 
       <Pagination
