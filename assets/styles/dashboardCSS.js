@@ -118,4 +118,42 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
+
+  summaryContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginTop: 25,
+  },
+
+  summaryCard: {
+    width: "48%",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 18,
+    marginBottom: 15,
+    elevation: 3,
+  },
+
+  summaryTitle: {
+    fontSize: 15,
+    color: "#666",
+  },
+
+  summaryValue: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginTop: 10,
+  },
+
+  quickActionsContainer: {
+    marginTop: 25,
+  },
+
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 15,
+    color: "#333",
+  },
 })

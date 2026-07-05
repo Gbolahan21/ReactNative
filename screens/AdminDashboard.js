@@ -18,6 +18,12 @@ import moh from '../assets/images/moh.png';
 export default function AdminDashboard({ navigation }) {
 
   const [user, setUser] = useState(null);
+  const [stats, setStats] = useState({
+    totalStudents: 0,
+    presentToday: 0,
+    absentToday: 0,
+    attendanceRate: 0,
+  });
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
@@ -41,13 +47,24 @@ export default function AdminDashboard({ navigation }) {
 
       if (storedUser) {
         const parsedUser = JSON.parse(storedUser);
-
         setUser(parsedUser);
       }
+
+      loadDashboardStats();
     };
 
     getUser();
   }, []);
+
+  const loadDashboardStats = async () => {
+    try {
+      const response = await api.get("/admin/dashboard");
+
+      setStats(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
       <View style={dashboard.container}>
@@ -67,6 +84,89 @@ export default function AdminDashboard({ navigation }) {
           <Text style={dashboard.welcome}>
             Welcome back, {user?.title}. {user?.firstname}
           </Text>
+        </View>
+
+        <View style={dashboard.summaryContainer}>
+          <View style={dashboard.summaryCard}>
+            <Text style={dashboard.summaryTitle}>
+              👨‍🎓 Students
+            </Text>
+
+            <Text style={dashboard.summaryValue}>
+              {stats.totalStudents}
+            </Text>
+          </View>
+
+          <View style={dashboard.summaryCard}>
+            <Text style={dashboard.summaryTitle}>
+              🟢 Present Today
+            </Text>
+
+            <Text style={dashboard.summaryValue}>
+              {stats.presentToday}
+            </Text>
+          </View>
+
+          <View style={dashboard.summaryCard}>
+            <Text style={dashboard.summaryTitle}>
+              🔴 Absent Today
+             </Text>
+
+            <Text style={dashboard.summaryValue}>
+              {stats.absentToday}
+            </Text>
+          </View>
+
+          <View style={dashboard.summaryCard}>
+            <Text style={dashboard.summaryTitle}>
+              📈 Attendance Rate
+            </Text>
+
+            <Text style={dashboard.summaryValue}>
+              {stats.attendanceRate}%
+            </Text>
+          </View>
+        </View>
+
+        <View style={dashboard.quickActionsContainer}>
+          <Text style={dashboard.sectionTitle}>
+            Quick Actions
+          </Text>
+
+          <Button
+            title="View Students"
+            iconName="people"
+            iconRightName="arrow-forward"
+            onPress={() => navigation.navigate("AdminStudents")}
+            textStyle={{ marginRight: 10 }}
+          />
+
+          <Button
+            title="Today's Attendance"
+            iconName="calendar"
+            iconRightName="arrow-forward"
+            onPress={() => navigation.navigate("TodayAttendance")}
+            textStyle={{ marginRight: 10 }}
+            style={{ marginTop: 12 }}
+          />
+
+          <Button
+            title="Attendance Analytics"
+            iconName="stats-chart"
+            iconRightName="arrow-forward"
+            onPress={() => navigation.navigate("AttendanceAnalytics")}
+            textStyle={{ marginRight: 10 }}
+            style={{ marginTop: 12 }}
+          />
+
+          <Button
+            title="Export Reports"
+            iconName="download"
+            iconRightName="arrow-forward"
+            onPress={() => navigation.navigate("ExportReports")}
+            textStyle={{ marginRight: 10 }}
+            style={{ marginTop: 12 }}
+          />
         </View>
     </View>
   );

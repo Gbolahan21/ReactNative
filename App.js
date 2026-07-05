@@ -10,6 +10,10 @@ import AttendanceHistory from "./screens/AttendanceHistory";
 import AdminRegister from "./screens/AdminRegister";
 import AdminLogin from "./screens/AdminLogin";
 import AdminDashboard from "./screens/AdminDashboard";
+import AdminStudents from "./screens/AdminStudents";
+import TodayAttendance from "./screens/TodayAttendance";
+import AttendanceAnalytics from "./screens/AttendanceAnalytics";
+import ExportReports from "./screens/ExportReports";
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +30,10 @@ export default function App() {
           <Stack.Screen name="AdminRegister" component={AdminRegister} options={{ headerShown: false }} />
           <Stack.Screen name="AdminLogin" component={AdminLogin} options={{ headerShown: false }} />
           <Stack.Screen name="AdminDashboard" component={AdminDashboard} options={{ headerShown: false }} />
+          <Stack.Screen name="AdminStudents" component={AdminStudents} options={{ headerShown: false }} />
+          <Stack.Screen name="TodayAttendance" component={TodayAttendance} options={{ headerShown: false }} />
+          <Stack.Screen name="AttendanceAnalytics" component={AttendanceAnalytics} options={{ headerShown: false }} />
+          <Stack.Screen name="ExportReports" component={ExportReports} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />

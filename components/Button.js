@@ -29,7 +29,7 @@ export default function Button({
         <Text style={[styles.buttonText, textStyle]}>
           {title}
         </Text>
-        <Ionicons name={iconRightName} size={iconRightSize} color={COLORS.white} />
+        <Ionicons name={iconRightName} size={iconRightSize} color={COLORS.white} style={{ marginTop: 5 }} />
       </View>
     </Pressable>
   );
