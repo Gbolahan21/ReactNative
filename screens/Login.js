@@ -5,6 +5,7 @@ import Toast from "react-native-toast-message";
 import IconButton from "../components/IconButton";
 import Button from "../components/Button";
 import login from "../assets/styles/loginCSS";
+import useResponsive from "../hooks/useResponsive";
 import {
   View,
   Text,
@@ -13,6 +14,7 @@ import {
 } from "react-native";
 
 export default function Login({ navigation }) {
+  const { isDesktop } = useResponsive();
   const [matricNo, setMatricNo] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -79,53 +81,55 @@ export default function Login({ navigation }) {
   const details = !matricNo || !password;
 
   return (
-    <View style={login.container}>
-      <IconButton name="arrow-back" size={28} onPress={() => navigation.navigate('Home')} />
+    <View style={[login.container, isDesktop && login.desktopContainer]}>
+      <View style={isDesktop ? login.card : null}>
+        <IconButton name="arrow-back" size={28} onPress={() => navigation.navigate('Home')} />
 
-      <Text style={login.text}>Login</Text>
+        <Text style={login.text}>Login</Text>
 
-      <TextInput 
-        style={login.input}
-        placeholder="Enter your matric no"
-        keyboardType="phone-pad"
-        autoCapitalize="none"
-        value={matricNo}
-        onChangeText={setMatricNo}
-      />
-
-      <View style={login.inputContainer}>
-        <TextInput
-          style={login.inputs}
-          placeholder="Enter your password"
-          secureTextEntry={!showPassword}
-          value={password}
-          onChangeText={setPassword}
+        <TextInput 
+          style={login.input}
+          placeholder="Enter your matric no"
+          keyboardType="phone-pad"
+          autoCapitalize="none"
+          value={matricNo}
+          onChangeText={setMatricNo}
         />
 
-        <IconButton name={showPassword ? "eye" : "eye-off"} onPress={() => setShowPassword(!showPassword)} />
-      </View>
-
-      <View style={login.rememberContainer}>
-        <Pressable
-          style={login.rememberButton}
-          onPress={() => setRememberMe(!rememberMe)}
-        >
-          <IconButton
-            name={rememberMe ? "checkbox" : "square-outline"}
-            size={22}
+        <View style={login.inputContainer}>
+          <TextInput
+            style={login.inputs}
+            placeholder="Enter your password"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={setPassword}
           />
-          <Text style={login.rememberText}>
-            Remember Me
-          </Text>
-        </Pressable>
+
+          <IconButton name={showPassword ? "eye" : "eye-off"} onPress={() => setShowPassword(!showPassword)} />
+        </View>
+
+        <View style={login.rememberContainer}>
+          <Pressable
+            style={login.rememberButton}
+            onPress={() => setRememberMe(!rememberMe)}
+          >
+            <IconButton
+              name={rememberMe ? "checkbox" : "square-outline"}
+              size={22}
+            />
+            <Text style={login.rememberText}>
+              Remember Me
+            </Text>
+          </Pressable>
+        </View>
+
+        <Button title="Login" onPress={handleLogin} disabled={details} />
+
+        <Text style={login.footerText}>
+          Don't have an account?{" "}
+          <Text style={login.link} onPress={() => navigation.navigate("Register")}>Register</Text>
+        </Text>
       </View>
-
-      <Button title="Login" onPress={handleLogin} disabled={details} />
-
-      <Text style={login.footerText}>
-        Don't have an account?{" "}
-        <Text style={login.link} onPress={() => navigation.navigate("Register")}>Register</Text>
-      </Text>
     </View>
   );
 }

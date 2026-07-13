@@ -5,6 +5,7 @@ import IconButton from "../components/IconButton";
 import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
 import register from "../assets/styles/registerCSS";
+import useResponsive from "../hooks/useResponsive";
 import {
   View,
   Text,
@@ -16,6 +17,7 @@ import {
 } from "react-native";
 
 export default function AdminRegister({ navigation }) {
+  const { isDesktop } = useResponsive();
   const [firstname, setFirstName] = useState('');
   const [lastname, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -66,100 +68,103 @@ export default function AdminRegister({ navigation }) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView 
-        contentContainerStyle={register.container}
+        contentContainerStyle={[register.container, isDesktop && register.desktopContainer]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <IconButton name="arrow-back" size={28} onPress={() => navigation.navigate('Home')} />
+        <View style={isDesktop ? register.card : null}>
+          <IconButton name="arrow-back" size={28} onPress={() => navigation.navigate('Home')} />
 
-        <Text style={register.text}>Register</Text>
+          <Text style={register.text}>Register</Text>
 
-        <TextInput 
-          style={register.input}
-          placeholder="Enter your firstname"
-          autoCapitalize="words"
-          autoCorrect={false}
-          value={firstname}
-          onChangeText={setFirstName}
-        />
-
-        <TextInput 
-          style={register.input}
-          placeholder="Enter your lastname"
-          autoCapitalize="words"
-          autoCorrect={false}
-          value={lastname}
-          onChangeText={setLastName}
-        />
-
-        <TextInput 
-          style={register.input}
-          placeholder="Enter your email"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
-        />
-
-       <Dropdown
-          label="Title"
-          placeholder="Select Title"
-          value={title}
-          onSelect={setTitle}
-          options={[
-            {
-              label: "Mr",
-              value: "Mr",
-            },
-            {
-              label: "Mrs",
-              value: "Mrs",
-            },
-          ]}
-        />
-        <View style={register.inputContainer}>
-          <TextInput
-            style={register.inputs}
-            placeholder="Enter your password"
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={setPassword}
+          <TextInput 
+            style={register.input}
+            placeholder="Enter your firstname"
+            autoCapitalize="words"
+            autoCorrect={false}
+            value={firstname}
+            onChangeText={setFirstName}
           />
-      
-          <IconButton name={showPassword ? "eye" : "eye-off"} onPress={() => setShowPassword(!showPassword)} />
-        </View>
 
-        <View style={register.inputContainer}>
-          <TextInput
-            style={register.inputs}
-            placeholder="Confirm password"
-            secureTextEntry={!showConfirmPassword}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
+          <TextInput 
+            style={register.input}
+            placeholder="Enter your lastname"
+            autoCapitalize="words"
+            autoCorrect={false}
+            value={lastname}
+            onChangeText={setLastName}
           />
+
+          <TextInput 
+            style={register.input}
+            placeholder="Enter your email"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
+
+          <Dropdown
+            label="Title"
+            placeholder="Select Title"
+            value={title}
+            onSelect={setTitle}
+            options={[
+              {
+                label: "Mr",
+                value: "Mr",
+              },
+              {
+                label: "Mrs",
+                value: "Mrs",
+              },
+            ]}
+          />
+
+          <View style={register.inputContainer}>
+            <TextInput
+              style={register.inputs}
+              placeholder="Enter your password"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+              />
         
-          <IconButton name={showConfirmPassword ? "eye" : "eye-off"} onPress={() => setShowConfirmPassword(!showConfirmPassword)} />
+            <IconButton name={showPassword ? "eye" : "eye-off"} onPress={() => setShowPassword(!showPassword)} />
+          </View>
+
+          <View style={register.inputContainer}>
+            <TextInput
+              style={register.inputs}
+              placeholder="Confirm password"
+              secureTextEntry={!showConfirmPassword}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              />
+          
+            <IconButton name={showConfirmPassword ? "eye" : "eye-off"} onPress={() => setShowConfirmPassword(!showConfirmPassword)} />
+          </View>
+
+          <View>
+            {confirmPassword.length > 0 && (
+              <Text
+                style={{
+                  color: password === confirmPassword ? "green" : "red",
+                  marginBottom: 15,
+                }}
+                >
+                {password === confirmPassword ? "✓ Passwords match" : "✗ Passwords do not match"}
+              </Text>
+            )}
+          </View>
+
+          <Button title="Register" onPress={handleRegister} disabled={details} />
+
+          <Text style={register.footerText}>
+            Already have an account.{" "}
+            <Text style={register.link} onPress={() => navigation.navigate("AdminLogin")}>Login</Text>
+          </Text>
         </View>
-
-        <View>
-          {confirmPassword.length > 0 && (
-            <Text
-              style={{
-                color: password === confirmPassword ? "green" : "red",
-                marginBottom: 15,
-              }}
-            >
-              {password === confirmPassword ? "✓ Passwords match" : "✗ Passwords do not match"}
-            </Text>
-          )}
-        </View>
-
-        <Button title="Register" onPress={handleRegister} disabled={details} />
-
-        <Text style={register.footerText}>
-          Already have an account.{" "}
-          <Text style={register.link} onPress={() => navigation.navigate("Login")}>Login</Text>
-        </Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );

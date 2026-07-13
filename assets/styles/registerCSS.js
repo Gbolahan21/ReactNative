@@ -5,8 +5,32 @@ export default StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: COLORS.background,
+    padding: 20,
+  },
+
+  desktopContainer: {
     paddingVertical: 50,
-    paddingHorizontal: 20,
+    alignItems: "center",
+  },
+
+  card: {
+    width: "100%",
+    maxWidth: 450,
+    backgroundColor: COLORS.white,
+    borderRadius: 16,
+    padding: 30,
+
+    // Android
+    elevation: 8,
+
+    // iOS
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
   },
 
   button: {
@@ -66,5 +90,6 @@ export default StyleSheet.create({
   inputs: {
     flex: 1,
     fontSize: 16,
+    outlineStyle: "none",
   },
 })

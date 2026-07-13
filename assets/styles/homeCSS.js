@@ -5,8 +5,12 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
-    paddingVertical: 50,
-    paddingHorizontal: 20,
+    padding: 20,
+  },
+
+  desktopContainer: {
+    paddingVertical: 30,
+    paddingHorizontal: '20%',
   },
 
   navbar: {
