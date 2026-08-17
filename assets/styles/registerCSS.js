@@ -9,7 +9,6 @@ export default StyleSheet.create({
   },
 
   desktopContainer: {
-    paddingVertical: 50,
     alignItems: "center",
   },
 

@@ -3,6 +3,7 @@ import api from "../services/api";
 import Toast from "react-native-toast-message";
 import IconButton from "../components/IconButton";
 import Button from "../components/Button";
+import Dropdown from "../components/Dropdown";
 import register from "../assets/styles/registerCSS";
 import useResponsive from "../hooks/useResponsive";
 import {
@@ -31,15 +32,35 @@ export default function Register({ navigation }) {
 
   const handleRegister = async () => {
     try {
-      const response = await api.post('/register', {
+      const studentEmailRegex = /^[^\s@]+@student\.lautech\.edu\.ng$/i;
+
+      if (!studentEmailRegex.test(email.trim())) {
+        Toast.show({
+          type: "error",
+          text1: "Invalid School Email",
+          text2: "Use your @student.lautech.edu.ng email address.",
+        });
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        Toast.show({
+          type: "error",
+          text1: "Password Error",
+          text2: "Passwords do not match.",
+        });
+        return;
+      }
+
+      const response = await api.post("/register", {
         firstname,
         lastname,
         matricNo,
-        email,
+        email: email.trim().toLowerCase(),
         department,
         faculty,
         level,
-        password
+        password,
       });
 
       setFirstName("");
@@ -59,6 +80,7 @@ export default function Register({ navigation }) {
       });
 
       navigation.navigate("Login");
+
     } catch (error) {
       Toast.show({
         type: "error",
@@ -81,8 +103,7 @@ export default function Register({ navigation }) {
         showsVerticalScrollIndicator={false}
       >
         <View style={isDesktop ? register.card : null}>
-          <IconButton name="arrow-back" size={28} onPress={() => navigation.navigate('Home')} />
-
+          <IconButton name="arrow-back" size={28} onPress={() => navigation.navigate("Home")}/>
           <Text style={register.text}>Register</Text>
 
           <TextInput 
@@ -138,13 +159,19 @@ export default function Register({ navigation }) {
             onChangeText={setFaculty}
           />
 
-          <TextInput 
-            style={register.input}
-            placeholder="Enter your level"
-            keyboardType="words"
-            autoCorrect={false}
+          <Dropdown
+            label="Level"
             value={level}
-            onChangeText={setLevel}
+            placeholder="Select Level"
+            onSelect={setLevel}
+            options={[
+              { label: "100 Level", value: "100" },
+              { label: "200 Level", value: "200" },
+              { label: "300 Level", value: "300" },
+              { label: "400 Level", value: "400" },
+              { label: "500 Level", value: "500" },
+              { label: "600 Level", value: "600" },
+            ]}
           />
 
           <View style={register.inputContainer}>
