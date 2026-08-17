@@ -48,6 +48,9 @@ export default function Login({ navigation }) {
 
       navigation.navigate("Dashboard");
     } catch (error) {
+        console.log("Login Error:", error);
+  console.log("Response:", error.response?.data);
+  console.log("Status:", error.response?.status);
       Toast.show({
         type: "error",
         text1: "Login Failed",
