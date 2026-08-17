@@ -5,7 +5,10 @@ import {
   FlatList,
   TextInput,
   Modal,
-  RefreshControl
+  RefreshControl,
+  Platform,
+  Pressable,
+  ScrollView
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -18,9 +21,10 @@ import IconButton from "../components/IconButton";
 import Button from "../components/Button";
 import Pagination from "../components/Pagination";
 import attendance from "../assets/styles/attendanceHistoryCSS";
+import useResponsive from "../hooks/useResponsive";
 
 export default function AttendanceHistoryScreen({ navigation }) {
-
+  const { isDesktop } = useResponsive();
   const [history, setHistory] = useState([]);
   const [filteredHistory, setFilteredHistory] = useState([]);
   const [search, setSearch] = useState("");
@@ -175,185 +179,210 @@ export default function AttendanceHistoryScreen({ navigation }) {
   };
 
   return (
-    <View style={attendance.container}>
+    <View style={[attendance.container, isDesktop && attendance.desktopContainer]}>
       <IconButton name="arrow-back" size={28} onPress={() => navigation.navigate('Dashboard')} />
-
-      <Text style={attendance.title}>Attendance History</Text>
-
-      <View style={attendance.searchContainer}>
-        <TextInput
-          placeholder="Search by status..."
-          value={search}
-          onChangeText={searchAttendance}
-          style={attendance.search}
-        />
-
-        <IconButton name="filter" size={28} onPress={() => setFilterVisible(true)} />
-      </View>
-
-      <View style={attendance.summaryContainer}>
-        <View style={attendance.summaryCard}>
-          <Text style={attendance.summaryLabel}>
-            <Ionicons name="stats-chart" size={20} color="#4A90E2" />{" "}
-            Total
-          </Text>
-          <Text style={attendance.summaryValue}>{totalRecords}</Text>
-        </View>
-
-        <View style={attendance.summaryCard}>
-          <Text style={attendance.summaryLabel}>
-            <Ionicons
-              name="checkmark-circle"
-              size={20}
-              color="#28A745"
-            />{" "}
-            Present
-          </Text>
-          <Text style={attendance.summaryValue}>{presentCount}</Text>
-        </View>
-
-        <View style={attendance.summaryCard}>
-          <Text style={attendance.summaryLabel}>
-            <Ionicons
-              name="close-circle"
-              size={20}
-              color="#DC3545"
-            />{" "}
-            Absent
-          </Text>
-          <Text style={attendance.summaryValue}>{absentCount}</Text>
-        </View>
-
-        <View style={attendance.summaryCard}>
-          <Text style={attendance.summaryLabel}>
-            <Ionicons
-              name="trending-up"
-              size={20}
-              color="#FF9800"
-            />{" "}
-            Rate
-          </Text>
-          <Text style={attendance.summaryValue}>
-            {attendanceRate}%
-          </Text>
-        </View>
-      </View>
-
-      <View style={attendance.tableHeader}>
-        <Text style={attendance.headerCell}>Status</Text>
-        <Text style={attendance.headerCell}>Date</Text>
-        <Text style={attendance.headerCell}>Check In</Text>
-        <Text style={attendance.headerCell}>Check Out</Text>
-      </View>
-
-      <FlatList
-        data={filteredHistory}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
+      <ScrollView 
+        style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-        }
-      />
-
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        onPrevious={() => loadHistory(page - 1)}
-        onNext={() => loadHistory(page + 1)}
-      />
-
-      <Modal
-        visible={filterVisible}
-        animationType="slide"
-        transparent
       >
-        <View style={attendance.modalContainer}>
-          <View style={attendance.cardFilter}>
-            <Text style={attendance.labelFilter}>Filter Attendance</Text>
+        <Text style={attendance.title}>Attendance History</Text>
 
-            <Text style={attendance.labelFilters}>Date</Text>
-            <Button
-              title={
-                selectedDate
-                  ? formatDate(selectedDate)
-                  : "Select Date"
-              }
-              iconName="calendar"
-              onPress={() => setShowDatePicker(true)}
-              style={{ marginBottom: 20 }}
-            />
+        <View style={attendance.searchContainer}>
+          <TextInput
+            placeholder="Search by status..."
+            value={search}
+            onChangeText={searchAttendance}
+            style={attendance.search}
+          />
 
-            {showDatePicker && (
-              <DateTimePicker
-                value={selectedDate || new Date()}
-                mode="date"
-                display="default"
-                onChange={(event, date) => {
-                  setShowDatePicker(false);
+          <IconButton name="filter" size={25} onPress={() => setFilterVisible(true)} />
+        </View>
 
-                  if (date) {
-                    setSelectedDate(date);
-                  }
-                }}
-              />
-            )}
+        <View style={attendance.summaryContainer}>
+          <View style={attendance.summaryCard}>
+            <Text style={attendance.summaryLabel}>
+              <Ionicons name="stats-chart" size={20} color="#4A90E2" />{" "}
+              Total
+            </Text>
+            <Text style={attendance.summaryValue}>{totalRecords}</Text>
+          </View>
 
-            <Text style={attendance.labelFilters}>Status</Text>
-            <View style={attendance.statusButtonsContainer}>
-              {["All", "Present", "Absent"].map((status) => (
-                <Button
-                  key={status}
-                  title={status}
-                  onPress={() => setSelectedStatus(status)}
-                  style={{
-                    backgroundColor: selectedStatus === status ? "#007BFF" : "#E0E0E0",
-                    paddingHorizontal: 15,
-                    paddingVertical: 10,
-                    borderRadius: 10,
-                    textAlign: "center",
-                  }}
-                />
-              ))}
-            </View>
+          <View style={attendance.summaryCard}>
+            <Text style={attendance.summaryLabel}>
+              <Ionicons
+                name="checkmark-circle"
+                size={20}
+                color="#28A745"
+              />{" "}
+              Present
+            </Text>
+            <Text style={attendance.summaryValue}>{presentCount}</Text>
+          </View>
 
-            <View style={attendance.buttonContainer}>
-              <Button
-                title="Apply"
-                onPress={() => {
-                  handleApplyFilter();
-                }}
-                style={{ width: "48%" }}
-              />
-              <Button
-                title="Reset"
-                onPress={() => {
-                  handleResetFilter();
-                }}
-                style={{ width: "48%" }}
-              />
-              </View>
+          <View style={attendance.summaryCard}>
+            <Text style={attendance.summaryLabel}>
+              <Ionicons
+                name="close-circle"
+                size={20}
+                color="#DC3545"
+              />{" "}
+              Absent
+            </Text>
+            <Text style={attendance.summaryValue}>{absentCount}</Text>
+          </View>
+
+          <View style={attendance.summaryCard}>
+            <Text style={attendance.summaryLabel}>
+              <Ionicons
+                name="trending-up"
+                size={20}
+                color="#FF9800"
+              />{" "}
+              Rate
+            </Text>
+            <Text style={attendance.summaryValue}>
+              {attendanceRate}%
+            </Text>
           </View>
         </View>
-      </Modal>
+
+        <View style={attendance.tableHeader}>
+          <Text style={attendance.headerCell}>Status</Text>
+          <Text style={attendance.headerCell}>Date</Text>
+          <Text style={attendance.headerCell}>Check In</Text>
+          <Text style={attendance.headerCell}>Check Out</Text>
+        </View>
+
+        <FlatList
+          data={filteredHistory}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+        />
+
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPrevious={() => loadHistory(page - 1)}
+          onNext={() => loadHistory(page + 1)}
+        />
+
+        <Modal
+          visible={filterVisible}
+          animationType="slide"
+          transparent
+          onRequestClose={() => setFilterVisible(false)}
+        >
+          <Pressable
+            style={attendance.modalContainer}
+            onPress={() => setFilterVisible(false)}
+          >
+            <Pressable style={[attendance.cardFilter, isDesktop && attendance.desktopCardFilter]} onPress={(e) => e.stopPropagation()}>
+              <Text style={attendance.labelFilter}>Filter Attendance</Text>
+
+              <Text style={attendance.labelFilters}>Date</Text>
+
+              {Platform.OS === "web" ? (
+                // Web date picker
+                <input
+                  type="date"
+                  value={
+                    selectedDate
+                      ? dayjs(selectedDate).format("YYYY-MM-DD")
+                      : ""
+                  }
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      setSelectedDate(
+                        dayjs(e.target.value, "YYYY-MM-DD").toDate()
+                      );
+                    }
+                  }}
+                  style={{
+                    width: "100%",
+                    height: 45,
+                    padding: 10,
+                    marginBottom: 20,
+                    border: "1px solid #ddd",
+                    borderRadius: 10,
+                    fontSize: 16,
+                    boxSizing: "border-box",
+                  }}
+                />
+              ) : (
+                // Android / iOS date picker
+                <>
+                  <Button
+                    title={
+                      selectedDate
+                        ? formatDate(selectedDate)
+                        : "Select Date"
+                    }
+                    iconName="calendar"
+                    onPress={() => setShowDatePicker(true)}
+                    style={{ marginBottom: 20 }}
+                  />
+
+                  {showDatePicker && (
+                    <DateTimePicker
+                      value={selectedDate || new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, date) => {
+                        setShowDatePicker(false);
+
+                        if (date) {
+                          setSelectedDate(date);
+                        }
+                      }}
+                    />
+                  )}
+                </>
+              )}
+
+              <Text style={attendance.labelFilters}>Status</Text>
+              <View style={attendance.statusButtonsContainer}>
+                {["All", "Present", "Absent"].map((status) => (
+                  <Button
+                    key={status}
+                    title={status}
+                    onPress={() => setSelectedStatus(status)}
+                    style={{
+                      backgroundColor: selectedStatus === status ? "#007BFF" : "#E0E0E0",
+                      paddingHorizontal: 15,
+                      paddingVertical: 10,
+                      borderRadius: 10,
+                      textAlign: "center",
+                    }}
+                  />
+                ))}
+              </View>
+
+              <View style={attendance.buttonContainer}>
+                <Button
+                  title="Apply"
+                  onPress={() => {
+                    handleApplyFilter();
+                  }}
+                  style={{ width: "48%" }}
+                />
+                <Button
+                  title="Reset"
+                  onPress={() => {
+                    handleResetFilter();
+                  }}
+                  style={{ width: "48%" }}
+                />
+                </View>
+            </Pressable>
+          </Pressable>
+        </Modal>
+      </ScrollView>
     </View>
   );
 }
-
-{/* <FlatList
-  data={filteredHistory}
-  keyExtractor={(item) => item.id.toString()}
-  renderItem={renderItem}
-  showsVerticalScrollIndicator={false}
-  ListFooterComponent={
-    <Pagination
-      page={page}
-      totalPages={totalPages}
-      onPrevious={() => loadHistory(page - 1)}
-      onNext={() => loadHistory(page + 1)}
-    />
-  }
-/> */}

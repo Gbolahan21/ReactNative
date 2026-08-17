@@ -20,8 +20,10 @@ export default function Register({ navigation }) {
   const [firstname, setFirstName] = useState('');
   const [lastname, setLastName] = useState('');
   const [matricNo, setMatricNo] = useState('');
+  const [email, setEmail] = useState('');
   const [department, setDepartment] = useState('');
   const [faculty, setFaculty] = useState('');
+  const [level, setLevel] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -33,16 +35,20 @@ export default function Register({ navigation }) {
         firstname,
         lastname,
         matricNo,
+        email,
         department,
         faculty,
+        level,
         password
       });
 
       setFirstName("");
       setLastName("");
       setMatricNo("");
+      setEmail("");
       setDepartment("");
       setFaculty("");
+      setLevel("");
       setPassword("");
       setConfirmPassword("");
 
@@ -62,7 +68,7 @@ export default function Register({ navigation }) {
     }
   };
 
-  const details = !firstname || !lastname || !matricNo || !department || !faculty || !password || !confirmPassword;
+  const details = !firstname || !lastname || !matricNo || !email || !department || !faculty || !level || !password || !confirmPassword;
   
   return (
     <KeyboardAvoidingView
@@ -107,6 +113,15 @@ export default function Register({ navigation }) {
 
           <TextInput 
             style={register.input}
+            placeholder="Enter your school email"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
+
+          <TextInput 
+            style={register.input}
             placeholder="Enter your department"
             keyboardType="words"
             autoCorrect={false}
@@ -121,6 +136,15 @@ export default function Register({ navigation }) {
             autoCorrect={false}
             value={faculty}
             onChangeText={setFaculty}
+          />
+
+          <TextInput 
+            style={register.input}
+            placeholder="Enter your level"
+            keyboardType="words"
+            autoCorrect={false}
+            value={level}
+            onChangeText={setLevel}
           />
 
           <View style={register.inputContainer}>

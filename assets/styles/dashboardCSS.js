@@ -5,8 +5,12 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
-    paddingVertical: 50,
-    paddingHorizontal: 20,
+    padding: 20,
+  },
+
+  desktopContainer: {
+    paddingVertical: 20,
+    paddingHorizontal: '30%',
   },
 
   navbar: {
@@ -32,10 +36,9 @@ export default StyleSheet.create({
   card: {
     backgroundColor: COLORS.background,
     borderRadius: 15,
-    padding: 20,
+    paddingVertical: 20,
     marginTop: 20,
     elevation: 4,
-    marginBottom: 20,
   },
 
   cardTitle: {
@@ -102,10 +105,9 @@ export default StyleSheet.create({
   statusCard: {
     backgroundColor: COLORS.background,
     borderRadius: 15,
-    padding: 18,
+    paddingVertical: 18,
     marginTop: 20,
     elevation: 4,
-    marginBottom: 20,
   },
 
   statusTitle: {
@@ -155,5 +157,43 @@ export default StyleSheet.create({
     fontWeight: "700",
     marginBottom: 15,
     color: "#333",
+  },
+
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: COLORS.modalBackground,
+  },
+
+  cardFilter: {
+    backgroundColor: COLORS.background,
+    borderRadius: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    width: "90%",
+  },
+
+  desktopCardFilter: {
+    width: "30%",
+  },
+
+  labelFilter: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+
+  labelFilters: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
   },
 })

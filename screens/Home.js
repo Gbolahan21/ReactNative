@@ -20,19 +20,19 @@ export default function HomeScreen({ navigation }) {
             <Text style={home.link}>Register</Text>
           </Pressable>
 
-          <Pressable onPress={() => navigation.navigate("AdminRegister")}>
+          {/* <Pressable onPress={() => navigation.navigate("AdminRegister")}>
             <Text style={home.link}>AdminRegister</Text>
           </Pressable>
 
           <Pressable onPress={() => navigation.navigate("AdminLogin")}>
             <Text style={home.link}>AdminLogin</Text>
-          </Pressable>
+          </Pressable> */}
         </View>
       </View>
 
       {/* Home Content */}
       <View style={home.content}>
-        <Text style={home.title}>Fingerprint Attendance System (F.A.S)</Text>
+        <Text style={home.title}>Student Fingerprint Attendance System (S.F.A.S)</Text>
 
         <Text style={home.subtitle}>
           Kindly sign in to continue or create a new account.

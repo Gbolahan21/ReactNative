@@ -6,20 +6,25 @@ import Toast from "react-native-toast-message";
 import Button from "../components/Button";
 import { COLORS } from "../constants/colors";
 import dashboard from "../assets/styles/dashboardCSS";
+import useResponsive from "../hooks/useResponsive";
 import {
   View,
   Text,
   Pressable,
   Image,
+  Modal,
+  ScrollView
 } from "react-native";
 
 import moh from '../assets/images/moh.png';
 
 export default function Dashboard({ navigation }) {
+  const { isDesktop } = useResponsive();
 
   const [user, setUser] = useState(null);
   const [attendanceStatus, setAttendanceStatus] = useState("Not Recorded");
   const [todayAttendance, setTodayAttendance] = useState(null);
+  const [logoutVisible, setLogoutVisible] = useState(false);
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
@@ -128,15 +133,18 @@ export default function Dashboard({ navigation }) {
   };
 
   return (
-      <View style={dashboard.container}>
-        <View style={dashboard.navbar}>
-          <Text style={dashboard.logo}><Image source={moh} style={dashboard.logo} /></Text>
+    <View style={[dashboard.container, isDesktop && dashboard.desktopContainer]}>
+      <View style={dashboard.navbar}>
+        <Text style={dashboard.logo}><Image source={moh} style={dashboard.logo} /></Text>
 
-          <Pressable onPress={handleLogout}>
-            <Text style={dashboard.link}>Logout</Text>
-          </Pressable>
-        </View>
-
+        <Pressable onPress={() => setLogoutVisible(true)}> 
+          <Text style={dashboard.link}>Logout</Text>
+        </Pressable>
+      </View>
+      <ScrollView
+        style={{ flex: 1 }}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={dashboard.content}>
           <Text style={dashboard.greeting}>
             {getGreeting()} 👋
@@ -182,7 +190,8 @@ export default function Dashboard({ navigation }) {
           iconName="finger-print"
           iconSize={24}
           onPress={scanFingerprint}
-          // disabled={attendanceStatus === "Present"}
+          disabled={attendanceStatus === "Present"}
+          textStyle={{marginLeft: 10}}
         />
 
         <View style={dashboard.card}>
@@ -196,14 +205,66 @@ export default function Dashboard({ navigation }) {
           <Text style={dashboard.label}>Matric Number</Text>
           <Text style={dashboard.value}>{user?.matricNo}</Text>
 
+          <Text style={dashboard.label}>Email</Text>
+          <Text style={dashboard.value}>{user?.email}</Text>
+
           <Text style={dashboard.label}>Department</Text>
           <Text style={dashboard.value}>{user?.department}</Text>
 
           <Text style={dashboard.label}>Faculty</Text>
           <Text style={dashboard.value}>{user?.faculty}</Text>
+
+          <Text style={dashboard.label}>Level</Text>
+          <Text style={dashboard.value}>{user?.level} Level</Text>
         </View>
 
         <Button title="Attendance History" iconRightName="arrow-forward" iconRightSize={18} onPress={() => navigation.navigate("AttendanceHistory")} textStyle={{marginRight: 10}} />
+
+        <Modal
+          visible={logoutVisible}
+          animationType="slide"
+          transparent
+          onRequestClose={() => setLogoutVisible(false)}
+        >
+          <Pressable
+            style={dashboard.modalContainer}
+            onPress={() => setLogoutVisible(false)}
+          >
+            <Pressable
+              style={[
+                dashboard.cardFilter,
+                isDesktop && dashboard.desktopCardFilter
+              ]}
+              onPress={(e) => e.stopPropagation()}
+            >
+              <Text style={dashboard.labelFilter}>
+                Log Out?
+              </Text>
+
+              <Text style={dashboard.labelFilters}>
+                Are you sure you want to log out?
+              </Text>
+
+              <View style={dashboard.buttonContainer}>
+                <Button
+                  title="Stay Logged In"
+                  onPress={() => setLogoutVisible(false)}
+                  style={{
+                    width: "48%",
+                    backgroundColor: COLORS.primaryDark,
+                  }}
+                />
+
+                <Button
+                  title="Log Out"
+                  onPress={handleLogout}
+                  style={{ width: "48%" }}
+                />
+              </View>
+            </Pressable>
+          </Pressable>
+        </Modal>
+      </ScrollView>
     </View>
   );
 }

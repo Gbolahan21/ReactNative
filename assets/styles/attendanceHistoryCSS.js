@@ -5,14 +5,18 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
-    paddingVertical: 50,
-    paddingHorizontal: 20,
+    padding: 20,
+  },
+
+  desktopContainer: {
+    paddingVertical: 20,
+    paddingHorizontal: '30%',
   },
 
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    marginBottom: 12,
+    marginBottom: 30,
     textAlign: "center",
   },
 
@@ -35,7 +39,7 @@ export default StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 15,
     height: 50,
-    width: "85%",
+    width: "90%",
     borderWidth: 1,
     borderColor: COLORS.border,
   },
@@ -57,7 +61,11 @@ export default StyleSheet.create({
     backgroundColor: COLORS.background,
     borderRadius: 10,
     padding: 20,
-    width: "80%",
+    width: "90%",
+  },
+
+  desktopCardFilter: {
+    width: "30%",
   },
 
   labelFilter: {

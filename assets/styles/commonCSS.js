@@ -20,7 +20,6 @@ export default StyleSheet.create({
     color: COLORS.white,
     fontSize: 18,
     fontWeight: "600",
-    marginLeft: 10,
   },
 
   disabledButton: {
@@ -37,8 +36,8 @@ export default StyleSheet.create({
   },
 
   pageButton: {
-    width: 45,
-    height: 45,
+    width: 30,
+    height: 30,
     borderRadius: 10,
     backgroundColor: COLORS.primary,
     justifyContent: "center",
@@ -50,7 +49,7 @@ export default StyleSheet.create({
   },
 
   pageText: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: "600",
     color: COLORS.black,
   },
