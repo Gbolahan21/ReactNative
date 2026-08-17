@@ -2,7 +2,7 @@
 
 # dependencies
 node_modules/
-.services/api/
+.services/
 
 # Expo
 .expo/
