@@ -2,18 +2,18 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Toast from "react-native-toast-message";
 
-import Home from "./screens/Home";
-import Login from "./screens/Login";
-import Register from "./screens/Register";
-import Dashboard from "./screens/Dashboard";
-import AttendanceHistory from "./screens/AttendanceHistory";
-import AdminRegister from "./screens/AdminRegister";
-import AdminLogin from "./screens/AdminLogin";
-import AdminDashboard from "./screens/AdminDashboard";
-import AdminStudents from "./screens/AdminStudents";
-import TodayAttendance from "./screens/TodayAttendance";
-import AttendanceAnalytics from "./screens/AttendanceAnalytics";
-import ExportReports from "./screens/ExportReports";
+import Home from "./routes/Home";
+import Login from "./routes/Login";
+import Register from "./routes/Register";
+import Dashboard from "./routes/Dashboard";
+import AttendanceHistory from "./routes/AttendanceHistory";
+import AdminRegister from "./routes/AdminRegister";
+import AdminLogin from "./routes/AdminLogin";
+import AdminDashboard from "./routes/AdminDashboard";
+import AdminStudents from "./routes/AdminStudents";
+import TodayAttendance from "./routes/TodayAttendance";
+import AttendanceAnalytics from "./routes/AttendanceAnalytics";
+import ExportReports from "./routes/ExportReports";
 
 const Stack = createNativeStackNavigator();
 

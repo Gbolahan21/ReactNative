@@ -114,7 +114,7 @@ export default function AttendanceHistoryScreen({ navigation }) {
 
   if (filteredHistory.length === 0) {
     return (
-      <View style={attendance.container}>
+      <View style={[attendance.container, isDesktop && attendance.desktopContainer]}>
         <Text style={attendance.emptyText}>
           No attendance records found.
         </Text>
@@ -122,7 +122,9 @@ export default function AttendanceHistoryScreen({ navigation }) {
         <Button
           title="Back to Dashboard"
           iconName="arrow-back"
+          iconSize={18}
           onPress={() => navigation.navigate('Dashboard')}
+          textStyle={{marginLeft: 10}}
         />
       </View>
     );
