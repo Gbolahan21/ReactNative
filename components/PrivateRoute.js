@@ -9,14 +9,15 @@ export default function PrivateRoute({
   const state = useSelector((state) => state);
 
   const authenticated = state.student?.authenticated;
+  const initialized = state.student?.initialized;
 
   useEffect(() => {
-    if (!authenticated) {
+    if (initialized && !authenticated) {
       navigation.replace("Home");
     }
-  }, [authenticated, navigation]);
+  }, [initialized, authenticated, navigation]);
 
-  if (!authenticated) {
+  if (!initialized || !authenticated) {
     return (
       <View
         style={{

@@ -12,7 +12,7 @@ import {
   TextInput
 } from "react-native";
 
-export default function SignIn({ navigation, signin, load }) {
+export default function SignIn({ navigation, signin }) {
   const { isDesktop } = useResponsive();
   const [matricNo, setMatricNo] = useState('');
   const [password, setPassword] = useState('');
@@ -60,30 +60,6 @@ export default function SignIn({ navigation, signin, load }) {
     );
   };
 
-  const checkLogin = async () => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-
-      load(
-        (error) => {
-          console.log("SESSION RESTORE FAILED:", error);
-
-          dispatch({
-            type: AUTH_INITIALIZED,
-          });
-        },
-
-        (response) => {
-          console.log("SESSION RESTORED:", response);
-
-          navigation.replace("Dashboard");
-        }
-      );
-    } catch (error) {
-      console.log("CHECK LOGIN ERROR:", error);
-    }
-  };
-
   const loadSavedMatricNo = async () => {
     try {
       const savedMatricNo =
@@ -99,12 +75,7 @@ export default function SignIn({ navigation, signin, load }) {
   };
 
   useEffect(() => {
-    const initialize = async () => {
-      await loadSavedMatricNo();
-      await checkLogin();
-    };
-
-    initialize();
+    loadSavedMatricNo();
   }, []);
 
   const details = !matricNo || !password;

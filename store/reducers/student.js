@@ -5,6 +5,7 @@ import {
   LOADING,
   SIGNIN,
   SIGNUP,
+  AUTH_INITIALIZED,
   LOAD,
 } from '../types';
 
@@ -19,6 +20,7 @@ export const initialState = {
   token: '',
   loading: [],
   authenticated: false,
+  initialized: false,
 };
 
 export default function (state = initialState, action) {
@@ -51,8 +53,13 @@ export default function (state = initialState, action) {
       return {
         ...state,
         ...payload.user,
-        token: payload.token,
         authenticated: true,
+      };
+
+    case AUTH_INITIALIZED:
+      return {
+        ...state,
+        initialized: true,
       };
 
     case ERROR:
