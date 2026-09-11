@@ -12,11 +12,11 @@ export default function HomeScreen({ navigation }) {
         <Text style={home.logo}><Image source={moh} style={home.logo} /></Text>
 
         <View style={home.navLinks}>
-          <Pressable onPress={() => navigation.navigate("Login")}>
+          <Pressable onPress={() => navigation.navigate("SignIn")}>
             <Text style={home.link}>Login</Text>
           </Pressable>
 
-          <Pressable onPress={() => navigation.navigate("Register")}>
+          <Pressable onPress={() => navigation.navigate("SignUp")}>
             <Text style={home.link}>Register</Text>
           </Pressable>
 

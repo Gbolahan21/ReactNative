@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from "../services/api";
 import Toast from "react-native-toast-message";
-import IconButton from "../components/IconButton";
-import Button from "../components/Button";
-import login from "../assets/styles/loginCSS";
-import useResponsive from "../hooks/useResponsive";
+import IconButton from "../../components/IconButton";
+import Button from "../../components/Button";
+import login from "../../assets/styles/loginCSS";
+import useResponsive from "../../hooks/useResponsive";
+import * as Helpers from '../../helpers';
 import {
   View,
   Text,
@@ -13,50 +13,45 @@ import {
   TextInput
 } from "react-native";
 
-export default function Login({ navigation }) {
+export default function SignIn({ navigation, signin }) {
   const { isDesktop } = useResponsive();
   const [matricNo, setMatricNo] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleLogin = async () => {
-    try {
-      const response = await api.post("/login", {
-        matricNo,
-        password,
-      });
+  useEffect(() => {
+    document.title = 'SignIn | Moh';
+  }, []);
 
-      if (rememberMe) {
-        await AsyncStorage.setItem("token", response.data.token);
-        await AsyncStorage.setItem("savedMatricNo", matricNo);
-      } else {
-        await AsyncStorage.removeItem("token");
-        await AsyncStorage.removeItem("savedMatricNo");
+  const handleLogin = () => {
+    signin(
+      matricNo.trim(),
+      password,
+
+      (error) => {
+        Toast.show({
+          type: "error",
+          text1: "Login Failed",
+          text2:
+            error?.error ||
+            error?.message ||
+            "Something went wrong",
+        });
+        Helpers.notification.error("Login Failed", "Something went wrong");
+      },
+
+      (response) => {
+        Toast.show({
+          type: "success",
+          text1: "Login Successful",
+          text2: response?.message || "Welcome back!",
+        });
+        Helpers.notification.success("Login Successful", "Welcome back!");
+
+        navigation.replace("Dashboard");
       }
-
-      await AsyncStorage.setItem(
-        "user",
-        JSON.stringify(response.data.user)
-      );
-
-      Toast.show({
-        type: "success",
-        text1: "Login Successful",
-        text2: "Welcome back!",
-      });
-
-      navigation.navigate("Dashboard");
-    } catch (error) {
-        console.log("Login Error:", error);
-  console.log("Response:", error.response?.data);
-  console.log("Status:", error.response?.status);
-      Toast.show({
-        type: "error",
-        text1: "Login Failed",
-        text2: error.response?.data?.error || "Something went wrong",
-      });
-    }
+    );
   };
 
   const checkLogin = async () => {
@@ -130,7 +125,7 @@ export default function Login({ navigation }) {
 
         <Text style={login.footerText}>
           Don't have an account?{" "}
-          <Text style={login.link} onPress={() => navigation.navigate("Register")}>Register</Text>
+          <Text style={login.link} onPress={() => navigation.navigate("SignUp")}>Register</Text>
         </Text>
       </View>
     </View>

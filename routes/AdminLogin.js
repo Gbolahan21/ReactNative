@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from "../services/api";
+// import api from "../services/api";
 import Toast from "react-native-toast-message";
 import IconButton from "../components/IconButton";
 import Button from "../components/Button";

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as LocalAuthentication from "expo-local-authentication";
-import api from "../services/api";
 import Toast from "react-native-toast-message";
 import Button from "../components/Button";
 import { COLORS } from "../constants/colors";
@@ -26,11 +25,15 @@ export default function Dashboard({ navigation }) {
   const [todayAttendance, setTodayAttendance] = useState(null);
   const [logoutVisible, setLogoutVisible] = useState(false);
 
+  useEffect(() => {
+    document.title = 'Dashboard | Moh';
+  }, []);
+
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
     await AsyncStorage.removeItem("user");
 
-    navigation.replace("Login");
+    navigation.replace("SignIn");
   };
 
   const getGreeting = () => {

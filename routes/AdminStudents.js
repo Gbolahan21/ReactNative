@@ -6,7 +6,7 @@ import {
   FlatList,
   Pressable,
 } from "react-native"
-import api from "../services/api";
+// import api from "../services/api";
 import Pagination from "../components/Pagination";
 import IconButton from "../components/IconButton";
 import styles from "../assets/styles/adminCSS";

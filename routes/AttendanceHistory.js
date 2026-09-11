@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import api from "../services/api";
+// import api from "../services/api";
 import dayjs from "dayjs";
 import { Ionicons } from "@expo/vector-icons";
 import customParseFormat from "dayjs/plugin/customParseFormat";

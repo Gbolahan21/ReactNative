@@ -1,22 +1,21 @@
-import { useState } from "react";
-import api from "../services/api";
+import { useState, useEffect } from "react";
 import Toast from "react-native-toast-message";
-import IconButton from "../components/IconButton";
-import Button from "../components/Button";
-import Dropdown from "../components/Dropdown";
-import register from "../assets/styles/registerCSS";
-import useResponsive from "../hooks/useResponsive";
+import IconButton from "../../components/IconButton";
+import Button from "../../components/Button";
+import Dropdown from "../../components/Dropdown";
+import register from "../../assets/styles/registerCSS";
+import useResponsive from "../../hooks/useResponsive";
+import * as Helpers from '../../helpers';
 import {
   View,
   Text,
-  Pressable,
   TextInput,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
 
-export default function Register({ navigation }) {
+export default function SignUp({ navigation, signup }) {
   const { isDesktop } = useResponsive();
   const [firstname, setFirstName] = useState('');
   const [lastname, setLastName] = useState('');
@@ -30,64 +29,75 @@ export default function Register({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleRegister = async () => {
-    try {
-      const studentEmailRegex = /^[^\s@]+@student\.lautech\.edu\.ng$/i;
+  useEffect(() => {
+    document.title = 'SignUp | Moh';
+  }, []);
 
-      if (!studentEmailRegex.test(email.trim())) {
-        Toast.show({
-          type: "error",
-          text1: "Invalid School Email",
-          text2: "Use your @student.lautech.edu.ng email address.",
-        });
-        return;
-      }
+  const handleRegister = () => {
+    const studentEmailRegex = /^[^\s@]+@student\.lautech\.edu\.ng$/i;
 
-      if (password !== confirmPassword) {
-        Toast.show({
-          type: "error",
-          text1: "Password Error",
-          text2: "Passwords do not match.",
-        });
-        return;
-      }
-
-      const response = await api.post("/register", {
-        firstname,
-        lastname,
-        matricNo,
-        email: email.trim().toLowerCase(),
-        department,
-        faculty,
-        level,
-        password,
-      });
-
-      setFirstName("");
-      setLastName("");
-      setMatricNo("");
-      setEmail("");
-      setDepartment("");
-      setFaculty("");
-      setLevel("");
-      setPassword("");
-      setConfirmPassword("");
-
-      Toast.show({
-        type: "success",
-        text1: "Registration Successful",
-        text2: "Welcome aboard!",
-      });
-
-      navigation.navigate("Login");
-
-    } catch (error) {
+    if (!studentEmailRegex.test(email.trim())) {
       Toast.show({
         type: "error",
-        text1: "Registration Failed",
-        text2: error.response?.data?.error || "Something went wrong",
+        text1: "Invalid School Email",
+        text2: "Use your @student.lautech.edu.ng email address.",
       });
+      Helpers.notification.error("Invalid School Email", "Use your @student.lautech.edu.ng email address.");
+      return;
     }
+
+    if (password !== confirmPassword) {
+      Toast.show({
+        type: "error",
+        text1: "Password Error",
+        text2: "Passwords do not match.",
+      });
+      Helpers.notification.error("Password Error", "Passwords do not match.");
+      return;
+    }
+
+    signup(
+      firstname.trim(),
+      lastname.trim(),
+      matricNo.trim(),
+      email.trim().toLowerCase(),
+      department.trim(),
+      faculty.trim(),
+      level,
+      password,
+
+      // Error callback
+      (error) => {
+        Toast.show({
+          type: "error",
+          text1: "Registration Failed",
+          text2: error || "Something went wrong",
+        });
+        Helpers.notification.error("Registration Failed", error || "Something went wrong");
+      },
+
+      // Success callback
+      (response) => {
+        setFirstName("");
+        setLastName("");
+        setMatricNo("");
+        setEmail("");
+        setDepartment("");
+        setFaculty("");
+        setLevel("");
+        setPassword("");
+        setConfirmPassword("");
+
+        Toast.show({
+          type: "success",
+          text1: "Registration Successful",
+          text2: "Welcome aboard!",
+        });
+        Helpers.notification.success("Registration Successful", "Welcome aboard!");
+
+        navigation.navigate("SignIn");
+      }
+    )
   };
 
   const details = !firstname || !lastname || !matricNo || !email || !department || !faculty || !level || !password || !confirmPassword;
@@ -215,7 +225,7 @@ export default function Register({ navigation }) {
 
           <Text style={register.footerText}>
             Already have an account.{" "}
-            <Text style={register.link} onPress={() => navigation.navigate("Login")}>Login</Text>
+            <Text style={register.link} onPress={() => navigation.navigate("SignIn")}>Login</Text>
           </Text>
         </View>
       </ScrollView>

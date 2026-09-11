@@ -1,74 +1,99 @@
-import axiosLib from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
+import { BASE_URL } from '../config/config';
 
 import token from './token';
 
-let axios = axiosLib;
 const api =
   (url, method, data, {success, error}, actionTypes) =>
-  (dispatch, mockAxios) => {
-    const {responder, loading, error: errorConstant, report} = actionTypes;
-
-    if (mockAxios?.get) {
-      axios = mockAxios;
-    }
+  async (dispatch) => {
+    const {
+      responder,
+      loading,
+      error: errorConstant,
+    } = actionTypes;
 
     dispatch({
       payload: url,
       type: loading,
     });
-    axios.defaults.headers.common.Authorization = `Bearer ${token.get()}`;
-    axios.defaults.headers.common['Content-Type'] = 'application/json';
-    return axios[method.toLowerCase()](`${import.meta.env.VITE_BASE_URL}${url}`, data)
-      .then((res) => {
-        dispatch({
-          payload: url,
-          type: loading,
-        });
-        dispatch({
-          payload: res.data,
-          type: responder,
-        });
 
-        if (typeof success === 'function' && report !== false) {
-          success(res.data, dispatch);
-        }
+    try {
+      const storedToken = await token.get();
 
-        return true;
-      })
-      .catch((e) => {
-        dispatch({
-          payload: url,
-          type: loading,
-        });
-        dispatch({
-          errorObj: e,
-          payload: e.response && e.response.data,
-          type: errorConstant,
-        });
+      const headers = {
+        'Content-Type': 'application/json',
+      };
 
-        if (typeof error === 'function' && report !== false) {
-          error(e.response && e.response.data, dispatch);
-        }
+      if (storedToken) {
+        headers.Authorization = `Bearer ${storedToken}`;
+      }
 
-        const redirectToSignin = () => {
-          token.remove();
-          const returnPath = authRedirect.getCurrentReturnPath();
-          window.location = returnPath ? authRedirect.buildSigninPath(returnPath) : '/signin';
-        };
-
-        if (e.response && e.response.status === 401) {
-          redirectToSignin();
-        }
-
-        const userToken = token.get('user:token') && jwtDecode(token.get('user:token'));
-        const isExpired = userToken?.exp * 1000 < Date.now();
-        if (isExpired) {
-          redirectToSignin();
-        }
-
-        return false;
+      const response = await axios({
+        method,
+        url: `${BASE_URL}${url}`,
+        data,
+        headers,
       });
+
+      if (response.data?.token) {
+        await token.set(response.data.token);
+      }
+
+      dispatch({
+        payload: url,
+        type: loading,
+      });
+
+      dispatch({
+        payload: response.data,
+        type: responder,
+      });
+
+      if (typeof success === 'function') {
+        success(response.data, dispatch);
+      }
+
+      return true;
+
+    } catch (e) {
+
+      dispatch({
+        payload: url,
+        type: loading,
+      });
+
+      dispatch({
+        errorObj: e,
+        payload: e.response?.data,
+        type: errorConstant,
+      });
+
+      if (typeof error === 'function') {
+        error(e.response?.data, dispatch);
+      }
+
+      if (e.response?.status === 401) {
+        await token.remove();
+      }
+
+      const storedToken = await token.get();
+
+      if (storedToken) {
+        try {
+          const decoded = jwtDecode(storedToken);
+
+          if (decoded.exp * 1000 < Date.now()) {
+            await token.remove();
+          }
+        } catch (decodeError) {
+          console.log('Invalid token');
+          await token.remove();
+        }
+      }
+
+      return false;
+    }
   };
 
 export default api;

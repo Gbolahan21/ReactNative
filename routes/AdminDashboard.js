@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as LocalAuthentication from "expo-local-authentication";
-import api from "../services/api";
+// import api from "../services/api";
 import Toast from "react-native-toast-message";
 import Button from "../components/Button";
 import { COLORS } from "../constants/colors";
