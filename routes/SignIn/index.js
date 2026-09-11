@@ -5,7 +5,6 @@ import IconButton from "../../components/IconButton";
 import Button from "../../components/Button";
 import login from "../../assets/styles/loginCSS";
 import useResponsive from "../../hooks/useResponsive";
-import * as Helpers from '../../helpers';
 import {
   View,
   Text,
@@ -13,7 +12,7 @@ import {
   TextInput
 } from "react-native";
 
-export default function SignIn({ navigation, signin }) {
+export default function SignIn({ navigation, signin, load }) {
   const { isDesktop } = useResponsive();
   const [matricNo, setMatricNo] = useState('');
   const [password, setPassword] = useState('');
@@ -38,16 +37,23 @@ export default function SignIn({ navigation, signin }) {
             error?.message ||
             "Something went wrong",
         });
-        Helpers.notification.error("Login Failed", "Something went wrong");
       },
 
-      (response) => {
+      async (response) => {
+        if (rememberMe) {
+          await AsyncStorage.setItem(
+            "savedMatricNo",
+            matricNo.trim()
+          );
+        } else {
+          await AsyncStorage.removeItem("savedMatricNo");
+        }
+
         Toast.show({
           type: "success",
           text1: "Login Successful",
           text2: response?.message || "Welcome back!",
         });
-        Helpers.notification.success("Login Successful", "Welcome back!");
 
         navigation.replace("Dashboard");
       }
@@ -55,25 +61,50 @@ export default function SignIn({ navigation, signin }) {
   };
 
   const checkLogin = async () => {
-    const token = await AsyncStorage.getItem("token");
+    try {
+      const token = await AsyncStorage.getItem("token");
 
-    if (token) {
-      navigation.replace("Dashboard");
+      load(
+        (error) => {
+          console.log("SESSION RESTORE FAILED:", error);
+
+          dispatch({
+            type: AUTH_INITIALIZED,
+          });
+        },
+
+        (response) => {
+          console.log("SESSION RESTORED:", response);
+
+          navigation.replace("Dashboard");
+        }
+      );
+    } catch (error) {
+      console.log("CHECK LOGIN ERROR:", error);
     }
   };
 
   const loadSavedMatricNo = async () => {
-    const savedMatricNo = await AsyncStorage.getItem("savedMatricNo");
+    try {
+      const savedMatricNo =
+        await AsyncStorage.getItem("savedMatricNo");
 
-    if (savedMatricNo) {
-      setMatricNo(savedMatricNo);
-      setRememberMe(true);
+      if (savedMatricNo) {
+        setMatricNo(savedMatricNo);
+        setRememberMe(true);
+      }
+    } catch (error) {
+      console.log("LOAD SAVED MATRIC ERROR:", error);
     }
   };
 
   useEffect(() => {
-    checkLogin();
-    loadSavedMatricNo();
+    const initialize = async () => {
+      await loadSavedMatricNo();
+      await checkLogin();
+    };
+
+    initialize();
   }, []);
 
   const details = !matricNo || !password;

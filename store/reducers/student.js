@@ -5,6 +5,7 @@ import {
   LOADING,
   SIGNIN,
   SIGNUP,
+  LOAD,
 } from '../types';
 
 export const initialState = {
@@ -44,6 +45,14 @@ export default function (state = initialState, action) {
     case SIGNUP:
       return {
         ...state,
+      };
+
+    case LOAD:
+      return {
+        ...state,
+        ...payload.user,
+        token: payload.token,
+        authenticated: true,
       };
 
     case ERROR:
