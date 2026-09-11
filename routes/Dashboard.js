@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as LocalAuthentication from "expo-local-authentication";
 import Toast from "react-native-toast-message";
+import { useSelector } from "react-redux";
 import Button from "../components/Button";
 import { COLORS } from "../constants/colors";
 import dashboard from "../assets/styles/dashboardCSS";
@@ -17,10 +18,10 @@ import {
 
 import moh from '../assets/images/moh.png';
 
-export default function Dashboard({ navigation }) {
+export default function Dashboard({ navigation, logout }) {
   const { isDesktop } = useResponsive();
 
-  const [user, setUser] = useState(null);
+  const user = useSelector((state) => state.student);
   const [attendanceStatus, setAttendanceStatus] = useState("Not Recorded");
   const [todayAttendance, setTodayAttendance] = useState(null);
   const [logoutVisible, setLogoutVisible] = useState(false);
@@ -29,9 +30,14 @@ export default function Dashboard({ navigation }) {
     document.title = 'Dashboard | Moh';
   }, []);
 
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem("token");
-    await AsyncStorage.removeItem("user");
+  const handleLogout = () => {
+    logout();
+
+    Toast.show({
+      type: "success",
+      text1: "Logout Successful",
+      text2: "You have been logged out.",
+    });
 
     navigation.replace("SignIn");
   };
@@ -61,20 +67,10 @@ export default function Dashboard({ navigation }) {
   };
 
   useEffect(() => {
-    const getUser = async () => {
-      const storedUser = await AsyncStorage.getItem("user");
-
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-
-        setUser(parsedUser);
-
-        await loadTodayAttendance(parsedUser.id);
-      }
-    };
-
-    getUser();
-  }, []);
+    if (user?.id) {
+      loadTodayAttendance(user.id);
+    }
+  }, [user?.id]);
   
   const scanFingerprint = async () => {
     try {

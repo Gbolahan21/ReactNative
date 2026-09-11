@@ -1,3 +1,7 @@
+import {
+  LOGOUT
+} from '../types';
+
 export const initialState = {};
 
 export default function (state = initialState, action) {

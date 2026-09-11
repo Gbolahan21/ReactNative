@@ -90,13 +90,15 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.3)",
     justifyContent: "center",
-    paddingHorizontal: 25,
+    alignItems: "center",
   },
 
   dropdownModal: {
     backgroundColor: "#FFF",
     borderRadius: 12,
     maxHeight: 250,
+    overflow: "hidden",
+    minWidth: 400,
   },
 
   dropdownItem: {

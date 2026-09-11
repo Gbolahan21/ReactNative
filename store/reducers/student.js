@@ -5,7 +5,6 @@ import {
   LOADING,
   SIGNIN,
   SIGNUP,
-  LOAD,
 } from '../types';
 
 export const initialState = {
@@ -46,30 +45,6 @@ export default function (state = initialState, action) {
       return {
         ...state,
       };
-
-    case LOAD: {
-      const {
-        email,
-        firstname,
-        lastname,
-        matricNo,
-        department,
-        faculty,
-        level,
-      } = payload.data;
-
-      return {
-        ...state,
-        email,
-        firstname,
-        lastname,
-        matricNo,
-        department,
-        faculty,
-        level,
-        authenticated: true,
-      };
-    }
 
     case ERROR:
       if (payload && payload.data && payload.data.error) {

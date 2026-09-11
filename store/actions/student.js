@@ -7,7 +7,6 @@ import {
   LOADING,
   SIGNIN,
   SIGNUP,
-  LOAD,
 } from '../types';
 
 export const signup = (firstname, lastname, matricNo, email, department, faculty, level, password, error, success) => 
@@ -35,13 +34,4 @@ export const signin = (matricNo, password, error, success) =>
     { matricNo, password },
     { error, success },
     { error: ERROR, loading: LOADING, responder: SIGNIN }
-  );
-
-export const load = (error, success) =>
-  Helpers.api(
-    '/student/load',
-    'GET',
-    {},
-    { error, success },
-    { error: ERROR, loading: LOADING, responder: LOAD }
   );
