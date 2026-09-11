@@ -46,6 +46,24 @@ export default function SignUp({ navigation, signup }) {
       return;
     }
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      Toast.show({
+        type: "error",
+        text1: "Weak Password",
+        text2:
+          "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.",
+      });
+
+      Helpers.notification.error(
+        "Weak Password",
+        "Password must be at least 8 characters and include uppercase, lowercase, number, and special character."
+      );
+
+      return;
+    }
+
     if (password !== confirmPassword) {
       Toast.show({
         type: "error",
@@ -207,6 +225,50 @@ export default function SignUp({ navigation, signup }) {
           
             <IconButton name={showConfirmPassword ? "eye" : "eye-off"} onPress={() => setShowConfirmPassword(!showConfirmPassword)} />
           </View>
+
+          {password.length > 0 && (
+            <View style={{ marginBottom: 15 }}>
+              <Text
+                style={{
+                  color: password.length >= 8 ? "green" : "red",
+                }}
+              >
+                {password.length >= 8 ? "✓" : "✗"} At least 8 characters
+              </Text>
+
+              <Text
+                style={{
+                  color: /[A-Z]/.test(password) ? "green" : "red",
+                }}
+              >
+                {/[A-Z]/.test(password) ? "✓" : "✗"} One uppercase letter
+              </Text>
+
+              <Text
+                style={{
+                  color: /[a-z]/.test(password) ? "green" : "red",
+                }}
+              >
+                {/[a-z]/.test(password) ? "✓" : "✗"} One lowercase letter
+              </Text>
+
+              <Text
+                style={{
+                  color: /\d/.test(password) ? "green" : "red",
+                }}
+              >
+                {/\d/.test(password) ? "✓" : "✗"} One number
+              </Text>
+
+              <Text
+                style={{
+                  color: /[@$!%*?&]/.test(password) ? "green" : "red",
+                }}
+              >
+                {/[@$!%*?&]/.test(password) ? "✓" : "✗"} One special character
+              </Text>
+            </View>
+          )}
 
           <View>
             {confirmPassword.length > 0 && (
