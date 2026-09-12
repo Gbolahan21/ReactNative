@@ -18,11 +18,13 @@ import {
 
 import moh from '../../assets/images/moh.png';
 
-export default function Dashboard({ navigation, logout, checkin, todayAttendance, attendance }) {
+export default function Dashboard({ navigation, logout, checkin, todayAttendance, attendance, checkout }) {
   const { isDesktop } = useResponsive();
 
   const attendanceStatus = attendance?.today?.status;
   const user = useSelector((state) => state.student);
+  const hasCheckedIn = !!attendance?.today?.check_in;
+  const hasCheckedOut = !!attendance?.today?.check_out;
   const [logoutVisible, setLogoutVisible] = useState(false);
 
   useEffect(() => {
@@ -58,17 +60,13 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
         (error) => {
           Toast.show({
             type: "error",
-            text1: "Attendance Load Failed",
+            text1: "TODAY ATTENDANCE ERROR:",
             text2: "Unable to load today's attendance.",
           });
         },
 
         (response) => {
-          Toast.show({
-            type: "success",
-            text1: "Attendance Loading",
-            text2: "Today's attendance is ready to be recorded.",
-          });
+          // Today's attendance loaded successfully.
         }
       );
     }
@@ -76,42 +74,42 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
   
   const scanFingerprint = useCallback(async () => {
     try {
-      const compatible = await LocalAuthentication.hasHardwareAsync();
+      // const compatible = await LocalAuthentication.hasHardwareAsync();
 
-      if (!compatible) {
-        Toast.show({
-          type: "error",
-          text1: "Fingerprint Failed",
-          text2: "This device does not support fingerprint authentication.",
-        });
-        return;
-      }
+      // if (!compatible) {
+      //   Toast.show({
+      //     type: "error",
+      //     text1: "Fingerprint Failed",
+      //     text2: "This device does not support fingerprint authentication.",
+      //   });
+      //   return;
+      // }
 
-      const enrolled = await LocalAuthentication.isEnrolledAsync();
+      // const enrolled = await LocalAuthentication.isEnrolledAsync();
 
-      if (!enrolled) {
-        Toast.show({
-          type: "error",
-          text1: "Fingerprint Failed",
-          text2: "No fingerprint is enrolled.",
-        });
-        return;
-      }
+      // if (!enrolled) {
+      //   Toast.show({
+      //     type: "error",
+      //     text1: "Fingerprint Failed",
+      //     text2: "No fingerprint is enrolled.",
+      //   });
+      //   return;
+      // }
 
-      const result = await LocalAuthentication.authenticateAsync({
-        promptMessage: "Scan your fingerprint to record attendance",
-        disableDeviceFallback: false,
-        cancelLabel: "Cancel",
-      });
+      // const result = await LocalAuthentication.authenticateAsync({
+      //   promptMessage: "Scan your fingerprint to record attendance",
+      //   disableDeviceFallback: false,
+      //   cancelLabel: "Cancel",
+      // });
 
-      if (!result.success) {
-        Toast.show({
-          type: "error",
-          text1: "Fingerprint Failed",
-          text2: "Fingerprint verification failed.",
-        });
-        return;
-      }
+      // if (!result.success) {
+      //   Toast.show({
+      //     type: "error",
+      //     text1: "Fingerprint Failed",
+      //     text2: "Fingerprint verification failed.",
+      //   });
+      //   return;
+      // }
 
       checkin(
         user.id,
@@ -120,7 +118,7 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
           Toast.show({
             type: "error",
             text1: "Attendance Failed",
-            text2: error.message,
+            text2: error.message || "Unable to record attendance.",
           });
         },
 
@@ -142,7 +140,33 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
         text2: "Attendance has already been recorded today.",
       });
     }
-  }, []);
+  }, [checkin, todayAttendance, user?.id]);
+
+  const scanCheckout = useCallback(() => {
+    if (!user?.id) return;
+
+    checkout(
+      user.id,
+
+      (error) => {
+        Toast.show({
+          type: "error",
+          text1: "Checkout Failed",
+          text2: error.message || "Unable to record checkout.",
+        });
+      },
+
+      (response) => {
+        Toast.show({
+          type: "success",
+          text1: "Checkout Recorded",
+          text2: response.message,
+        });
+
+        todayAttendance(user.id);
+      }
+    );
+  }, [checkout, todayAttendance, user?.id]);
 
   return (
     <View style={[dashboard.container, isDesktop && dashboard.desktopContainer]}>
@@ -185,26 +209,50 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
               ? "🟢 Present"
               : "🔴 Attendance Not Recorded"}
           </Text>
-          {todayAttendance?.check_in && (
+          {attendance?.today?.check_in && (
             <>
               <Text style={dashboard.label}>Checked in</Text>
-              <Text style={dashboard.value}>{todayAttendance?.check_in}</Text>
+              <Text style={dashboard.value}>
+                {attendance.today.check_in}
+              </Text>
+            </>
+          )}
+
+          {attendance?.today?.check_out && (
+            <>
+              <Text style={dashboard.label}>Checked out</Text>
+              <Text style={dashboard.value}>
+                {attendance.today.check_out}
+              </Text>
             </>
           )}
         </View>
 
-        <Button
-          title={
-              attendanceStatus === "Present"
-                  ? "Attendance Recorded"
-                  : "Scan Fingerprint"
-          }
-          iconName="finger-print"
-          iconSize={24}
-          onPress={scanFingerprint}
-          disabled={attendanceStatus === "Present"}
-          textStyle={{marginLeft: 10}}
-        />
+        {!hasCheckedIn && (
+          <Button
+            title="Scan Fingerprint"
+            iconName="finger-print"
+            iconSize={24}
+            onPress={scanFingerprint}
+            textStyle={{marginLeft: 10}}
+          />
+        )}
+
+        {hasCheckedIn && !hasCheckedOut && (
+          <Button
+            title="Check Out"
+            iconName="finger-print"
+            iconSize={24}
+            onPress={scanCheckout}
+            textStyle={{marginLeft: 10}}
+          />
+        )}
+
+        {hasCheckedOut && (
+          <Text style={dashboard.value}>
+            Attendance completed for today
+          </Text>
+        )}
 
         <View style={dashboard.card}>
           <Text style={dashboard.cardTitle}>Student Information</Text>

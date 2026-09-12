@@ -62,15 +62,9 @@ export default function AttendanceHistoryScreen({ navigation, attendanceHistory,
           Toast.show({
             type: "error",
             text1: "Attendance Load Failed",
-            text2:
-              error?.error ||
-              "Unable to load attendance history.",
+            text2: "Unable to load attendance history.",
           });
         },
-
-        (response) => {
-          console.log("ATTENDANCE HISTORY:", response);
-        }
       );
     },
     [attendanceHistory, user?.id]
@@ -80,7 +74,11 @@ export default function AttendanceHistoryScreen({ navigation, attendanceHistory,
     if (user?.id) {
       loadHistory(1);
     }
-  }, [user?.id]);
+  }, [user?.id, loadHistory]);
+
+  useEffect(() => {
+    setFilteredHistory(history);
+  }, [history]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);

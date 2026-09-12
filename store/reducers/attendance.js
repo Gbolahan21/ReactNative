@@ -2,6 +2,7 @@ import {
   ERROR,
   LOADING,
   CHECKIN,
+  CHECKOUT,
   TODAY_ATTENDANCE,
   ATTENDANCE_HISTORY,
 } from "../types";
@@ -43,6 +44,13 @@ export default function attendance(
           status: "Present",
           ...payload,
         },
+        error: null,
+      };
+
+    case CHECKOUT:
+      return {
+        ...state,
+        today: payload.attendance,
         error: null,
       };
 

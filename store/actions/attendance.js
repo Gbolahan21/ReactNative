@@ -4,6 +4,7 @@ import {
   ERROR,
   LOADING,
   CHECKIN,
+  CHECKOUT,
   TODAY_ATTENDANCE,
   ATTENDANCE_HISTORY
 } from "../types";
@@ -23,6 +24,19 @@ export const checkin = (userId, error, success) =>
       error: ERROR,
       loading: LOADING,
       responder: CHECKIN,
+    }
+  );
+
+export const checkout = (userId, error, success) =>
+  Helpers.api(
+    "/attendance/checkout",
+    "POST",
+    { userId },
+    { error, success },
+    {
+      error: ERROR,
+      loading: LOADING,
+      responder: CHECKOUT,
     }
   );
 
