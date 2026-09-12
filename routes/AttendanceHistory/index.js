@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -10,44 +10,34 @@ import {
   Pressable,
   ScrollView
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSelector } from "react-redux";
 import DateTimePicker from "@react-native-community/datetimepicker";
-// import api from "../services/api";
 import dayjs from "dayjs";
 import { Ionicons } from "@expo/vector-icons";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
-import IconButton from "../components/IconButton";
-import Button from "../components/Button";
-import Pagination from "../components/Pagination";
-import attendance from "../assets/styles/attendanceHistoryCSS";
-import useResponsive from "../hooks/useResponsive";
+import IconButton from "../../components/IconButton";
+import Button from "../../components/Button";
+import Pagination from "../../components/Pagination";
+import attendances from "../../assets/styles/attendanceHistoryCSS";
+import useResponsive from "../../hooks/useResponsive";
+import Toast from "react-native-toast-message";
 
-export default function AttendanceHistoryScreen({ navigation }) {
+export default function AttendanceHistoryScreen({ navigation, attendanceHistory, attendance }) {
   const { isDesktop } = useResponsive();
-  const [history, setHistory] = useState([]);
   const [filteredHistory, setFilteredHistory] = useState([]);
   const [search, setSearch] = useState("");
   const [filterVisible, setFilterVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("All");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
-  const totalRecords = history.length;
-
-  useEffect(() => {
-    loadHistory();
-  }, []);
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-
-    await loadHistory();
-
-    setRefreshing(false);
-  };
+  const user = useSelector((state) => state.student);
+  const history = attendance?.history || [];
+  const page = attendance?.page || 1;
+  const totalPages = attendance?.totalPages || 1;
+  const totalRecords = attendance?.totalRecords || 0;
 
   const presentCount = history.filter(
     (item) => item.status === "Present"
@@ -59,29 +49,48 @@ export default function AttendanceHistoryScreen({ navigation }) {
 
   const attendanceRate = totalRecords === 0 ? 0 : Math.round((presentCount / totalRecords) * 100);
 
-  const loadHistory = async (pageNumber = 1) => {
-    try {
-      const storedUser = await AsyncStorage.getItem("user");
+  const loadHistory = useCallback(
+    (pageNumber = 1) => {
+      if (!user?.id) return;
 
-      if (!storedUser) return;
+      attendanceHistory(
+        user.id,
+        pageNumber,
+        10,
 
-      const user = JSON.parse(storedUser);
+        (error) => {
+          Toast.show({
+            type: "error",
+            text1: "Attendance Load Failed",
+            text2:
+              error?.error ||
+              "Unable to load attendance history.",
+          });
+        },
 
-      const response = await api.get(
-        `/attendance/history/${user.id}?page=${pageNumber}&limit=10`
+        (response) => {
+          console.log("ATTENDANCE HISTORY:", response);
+        }
       );
+    },
+    [attendanceHistory, user?.id]
+  );
 
-      // Replace the current page's data
-      setHistory(response.data.records);
-      setFilteredHistory(response.data.records);
-
-      // Update pagination state
-      setPage(response.data.page);
-      setTotalPages(response.data.totalPages);
-    } catch (err) {
-      console.log(err);
+  useEffect(() => {
+    if (user?.id) {
+      loadHistory(1);
     }
-  };
+  }, [user?.id]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+
+    loadHistory(1);
+
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 500);
+  }, [loadHistory]);
 
   const searchAttendance = (text) => {
     setSearch(text);
@@ -114,8 +123,8 @@ export default function AttendanceHistoryScreen({ navigation }) {
 
   if (filteredHistory.length === 0) {
     return (
-      <View style={[attendance.container, isDesktop && attendance.desktopContainer]}>
-        <Text style={attendance.emptyText}>
+      <View style={[attendances.container, isDesktop && attendances.desktopContainer]}>
+        <Text style={attendances.emptyText}>
           No attendance records found.
         </Text>
 
@@ -131,20 +140,20 @@ export default function AttendanceHistoryScreen({ navigation }) {
   }
 
   const renderItem = ({ item }) => (
-    <View style={attendance.tableRow}>
-      <Text style={attendance.statusCell}>
+    <View style={attendances.tableRow}>
+      <Text style={attendances.statusCell}>
         {item.status === "Present" ? "🟢 Present" : "🔴 Absent"}
       </Text>
 
-      <Text style={attendance.dateCell}>
+      <Text style={attendances.dateCell}>
         {formatDate(item.attendance_date)}
       </Text>
 
-      <Text style={attendance.timeCell}>
+      <Text style={attendances.timeCell}>
         {formatTime(item.check_in)}
       </Text>
 
-      <Text style={attendance.timeCell}>
+      <Text style={attendances.timeCell}>
         {formatTime(item.check_out)}
       </Text>
     </View>
@@ -181,36 +190,36 @@ export default function AttendanceHistoryScreen({ navigation }) {
   };
 
   return (
-    <View style={[attendance.container, isDesktop && attendance.desktopContainer]}>
+    <View style={[attendances.container, isDesktop && attendances.desktopContainer]}>
       <IconButton name="arrow-back" size={28} onPress={() => navigation.navigate('Dashboard')} />
       <ScrollView 
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={attendance.title}>Attendance History</Text>
+        <Text style={attendances.title}>Attendance History</Text>
 
-        <View style={attendance.searchContainer}>
+        <View style={attendances.searchContainer}>
           <TextInput
             placeholder="Search by status..."
             value={search}
             onChangeText={searchAttendance}
-            style={attendance.search}
+            style={attendances.search}
           />
 
           <IconButton name="filter" size={25} onPress={() => setFilterVisible(true)} />
         </View>
 
-        <View style={attendance.summaryContainer}>
-          <View style={attendance.summaryCard}>
-            <Text style={attendance.summaryLabel}>
+        <View style={attendances.summaryContainer}>
+          <View style={attendances.summaryCard}>
+            <Text style={attendances.summaryLabel}>
               <Ionicons name="stats-chart" size={20} color="#4A90E2" />{" "}
               Total
             </Text>
-            <Text style={attendance.summaryValue}>{totalRecords}</Text>
+            <Text style={attendances.summaryValue}>{totalRecords}</Text>
           </View>
 
-          <View style={attendance.summaryCard}>
-            <Text style={attendance.summaryLabel}>
+          <View style={attendances.summaryCard}>
+            <Text style={attendances.summaryLabel}>
               <Ionicons
                 name="checkmark-circle"
                 size={20}
@@ -218,11 +227,11 @@ export default function AttendanceHistoryScreen({ navigation }) {
               />{" "}
               Present
             </Text>
-            <Text style={attendance.summaryValue}>{presentCount}</Text>
+            <Text style={attendances.summaryValue}>{presentCount}</Text>
           </View>
 
-          <View style={attendance.summaryCard}>
-            <Text style={attendance.summaryLabel}>
+          <View style={attendances.summaryCard}>
+            <Text style={attendances.summaryLabel}>
               <Ionicons
                 name="close-circle"
                 size={20}
@@ -230,11 +239,11 @@ export default function AttendanceHistoryScreen({ navigation }) {
               />{" "}
               Absent
             </Text>
-            <Text style={attendance.summaryValue}>{absentCount}</Text>
+            <Text style={attendances.summaryValue}>{absentCount}</Text>
           </View>
 
-          <View style={attendance.summaryCard}>
-            <Text style={attendance.summaryLabel}>
+          <View style={attendances.summaryCard}>
+            <Text style={attendances.summaryLabel}>
               <Ionicons
                 name="trending-up"
                 size={20}
@@ -242,17 +251,17 @@ export default function AttendanceHistoryScreen({ navigation }) {
               />{" "}
               Rate
             </Text>
-            <Text style={attendance.summaryValue}>
+            <Text style={attendances.summaryValue}>
               {attendanceRate}%
             </Text>
           </View>
         </View>
 
-        <View style={attendance.tableHeader}>
-          <Text style={attendance.headerCell}>Status</Text>
-          <Text style={attendance.headerCell}>Date</Text>
-          <Text style={attendance.headerCell}>Check In</Text>
-          <Text style={attendance.headerCell}>Check Out</Text>
+        <View style={attendances.tableHeader}>
+          <Text style={attendances.headerCell}>Status</Text>
+          <Text style={attendances.headerCell}>Date</Text>
+          <Text style={attendances.headerCell}>Check In</Text>
+          <Text style={attendances.headerCell}>Check Out</Text>
         </View>
 
         <FlatList
@@ -281,13 +290,13 @@ export default function AttendanceHistoryScreen({ navigation }) {
           onRequestClose={() => setFilterVisible(false)}
         >
           <Pressable
-            style={attendance.modalContainer}
+            style={attendances.modalContainer}
             onPress={() => setFilterVisible(false)}
           >
-            <Pressable style={[attendance.cardFilter, isDesktop && attendance.desktopCardFilter]} onPress={(e) => e.stopPropagation()}>
-              <Text style={attendance.labelFilter}>Filter Attendance</Text>
+            <Pressable style={[attendances.cardFilter, isDesktop && attendances.desktopCardFilter]} onPress={(e) => e.stopPropagation()}>
+              <Text style={attendances.labelFilter}>Filter Attendance</Text>
 
-              <Text style={attendance.labelFilters}>Date</Text>
+              <Text style={attendances.labelFilters}>Date</Text>
 
               {Platform.OS === "web" ? (
                 // Web date picker
@@ -347,8 +356,8 @@ export default function AttendanceHistoryScreen({ navigation }) {
                 </>
               )}
 
-              <Text style={attendance.labelFilters}>Status</Text>
-              <View style={attendance.statusButtonsContainer}>
+              <Text style={attendances.labelFilters}>Status</Text>
+              <View style={attendances.statusButtonsContainer}>
                 {["All", "Present", "Absent"].map((status) => (
                   <Button
                     key={status}
@@ -365,7 +374,7 @@ export default function AttendanceHistoryScreen({ navigation }) {
                 ))}
               </View>
 
-              <View style={attendance.buttonContainer}>
+              <View style={attendances.buttonContainer}>
                 <Button
                   title="Apply"
                   onPress={() => {

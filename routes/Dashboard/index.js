@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as LocalAuthentication from "expo-local-authentication";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
-import Button from "../components/Button";
-import { COLORS } from "../constants/colors";
-import dashboard from "../assets/styles/dashboardCSS";
-import useResponsive from "../hooks/useResponsive";
+import Button from "../../components/Button";
+import { COLORS } from "../../constants/colors";
+import dashboard from "../../assets/styles/dashboardCSS";
+import useResponsive from "../../hooks/useResponsive";
 import {
   View,
   Text,
@@ -16,21 +16,20 @@ import {
   ScrollView
 } from "react-native";
 
-import moh from '../assets/images/moh.png';
+import moh from '../../assets/images/moh.png';
 
-export default function Dashboard({ navigation, logout }) {
+export default function Dashboard({ navigation, logout, checkin, todayAttendance, attendance }) {
   const { isDesktop } = useResponsive();
 
+  const attendanceStatus = attendance?.today?.status;
   const user = useSelector((state) => state.student);
-  const [attendanceStatus, setAttendanceStatus] = useState("Not Recorded");
-  const [todayAttendance, setTodayAttendance] = useState(null);
   const [logoutVisible, setLogoutVisible] = useState(false);
 
   useEffect(() => {
     document.title = 'Dashboard | Moh';
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logout();
 
     Toast.show({
@@ -40,39 +39,42 @@ export default function Dashboard({ navigation, logout }) {
     });
 
     navigation.replace("SignIn");
-  };
+  }, [logout, navigation]);
 
-  const getGreeting = () => {
+  const getGreeting = useCallback(() => {
     const hour = new Date().getHours();
 
     if (hour < 12) return "Good Morning";
     if (hour < 16) return "Good Afternoon";
 
     return "Good Evening";
-  };
-
-  const loadTodayAttendance = async (userId) => {
-    try {
-      const response = await api.get(`/attendance/today/${userId}`);
-
-      setTodayAttendance(response.data);
-      setAttendanceStatus(response.data.status);
-    } catch (err) {
-      Toast.show({
-        type: "error",
-        text1: "Attendance Load Failed",
-        text2: "Unable to load today's attendance.",
-      });
-    }
-  };
+  }, []);
 
   useEffect(() => {
     if (user?.id) {
-      loadTodayAttendance(user.id);
+      todayAttendance(
+        user.id,
+
+        (error) => {
+          Toast.show({
+            type: "error",
+            text1: "Attendance Load Failed",
+            text2: "Unable to load today's attendance.",
+          });
+        },
+
+        (response) => {
+          Toast.show({
+            type: "success",
+            text1: "Attendance Loading",
+            text2: "Today's attendance is ready to be recorded.",
+          });
+        }
+      );
     }
-  }, [user?.id]);
+  }, [user?.id, todayAttendance]);
   
-  const scanFingerprint = async () => {
+  const scanFingerprint = useCallback(async () => {
     try {
       const compatible = await LocalAuthentication.hasHardwareAsync();
 
@@ -111,17 +113,28 @@ export default function Dashboard({ navigation, logout }) {
         return;
       }
 
-      await api.post("/attendance/checkin", {
-        userId: user.id,
-      });
+      checkin(
+        user.id,
 
-      await loadTodayAttendance(user.id);
+        (error) => {
+          Toast.show({
+            type: "error",
+            text1: "Attendance Failed",
+            text2: error.message,
+          });
+        },
 
-      Toast.show({
-        type: "success",
-        text1: "Attendance Recorded",
-        text2: "Your attendance has been recorded.",
-      });
+        async (response) => {
+          Toast.show({
+            type: "success",
+            text1: "Attendance Recorded",
+            text2: response.message,
+          });
+
+          // Reload today's attendance
+          todayAttendance(user.id);
+        }
+      );
     } catch (err) {
       Toast.show({
         type: "error",
@@ -129,7 +142,7 @@ export default function Dashboard({ navigation, logout }) {
         text2: "Attendance has already been recorded today.",
       });
     }
-  };
+  }, []);
 
   return (
     <View style={[dashboard.container, isDesktop && dashboard.desktopContainer]}>
