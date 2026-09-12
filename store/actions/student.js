@@ -8,6 +8,9 @@ import {
   SIGNIN,
   SIGNUP,
   LOAD,
+  FACULTIES,
+  DEPARTMENTS,
+  LEVELS,
 } from '../types';
 
 export const signup = (firstname, lastname, matricNo, email, department, faculty, level, password, error, success) => 
@@ -45,3 +48,31 @@ export const load = (error, success) =>
     { error, success },
     { error: ERROR, loading: LOADING, responder: LOAD }
   );
+
+export const getFaculties = (error, success) =>
+  Helpers.api(
+    '/student/faculties',
+    'GET',
+    {},
+    { error, success },
+    { error: ERROR, loading: LOADING, responder: FACULTIES }
+  );
+
+export const getDepartments = (error, success) =>
+  Helpers.api(
+    '/student/departments',
+    'GET',
+    {},
+    { error, success },
+    { error: ERROR, loading: LOADING, responder: DEPARTMENTS }
+  );
+
+export const getLevels = (error, success) =>
+  Helpers.api(
+    '/student/levels',
+    'GET',
+    {},
+    { error, success },
+    { error: ERROR, loading: LOADING, responder: LEVELS }
+  );
+

@@ -55,6 +55,7 @@ export default StyleSheet.create({
   welcome: {
     fontSize: 18,
     color: COLORS.text,
+    marginBottom: 20,
   },
 
   label: {
@@ -106,7 +107,6 @@ export default StyleSheet.create({
     backgroundColor: COLORS.background,
     borderRadius: 15,
     paddingVertical: 18,
-    marginTop: 20,
     elevation: 4,
   },
 
@@ -170,12 +170,16 @@ export default StyleSheet.create({
     backgroundColor: COLORS.background,
     borderRadius: 10,
     paddingVertical: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 40,
     width: "90%",
   },
 
   desktopCardFilter: {
     width: "30%",
+  },
+
+  desktopCourseFilter: {
+    width: "60%",
   },
 
   labelFilter: {

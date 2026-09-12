@@ -7,6 +7,9 @@ import {
   SIGNUP,
   AUTH_INITIALIZED,
   LOAD,
+  FACULTIES,
+  DEPARTMENTS,
+  LEVELS,
 } from '../types';
 
 export const initialState = {
@@ -21,6 +24,9 @@ export const initialState = {
   loading: [],
   authenticated: false,
   initialized: false,
+  faculties: [],
+  departments: [],
+  levels: [],
 };
 
 export default function (state = initialState, action) {
@@ -54,6 +60,24 @@ export default function (state = initialState, action) {
         ...state,
         ...payload.user,
         authenticated: true,
+      };
+
+    case FACULTIES:
+      return {
+        ...state,
+        faculties: payload.faculties,
+      };
+    
+    case DEPARTMENTS:
+      return {
+        ...state,
+        departments: payload.departments,
+      };
+
+    case LEVELS:
+      return {
+        ...state,
+        levels: payload.levels,
       };
 
     case AUTH_INITIALIZED:

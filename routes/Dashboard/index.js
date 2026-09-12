@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as LocalAuthentication from "expo-local-authentication";
+// import * as LocalAuthentication from "expo-local-authentication";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import Button from "../../components/Button";
+import Dropdown from "../../components/Dropdown";
 import { COLORS } from "../../constants/colors";
 import dashboard from "../../assets/styles/dashboardCSS";
 import useResponsive from "../../hooks/useResponsive";
@@ -18,14 +19,34 @@ import {
 
 import moh from '../../assets/images/moh.png';
 
-export default function Dashboard({ navigation, logout, checkin, todayAttendance, attendance, checkout }) {
+export default function Dashboard({ navigation, logout, checkin, todayAttendance, attendance, checkout, getFaculties, getDepartments, getLevels }) {
   const { isDesktop } = useResponsive();
 
   const attendanceStatus = attendance?.today?.status;
   const user = useSelector((state) => state.student);
+  const {faculties, departments, levels} = user;
   const hasCheckedIn = !!attendance?.today?.check_in;
   const hasCheckedOut = !!attendance?.today?.check_out;
   const [logoutVisible, setLogoutVisible] = useState(false);
+  const [courseVisible, setCourseVisible] = useState(false);
+  const [selectedSemester, setSelectedSemester] = useState("");
+  const [selectedFaculty, setSelectedFaculty] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState("");
+
+  useEffect(() => {
+    if (faculties.length === 0) {
+      getFaculties();
+    }
+
+    if (departments.length === 0) {
+      getDepartments();
+    }
+
+    if (levels.length === 0) {
+      getLevels();
+    }
+  }, [getFaculties, getDepartments, getLevels, faculties.length, departments.length, levels.length]);
 
   const handleLogout = useCallback(() => {
     logout();
@@ -164,6 +185,21 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
     );
   }, [checkout, todayAttendance, user?.id]);
 
+  const facultyOptions = user?.faculties?.map((faculty) => ({
+    label: faculty,
+    value: faculty,
+  }));
+
+  const departmentOptions = user?.departments?.map((department) => ({
+    label: department,
+    value: department,
+  }));
+
+  const levelOptions = user?.levels?.map((level) => ({
+    label: level,
+    value: level,
+  }));
+
   return (
     <View style={[dashboard.container, isDesktop && dashboard.desktopContainer]}>
       <View style={dashboard.navbar}>
@@ -186,6 +222,14 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
             Welcome back, {user?.firstname}
           </Text>
         </View>
+
+        <Button
+          title="Course Registration"
+          iconName="book"
+          iconSize={24}
+          onPress={() => setCourseVisible(true)}
+          textStyle={{marginLeft: 10}}
+        />
 
         <View style={dashboard.statusCard}>
           <Text style={dashboard.statusTitle}>Today's Status</Text>
@@ -317,6 +361,95 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
                   style={{ width: "48%" }}
                 />
               </View>
+            </Pressable>
+          </Pressable>
+        </Modal>
+
+        <Modal
+          visible={courseVisible}
+          animationType="slide"
+          transparent
+          onRequestClose={() => setCourseVisible(false)}
+        >
+          <Pressable
+            style={dashboard.modalContainer}
+            onPress={() => setCourseVisible(false)}
+          >
+            <Pressable
+              style={[
+                dashboard.cardFilter,
+                isDesktop && dashboard.desktopCourseFilter,
+              ]}
+              onPress={(e) => e.stopPropagation()}
+            >
+              <Text style={dashboard.labelFilter}>
+                Course Registration
+              </Text>
+
+              <View style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 10 }}>
+                <Dropdown
+                  label="Semester"
+                  value={selectedSemester}
+                  placeholder="Select Semester"
+                  onSelect={(value) => setSelectedSemester(value)}
+                  options={[
+                    { label: "First Semester", value: "First Semester" },
+                    { label: "Second Semester", value: "Second Semester" },
+                  ]}
+                />
+
+                <Dropdown
+                  label="Faculty"
+                  value={selectedFaculty}
+                  placeholder="Select Faculty"
+                  onSelect={(value) => setSelectedFaculty(value)}
+                  options={facultyOptions}
+                />
+
+                <Dropdown
+                  label="Department"
+                  value={selectedDepartment}
+                  placeholder="Select Department"
+                  onSelect={(value) => setSelectedDepartment(value)}
+                  options={departmentOptions}
+                />               
+
+                <Dropdown
+                  label="Level"
+                  value={selectedLevel}
+                  placeholder="Select Level"
+                  onSelect={(value) => setSelectedLevel(value)}
+                  options={levelOptions}
+                />
+
+                {/* <Dropdown
+                  label="Course"
+                  value={selectedCourse}
+                  placeholder="Select Course"
+                  onSelect={(value) => setSelectedCourse(value)}
+                  options={courseOptions}
+                /> */}
+              </View>
+
+              <View style={dashboard.buttonContainer}>
+                <Button
+                  title="Cancel"
+                  onPress={() => {
+                    setCourseVisible(false);
+                  }}
+                  style={{
+                    width: "48%",
+                    backgroundColor: COLORS.primaryDark,
+                  }}
+                />
+
+                <Button
+                  title="Save"
+                  // onPress={handleCourseRegistration}
+                  style={{ width: "48%" }}
+                />
+              </View>
+
             </Pressable>
           </Pressable>
         </Modal>
