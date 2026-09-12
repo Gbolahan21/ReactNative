@@ -19,10 +19,6 @@ export default function SignIn({ navigation, signin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  useEffect(() => {
-    document.title = 'SignIn | Moh';
-  }, []);
-
   const handleLogin = () => {
     signin(
       matricNo.trim(),

@@ -27,10 +27,6 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
   const hasCheckedOut = !!attendance?.today?.check_out;
   const [logoutVisible, setLogoutVisible] = useState(false);
 
-  useEffect(() => {
-    document.title = 'Dashboard | Moh';
-  }, []);
-
   const handleLogout = useCallback(() => {
     logout();
 

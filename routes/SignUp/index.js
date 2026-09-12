@@ -42,7 +42,6 @@ export default function SignUp({ navigation, signup }) {
         text1: "Invalid School Email",
         text2: "Use your @student.lautech.edu.ng email address.",
       });
-      Helpers.notification.error("Invalid School Email", "Use your @student.lautech.edu.ng email address.");
       return;
     }
 
@@ -55,12 +54,6 @@ export default function SignUp({ navigation, signup }) {
         text2:
           "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.",
       });
-
-      Helpers.notification.error(
-        "Weak Password",
-        "Password must be at least 8 characters and include uppercase, lowercase, number, and special character."
-      );
-
       return;
     }
 
@@ -70,7 +63,6 @@ export default function SignUp({ navigation, signup }) {
         text1: "Password Error",
         text2: "Passwords do not match.",
       });
-      Helpers.notification.error("Password Error", "Passwords do not match.");
       return;
     }
 
@@ -89,9 +81,8 @@ export default function SignUp({ navigation, signup }) {
         Toast.show({
           type: "error",
           text1: "Registration Failed",
-          text2: error || "Something went wrong",
+          text2: error.message || "Something went wrong",
         });
-        Helpers.notification.error("Registration Failed", error || "Something went wrong");
       },
 
       // Success callback
@@ -109,9 +100,8 @@ export default function SignUp({ navigation, signup }) {
         Toast.show({
           type: "success",
           text1: "Registration Successful",
-          text2: "Welcome aboard!",
+          text2: response.message || "Welcome aboard!",
         });
-        Helpers.notification.success("Registration Successful", "Welcome aboard!");
 
         navigation.navigate("SignIn");
       }
