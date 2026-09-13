@@ -45,7 +45,7 @@ export default function (state = initialState, action) {
     case SIGNIN:
       return {
         ...state,
-        ...payload.user,
+        ...payload.student,
         token: payload.token,
         authenticated: true,
       };
@@ -58,7 +58,7 @@ export default function (state = initialState, action) {
     case LOAD:
       return {
         ...state,
-        ...payload.user,
+        ...payload.student,
         authenticated: true,
       };
 
