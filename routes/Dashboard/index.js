@@ -23,8 +23,8 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
   const { isDesktop } = useResponsive();
 
   const attendanceStatus = attendance?.today?.status;
-  const user = useSelector((state) => state.student);
-  const {faculties, departments, levels} = user;
+  const student = useSelector((state) => state.student);
+  const {faculties, departments, levels} = student;
   const hasCheckedIn = !!attendance?.today?.check_in;
   const hasCheckedOut = !!attendance?.today?.check_out;
   const [logoutVisible, setLogoutVisible] = useState(false);
@@ -70,9 +70,9 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
   }, []);
 
   useEffect(() => {
-    if (user?.id) {
+    if (student?.id) {
       todayAttendance(
-        user.id,
+        student.id,
 
         (error) => {
           Toast.show({
@@ -87,7 +87,7 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
         }
       );
     }
-  }, [user?.id, todayAttendance]);
+  }, [student?.id, todayAttendance]);
   
   const scanFingerprint = useCallback(async () => {
     try {
@@ -129,7 +129,7 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
       // }
 
       checkin(
-        user.id,
+        student.id,
 
         (error) => {
           Toast.show({
@@ -147,7 +147,7 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
           });
 
           // Reload today's attendance
-          todayAttendance(user.id);
+          todayAttendance(student.id);
         }
       );
     } catch (err) {
@@ -157,13 +157,13 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
         text2: "Attendance has already been recorded today.",
       });
     }
-  }, [checkin, todayAttendance, user?.id]);
+  }, [checkin, todayAttendance, student?.id]);
 
   const scanCheckout = useCallback(() => {
-    if (!user?.id) return;
+    if (!student?.id) return;
 
     checkout(
-      user.id,
+      student.id,
 
       (error) => {
         Toast.show({
@@ -180,22 +180,22 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
           text2: response.message,
         });
 
-        todayAttendance(user.id);
+        todayAttendance(student.id);
       }
     );
-  }, [checkout, todayAttendance, user?.id]);
+  }, [checkout, todayAttendance, student?.id]);
 
-  const facultyOptions = user?.faculties?.map((faculty) => ({
+  const facultyOptions = student?.faculties?.map((faculty) => ({
     label: faculty,
     value: faculty,
   }));
 
-  const departmentOptions = user?.departments?.map((department) => ({
+  const departmentOptions = student?.departments?.map((department) => ({
     label: department,
     value: department,
   }));
 
-  const levelOptions = user?.levels?.map((level) => ({
+  const levelOptions = student?.levels?.map((level) => ({
     label: level,
     value: level,
   }));
@@ -219,7 +219,7 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
           </Text>
 
           <Text style={dashboard.welcome}>
-            Welcome back, {user?.firstname}
+            Welcome back, {student?.firstname}
           </Text>
         </View>
 
@@ -299,23 +299,23 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
 
           <Text style={dashboard.label}>Name</Text>
           <Text style={dashboard.value}>
-            {user?.firstname} {user?.lastname}
+            {student?.firstname} {student?.lastname}
           </Text>
 
           <Text style={dashboard.label}>Matric Number</Text>
-          <Text style={dashboard.value}>{user?.matricNo}</Text>
+          <Text style={dashboard.value}>{student?.matricNo}</Text>
 
           <Text style={dashboard.label}>Email</Text>
-          <Text style={dashboard.value}>{user?.email}</Text>
+          <Text style={dashboard.value}>{student?.email}</Text>
 
           <Text style={dashboard.label}>Department</Text>
-          <Text style={dashboard.value}>{user?.department}</Text>
+          <Text style={dashboard.value}>{student?.department}</Text>
 
           <Text style={dashboard.label}>Faculty</Text>
-          <Text style={dashboard.value}>{user?.faculty}</Text>
+          <Text style={dashboard.value}>{student?.faculty}</Text>
 
           <Text style={dashboard.label}>Level</Text>
-          <Text style={dashboard.value}>{user?.level} Level</Text>
+          <Text style={dashboard.value}>{student?.level} Level</Text>
         </View>
 
         <Button title="Attendance History" iconRightName="arrow-forward" iconRightSize={18} onPress={() => navigation.navigate("AttendanceHistory")} textStyle={{marginRight: 10}} />

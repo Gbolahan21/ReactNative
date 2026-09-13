@@ -178,7 +178,6 @@ export default function SignUp({ navigation, signup }) {
           />
 
           <Dropdown
-            label="Level"
             value={level}
             placeholder="Select Level"
             onSelect={setLevel}

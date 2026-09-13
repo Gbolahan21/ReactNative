@@ -9,12 +9,12 @@ import {
   ATTENDANCE_HISTORY
 } from "../types";
 
-export const checkin = (userId, error, success) =>
+export const checkin = (studentId, error, success) =>
   Helpers.api(
     "/attendance/checkin",
     "POST",
     {
-      userId,
+      studentId,
     },
     {
       error,
@@ -27,11 +27,11 @@ export const checkin = (userId, error, success) =>
     }
   );
 
-export const checkout = (userId, error, success) =>
+export const checkout = (studentId, error, success) =>
   Helpers.api(
     "/attendance/checkout",
     "POST",
-    { userId },
+    { studentId },
     { error, success },
     {
       error: ERROR,
@@ -40,9 +40,9 @@ export const checkout = (userId, error, success) =>
     }
   );
 
-export const todayAttendance = (userId, error, success) =>
+export const todayAttendance = (studentId, error, success) =>
   Helpers.api(
-    `/attendance/today/${userId}`,
+    `/attendance/today/${studentId}`,
     "GET",
     {},
     {
@@ -57,14 +57,14 @@ export const todayAttendance = (userId, error, success) =>
   );
 
 export const attendanceHistory = (
-  userId,
+  studentId,
   page = 1,
   limit = 10,
   error,
   success
 ) =>
   Helpers.api(
-    `/attendance/history/${userId}?page=${page}&limit=${limit}`,
+    `/attendance/history/${studentId}?page=${page}&limit=${limit}`,
     "GET",
     {},
     {
