@@ -20,7 +20,18 @@ import {
 
 import moh from '../../assets/images/moh.png';
 
-export default function Dashboard({ navigation, logout, checkin, todayAttendance, attendance, checkout, updateStudent, loadLookups, getCourses }) {
+export default function Dashboard({ 
+  navigation, 
+  logout, 
+  checkin, 
+  todayAttendance, 
+  attendance, 
+  checkout, 
+  updateStudent, 
+  loadLookups, 
+  getCourses, 
+  registerCourse, 
+}) {
   const { isDesktop } = useResponsive();
 
   const attendanceStatus = attendance?.today?.status;
@@ -31,6 +42,8 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
   const [logoutVisible, setLogoutVisible] = useState(false);
 
   const [courseVisible, setCourseVisible] = useState(false);
+  const [selectedCourses, setSelectedCourses] = useState([]);
+  const [submittingCourses, setSubmittingCourses] = useState(false);
 
   const [editVisible, setEditVisible] = useState(false);
   const [editFirstname, setEditFirstname] = useState("");
@@ -217,6 +230,16 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
       value: level.name,
     })) || [];
 
+  useEffect(() => {
+    if (courseVisible) {
+      const alreadyRegistered = courses.filter(
+        (course) => course.registered
+      );
+
+      setSelectedCourses(alreadyRegistered);
+    }
+  }, [courseVisible, courses]);
+
   const handleUpdateStudent = () => {
     if (
       !editFirstname.trim() ||
@@ -277,7 +300,7 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
         });
       },
 
-      (response) => {
+      () => {
         setCourseVisible(true);
       }
     );
@@ -289,6 +312,124 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
     return level
       .trim()
       .replace(/\blevel\b/i, "Level");
+  };
+
+  const handleCourseAction = (course) => {
+    if (course.registered || selectedCourses.some(
+      (selected) => selected.id === course.id
+    )) {
+      // DROP from temporary selection
+      setSelectedCourses((prev) =>
+        prev.filter((selected) => selected.id !== course.id)
+      );
+
+      return;
+    }
+
+    // ADD to temporary selection
+    setSelectedCourses((prev) => [
+      ...prev,
+      course,
+    ]);
+  };
+
+  const isCourseSelected = (courseId) => {
+    return selectedCourses.some(
+      (course) => course.id === courseId
+    );
+  };
+
+  const handleRegisterAll = () => {
+    setSelectedCourses(courses);
+  };
+
+  const unselectedCourses = courses.filter(
+    (course) =>
+      !course.registered &&
+      !selectedCourses.some(
+        (selected) => selected.id === course.id
+      )
+  );
+
+  const handleSubmitCourses = () => {
+    if (selectedCourses.length === 0) {
+      Toast.show({
+        type: "error",
+        text1: "No Courses Selected",
+        text2: "Please select at least one course.",
+      });
+
+      return;
+    }
+
+    setSubmittingCourses(true);
+
+    const newCourses = selectedCourses.filter(
+      (selected) =>
+        !courses.some(
+          (course) =>
+            course.id === selected.id &&
+            course.registered
+        )
+    );
+
+    if (newCourses.length === 0) {
+      setSubmittingCourses(false);
+
+      Toast.show({
+        type: "info",
+        text1: "No Changes",
+        text2: "There are no new courses to register.",
+      });
+
+      return;
+    }
+
+    let completed = 0;
+    let failed = false;
+
+    newCourses.forEach((course) => {
+      registerCourse(
+        course.id,
+
+        (error) => {
+          if (failed) return;
+
+          failed = true;
+          setSubmittingCourses(false);
+
+          Toast.show({
+            type: "error",
+            text1: "Registration Failed",
+            text2:
+              error.message ||
+              "Unable to register courses.",
+          });
+        },
+
+        () => {
+          completed++;
+
+          if (completed === newCourses.length) {
+            setSubmittingCourses(false);
+
+            Toast.show({
+              type: "success",
+              text1: "Registration Successful",
+              text2: "Your courses have been registered.",
+            });
+
+            // Reload courses from database
+            getCourses(
+              () => {},
+              () => {
+                setCourseVisible(false);
+              }
+            );
+          }
+        }
+      );
+    });
   };
 
   return (
@@ -562,25 +703,40 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
                 </View>
               </View>
 
-              <Text style={dashboard.label}>
-                Available Courses
-              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 10,
+                }}
+              >
+                <Text style={dashboard.label}>
+                  Available Courses
+                </Text>
+
+                {unselectedCourses.length > 0 && (
+                  <Button
+                    title="Register All"
+                    onPress={handleRegisterAll}
+                    style={{
+                      width: 130,
+                    }}
+                  />
+                )}
+              </View>
 
               {courses.length === 0 ? (
-
                 <Text style={dashboard.labelFilters}>
                   No courses have been assigned to you for this semester.
                 </Text>
-
               ) : (
-
                 courses.map((course) => (
                   <View
                     key={course.id}
                     style={dashboard.courseItem}
                   >
-
-                    <View>
+                    <View style={{ flex: 1 }}>
                       <Text style={dashboard.courseCode}>
                         {course.course_code}
                       </Text>
@@ -589,22 +745,84 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
                         {course.course_title}
                       </Text>
                     </View>
+
+                    <Button
+                      title={
+                        course.registered || isCourseSelected(course.id)
+                          ? "DROP"
+                          : "ADD"
+                      }
+                      onPress={() => handleCourseAction(course)}
+                      style={{
+                        width: 80,
+                        backgroundColor:
+                          course.registered || isCourseSelected(course.id)
+                            ? COLORS.danger
+                            : COLORS.primary,
+                      }}
+                    />
                   </View>
                 ))
+              )}
 
+              {selectedCourses.length > 0 && (
+                <View style={{ marginTop: 20 }}>
+
+                  <Text style={dashboard.label}>
+                    Selected Courses
+                  </Text>
+
+                  {selectedCourses.map((course) => (
+                    <View
+                      key={course.id}
+                      style={dashboard.courseItem}
+                    >
+                      <View style={{ flex: 1 }}>
+                        <Text style={dashboard.courseCode}>
+                          {course.course_code}
+                        </Text>
+
+                        <Text style={dashboard.courseTitle}>
+                          {course.course_title}
+                        </Text>
+                      </View>
+
+                      <Text
+                        style={{
+                          color: COLORS.success,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Selected
+                      </Text>
+                    </View>
+                  ))}
+                </View>
               )}
 
               <View style={dashboard.buttonContainer}>
-
                 <Button
-                  title="Close"
-                  onPress={() => setCourseVisible(false)}
+                  title={
+                  selectedCourses.length > 0
+                    ? submittingCourses
+                      ? "Submitting..."
+                      : "Submit"
+                    : "Close"
+                  }
+                  onPress={
+                    selectedCourses.length > 0
+                      ? handleSubmitCourses
+                      : () => setCourseVisible(false)
+                  }
+                  disabled={submittingCourses}
                   style={{
                     width: "100%",
-                    backgroundColor: COLORS.primaryDark,
+                    backgroundColor:
+                      selectedCourses.length > 0
+                        ? COLORS.primary
+                        : COLORS.primaryDark,
                   }}
                 />
-
               </View>
 
             </Pressable>
@@ -693,8 +911,8 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
                   onSelect={setEditLevel}
                   options={levelOptions}
                 />
-
               </View>
+
               <View style={dashboard.buttonContainer}>
                 <Button
                   title="Cancel"

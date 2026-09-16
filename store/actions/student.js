@@ -102,3 +102,39 @@ export const getCourses = (error, success) =>
       responder: COURSES,
     }
   );
+
+export const registerCourse = (courseId, error, success) =>
+  Helpers.api(
+    `/course-registration/${courseId}/register`,
+    "POST",
+    {},
+    { error, success },
+    {
+      error: ERROR,
+      loading: LOADING,
+    }
+  );
+
+export const dropCourse = (courseId, error, success) =>
+  Helpers.api(
+    `/course-registration/${courseId}/drop`,
+    "DELETE",
+    {},
+    { error, success },
+    {
+      error: ERROR,
+      loading: LOADING,
+    }
+  );
+
+export const registerAllCourses = (error, success) =>
+  Helpers.api(
+    "/course-registration/registerr-all",
+    "POST",
+    {},
+    { error, success },
+    {
+      error: ERROR,
+      loading: LOADING,
+    }
+  );
