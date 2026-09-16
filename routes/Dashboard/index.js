@@ -35,7 +35,6 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
   const [editVisible, setEditVisible] = useState(false);
   const [editFirstname, setEditFirstname] = useState("");
   const [editLastname, setEditLastname] = useState("");
-  const [editEmail, setEditEmail] = useState("");
   const [editGender, setEditGender] = useState("");
   const [editFaculty, setEditFaculty] = useState("");
   const [editDepartment, setEditDepartment] = useState("");
@@ -67,14 +66,13 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
   const handleOpenEdit = useCallback(() => {
     setEditFirstname(student?.firstname || "");
     setEditLastname(student?.lastname || "");
-    setEditEmail(student?.email || "");
     setEditGender(student?.gender || "");
     setEditFaculty(student?.faculty || "");
     setEditDepartment(student?.department || "");
     setEditLevel(student?.level || "");
 
     setEditVisible(true);
-  }, []);
+  }, [student]);
 
   const getGreeting = useCallback(() => {
     const hour = new Date().getHours();
@@ -217,12 +215,6 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
     levels?.map((level) => ({
       label: level.name,
       value: level.name,
-    })) || [];
-
-  const semesterOptions =
-    semesters?.map((semester) => ({
-      label: semester.name,
-      value: semester.name,
     })) || [];
 
   const handleUpdateStudent = () => {
@@ -658,16 +650,6 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
                     placeholder="Last Name"
                     value={editLastname}
                     onChangeText={setEditLastname}
-                  />
-                </View>
-
-                <View>
-                  <Text style={dashboard.editTextInfo}>Email</Text>
-                  <TextInput
-                    style={dashboard.input}
-                    placeholder="Email"
-                    value={editEmail}
-                    onChangeText={setEditEmail}
                   />
                 </View>
 
