@@ -3,7 +3,6 @@ import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import Dashboard from "./Dashboard";
 import AttendanceHistory from "./AttendanceHistory";
-import AdminStudents from "./AdminStudents";
 
 const baseRoutes = {
   public: [
@@ -34,11 +33,6 @@ const baseRoutes = {
       name: "AttendanceHistory",
       component: AttendanceHistory,
       path: "/attendance-history",
-    },
-    {
-      name: "AdminStudents",
-      component: AdminStudents,
-      path: "/admin/students",
     },
   ],
 };
