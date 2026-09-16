@@ -1,7 +1,7 @@
 import { View, Text, Pressable, Image } from "react-native";
-import moh from '../assets/images/moh.png';
-import home from "../assets/styles/homeCSS";
-import useResponsive from "../hooks/useResponsive";
+import moh from '../../assets/images/moh.png';
+import home from "../../assets/styles/homeCSS";
+import useResponsive from "../../hooks/useResponsive";
 
 export default function HomeScreen({ navigation }) {
   const { isDesktop } = useResponsive();
@@ -19,14 +19,6 @@ export default function HomeScreen({ navigation }) {
           <Pressable onPress={() => navigation.navigate("SignUp")}>
             <Text style={home.link}>Register</Text>
           </Pressable>
-
-          {/* <Pressable onPress={() => navigation.navigate("AdminRegister")}>
-            <Text style={home.link}>AdminRegister</Text>
-          </Pressable>
-
-          <Pressable onPress={() => navigation.navigate("AdminLogin")}>
-            <Text style={home.link}>AdminLogin</Text>
-          </Pressable> */}
         </View>
       </View>
 

@@ -14,39 +14,43 @@ import {
   Pressable,
   Image,
   Modal,
-  ScrollView
+  ScrollView,
+  TextInput
 } from "react-native";
 
 import moh from '../../assets/images/moh.png';
 
-export default function Dashboard({ navigation, logout, checkin, todayAttendance, attendance, checkout, getFaculties, getDepartments, getLevels }) {
+export default function Dashboard({ navigation, logout, checkin, todayAttendance, attendance, checkout, updateStudent, loadLookups, getCourses }) {
   const { isDesktop } = useResponsive();
 
   const attendanceStatus = attendance?.today?.status;
   const student = useSelector((state) => state.student);
-  const {faculties, departments, levels} = student;
+  const { faculties, departments, levels, semesters, semester, courses } = student;
   const hasCheckedIn = !!attendance?.today?.check_in;
   const hasCheckedOut = !!attendance?.today?.check_out;
   const [logoutVisible, setLogoutVisible] = useState(false);
+
   const [courseVisible, setCourseVisible] = useState(false);
-  const [selectedSemester, setSelectedSemester] = useState("");
-  const [selectedFaculty, setSelectedFaculty] = useState("");
-  const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [selectedLevel, setSelectedLevel] = useState("");
+
+  const [editVisible, setEditVisible] = useState(false);
+  const [editFirstname, setEditFirstname] = useState("");
+  const [editLastname, setEditLastname] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editGender, setEditGender] = useState("");
+  const [editFaculty, setEditFaculty] = useState("");
+  const [editDepartment, setEditDepartment] = useState("");
+  const [editLevel, setEditLevel] = useState("");
 
   useEffect(() => {
-    if (faculties.length === 0) {
-      getFaculties();
-    }
-
-    if (departments.length === 0) {
-      getDepartments();
-    }
-
-    if (levels.length === 0) {
-      getLevels();
-    }
-  }, [getFaculties, getDepartments, getLevels, faculties.length, departments.length, levels.length]);
+    loadLookups(
+      (error) => {
+        // console.log("LOOKUPS ERROR:", error);
+      },
+      (response) => {
+        // console.log("LOOKUPS LOADED:", response);
+      }
+    );
+  }, []);
 
   const handleLogout = useCallback(() => {
     logout();
@@ -59,6 +63,18 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
 
     navigation.replace("SignIn");
   }, [logout, navigation]);
+
+  const handleOpenEdit = useCallback(() => {
+    setEditFirstname(student?.firstname || "");
+    setEditLastname(student?.lastname || "");
+    setEditEmail(student?.email || "");
+    setEditGender(student?.gender || "");
+    setEditFaculty(student?.faculty || "");
+    setEditDepartment(student?.department || "");
+    setEditLevel(student?.level || "");
+
+    setEditVisible(true);
+  }, []);
 
   const getGreeting = useCallback(() => {
     const hour = new Date().getHours();
@@ -185,20 +201,103 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
     );
   }, [checkout, todayAttendance, student?.id]);
 
-  const facultyOptions = student?.faculties?.map((faculty) => ({
-    label: faculty,
-    value: faculty,
-  }));
+  const facultyOptions =
+    faculties?.map((faculty) => ({
+      label: faculty.name,
+      value: faculty.name,
+    })) || [];
 
-  const departmentOptions = student?.departments?.map((department) => ({
-    label: department,
-    value: department,
-  }));
+  const departmentOptions =
+    departments?.map((department) => ({
+      label: department.name,
+      value: department.name,
+    })) || [];
 
-  const levelOptions = student?.levels?.map((level) => ({
-    label: level,
-    value: level,
-  }));
+  const levelOptions =
+    levels?.map((level) => ({
+      label: level.name,
+      value: level.name,
+    })) || [];
+
+  const semesterOptions =
+    semesters?.map((semester) => ({
+      label: semester.name,
+      value: semester.name,
+    })) || [];
+
+  const handleUpdateStudent = () => {
+    if (
+      !editFirstname.trim() ||
+      !editLastname.trim() ||
+      !editGender ||
+      !editFaculty ||
+      !editDepartment ||
+      !editLevel
+    ) {
+      Toast.show({
+        type: "error",
+        text1: "Incomplete Information",
+        text2: "Please complete all required fields.",
+      });
+
+      return;
+    }
+
+    updateStudent(
+      editFirstname.trim(),
+      editLastname.trim(),
+      editGender,
+      editDepartment,
+      editFaculty,
+      editLevel,
+
+      (error) => {
+        Toast.show({
+          type: "error",
+          text1: "Update Failed",
+          text2:
+            error.message ||
+            "Unable to update your information.",
+        });
+      },
+
+      (response) => {
+        Toast.show({
+          type: "success",
+          text1: "Profile Updated",
+          text2:
+            response.message ||
+            "Your information has been updated successfully.",
+        });
+
+        setEditVisible(false);
+      }
+    );
+  };
+
+  const handleCourseRegistration = () => {
+    getCourses(
+      (error) => {
+        Toast.show({
+          type: "error",
+          text1: "Course Loading Failed",
+          text2: error.message || "Unable to load courses.",
+        });
+      },
+
+      (response) => {
+        setCourseVisible(true);
+      }
+    );
+  };
+
+  const formatLevel = (level) => {
+    if (!level) return "N/A";
+
+    return level
+      .trim()
+      .replace(/\blevel\b/i, "Level");
+  };
 
   return (
     <View style={[dashboard.container, isDesktop && dashboard.desktopContainer]}>
@@ -227,7 +326,7 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
           title="Course Registration"
           iconName="book"
           iconSize={24}
-          onPress={() => setCourseVisible(true)}
+          onPress={handleCourseRegistration}
           textStyle={{marginLeft: 10}}
         />
 
@@ -295,27 +394,69 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
         )}
 
         <View style={dashboard.card}>
-          <Text style={dashboard.cardTitle}>Student Information</Text>
+          <View style={dashboard.cardHeader}>
+            <Text style={dashboard.cardTitle}>
+              Student Information
+            </Text>
 
-          <Text style={dashboard.label}>Name</Text>
-          <Text style={dashboard.value}>
-            {student?.firstname} {student?.lastname}
-          </Text>
+            <Button
+              title="Edit Profile"
+              onPress={handleOpenEdit}
+              style={dashboard.editButton}
+              textStyle={dashboard.editButtonText}
+            />
+          </View>
 
-          <Text style={dashboard.label}>Matric Number</Text>
-          <Text style={dashboard.value}>{student?.matricNo}</Text>
+          <View style={dashboard.grid}>
+            <View style={dashboard.gridItem}>
+              <Text style={dashboard.label}>Name</Text>
+              <Text style={dashboard.value}>
+                {student?.firstname} {student?.lastname}
+              </Text>
+            </View>
 
-          <Text style={dashboard.label}>Email</Text>
-          <Text style={dashboard.value}>{student?.email}</Text>
+            <View style={dashboard.gridItem}>
+              <Text style={dashboard.label}>Matric Number</Text>
+              <Text style={dashboard.value}>
+                {student?.matricNo}
+              </Text>
+            </View>
 
-          <Text style={dashboard.label}>Department</Text>
-          <Text style={dashboard.value}>{student?.department}</Text>
+            <View style={dashboard.gridItem}>
+              <Text style={dashboard.label}>Email</Text>
+              <Text style={dashboard.value}>
+                {student?.email}
+              </Text>
+            </View>
 
-          <Text style={dashboard.label}>Faculty</Text>
-          <Text style={dashboard.value}>{student?.faculty}</Text>
+            <View style={dashboard.gridItem}>
+              <Text style={dashboard.label}>Gender</Text>
+              <Text style={dashboard.value}>
+                {student?.gender || "Not provided"}
+              </Text>
+            </View>
 
-          <Text style={dashboard.label}>Level</Text>
-          <Text style={dashboard.value}>{student?.level} Level</Text>
+            <View style={dashboard.gridItem}>
+              <Text style={dashboard.label}>Department</Text>
+              <Text style={dashboard.value}>
+                {student?.department}
+              </Text>
+            </View>
+
+            <View style={dashboard.gridItem}>
+              <Text style={dashboard.label}>Faculty</Text>
+              <Text style={dashboard.value}>
+                {student?.faculty}
+              </Text>
+            </View>
+
+            <View style={dashboard.gridItem}>
+              <Text style={dashboard.label}>Level</Text>
+              <Text style={dashboard.value}>
+                {formatLevel(student?.level)}
+              </Text>
+            </View>
+          </View>
         </View>
 
         <Button title="Attendance History" iconRightName="arrow-forward" iconRightSize={18} onPress={() => navigation.navigate("AttendanceHistory")} textStyle={{marginRight: 10}} />
@@ -382,61 +523,200 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
               ]}
               onPress={(e) => e.stopPropagation()}
             >
+
               <Text style={dashboard.labelFilter}>
                 Course Registration
               </Text>
 
-              <View style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 10 }}>
+              <View style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <View>
+                  <Text style={dashboard.label}>
+                    Semester
+                  </Text>
+
+                  <Text style={dashboard.value}>
+                    {semester || "No active semester"}
+                  </Text>
+                </View>
+
+                <View>
+                  <Text style={dashboard.label}>
+                    Faculty
+                  </Text>
+
+                  <Text style={dashboard.value}>
+                    {student?.faculty || "N/A"}
+                  </Text>
+                </View>
+
+                <View>
+                  <Text style={dashboard.label}>
+                    Department
+                  </Text>
+
+                  <Text style={dashboard.value}>
+                    {student?.department || "N/A"}
+                  </Text>
+                </View>
+
+                <View>
+                  <Text style={dashboard.label}>
+                    Level
+                  </Text>
+
+                  <Text style={dashboard.value}>
+                    {formatLevel(student?.level)}
+                  </Text>
+                </View>
+              </View>
+
+              <Text style={dashboard.label}>
+                Available Courses
+              </Text>
+
+              {courses.length === 0 ? (
+
+                <Text style={dashboard.labelFilters}>
+                  No courses have been assigned to you for this semester.
+                </Text>
+
+              ) : (
+
+                courses.map((course) => (
+                  <View
+                    key={course.id}
+                    style={dashboard.courseItem}
+                  >
+
+                    <View>
+                      <Text style={dashboard.courseCode}>
+                        {course.course_code}
+                      </Text>
+
+                      <Text style={dashboard.courseTitle}>
+                        {course.course_title}
+                      </Text>
+                    </View>
+                  </View>
+                ))
+
+              )}
+
+              <View style={dashboard.buttonContainer}>
+
+                <Button
+                  title="Close"
+                  onPress={() => setCourseVisible(false)}
+                  style={{
+                    width: "100%",
+                    backgroundColor: COLORS.primaryDark,
+                  }}
+                />
+
+              </View>
+
+            </Pressable>
+          </Pressable>
+        </Modal>
+
+        <Modal
+          visible={editVisible}
+          animationType="slide"
+          transparent
+          onRequestClose={() => setEditVisible(false)}
+        >
+          <Pressable
+            style={dashboard.modalContainer}
+            onPress={() => setEditVisible(false)}
+          >
+            <Pressable
+              style={[
+                dashboard.cardFilter,
+                isDesktop && dashboard.desktopEditFilter,
+              ]}
+              onPress={(e) => e.stopPropagation()}
+            >
+              <Text style={dashboard.labelFilter}>
+                Edit Student Information
+              </Text>
+
+              <View style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <View>
+                  <Text style={dashboard.editTextInfo}>First Name</Text>
+                  <TextInput
+                    style={dashboard.input}
+                    placeholder="First Name"
+                    value={editFirstname}
+                    onChangeText={setEditFirstname}
+                  />
+                </View>
+
+                <View>
+                  <Text style={dashboard.editTextInfo}>Last Name</Text>
+                  <TextInput
+                    style={dashboard.input}
+                    placeholder="Last Name"
+                    value={editLastname}
+                    onChangeText={setEditLastname}
+                  />
+                </View>
+
+                <View>
+                  <Text style={dashboard.editTextInfo}>Email</Text>
+                  <TextInput
+                    style={dashboard.input}
+                    placeholder="Email"
+                    value={editEmail}
+                    onChangeText={setEditEmail}
+                  />
+                </View>
+
                 <Dropdown
-                  label="Semester"
-                  value={selectedSemester}
-                  placeholder="Select Semester"
-                  onSelect={(value) => setSelectedSemester(value)}
+                  label="Gender"
+                  value={editGender}
+                  placeholder="Select Gender"
+                  onSelect={setEditGender}
                   options={[
-                    { label: "First Semester", value: "First Semester" },
-                    { label: "Second Semester", value: "Second Semester" },
+                    {
+                      label: "Male",
+                      value: "Male",
+                    },
+                    {
+                      label: "Female",
+                      value: "Female",
+                    },
                   ]}
                 />
 
                 <Dropdown
                   label="Faculty"
-                  value={selectedFaculty}
+                  value={editFaculty}
                   placeholder="Select Faculty"
-                  onSelect={(value) => setSelectedFaculty(value)}
+                  onSelect={setEditFaculty}
                   options={facultyOptions}
                 />
 
                 <Dropdown
                   label="Department"
-                  value={selectedDepartment}
+                  value={editDepartment}
                   placeholder="Select Department"
-                  onSelect={(value) => setSelectedDepartment(value)}
+                  onSelect={setEditDepartment}
                   options={departmentOptions}
-                />               
+                />
 
                 <Dropdown
                   label="Level"
-                  value={selectedLevel}
+                  value={editLevel}
                   placeholder="Select Level"
-                  onSelect={(value) => setSelectedLevel(value)}
+                  onSelect={setEditLevel}
                   options={levelOptions}
                 />
 
-                {/* <Dropdown
-                  label="Course"
-                  value={selectedCourse}
-                  placeholder="Select Course"
-                  onSelect={(value) => setSelectedCourse(value)}
-                  options={courseOptions}
-                /> */}
               </View>
-
               <View style={dashboard.buttonContainer}>
                 <Button
                   title="Cancel"
-                  onPress={() => {
-                    setCourseVisible(false);
-                  }}
+                  onPress={() => setEditVisible(false)}
                   style={{
                     width: "48%",
                     backgroundColor: COLORS.primaryDark,
@@ -445,11 +725,12 @@ export default function Dashboard({ navigation, logout, checkin, todayAttendance
 
                 <Button
                   title="Save"
-                  // onPress={handleCourseRegistration}
-                  style={{ width: "48%" }}
+                  onPress={handleUpdateStudent}
+                  style={{
+                    width: "48%",
+                  }}
                 />
               </View>
-
             </Pressable>
           </Pressable>
         </Modal>

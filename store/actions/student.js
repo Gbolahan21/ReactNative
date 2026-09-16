@@ -1,5 +1,3 @@
-import {jwtDecode} from 'jwt-decode';
-
 import * as Helpers from '../../helpers';
 
 import {
@@ -8,12 +6,12 @@ import {
   SIGNIN,
   SIGNUP,
   LOAD,
-  FACULTIES,
-  DEPARTMENTS,
-  LEVELS,
+  STUDENT_UPDATE,
+  LOOKUPS,
+  COURSES
 } from '../types';
 
-export const signup = (firstname, lastname, matricNo, email, department, faculty, level, password, error, success) => 
+export const signup = (firstname, lastname, matricNo, email, gender, department, faculty, level, password, error, success) => 
   Helpers.api(
   '/student/signup',
   'POST',
@@ -22,6 +20,7 @@ export const signup = (firstname, lastname, matricNo, email, department, faculty
     lastname,
     matricNo,
     email,
+    gender,
     department,
     faculty,
     level,
@@ -49,30 +48,57 @@ export const load = (error, success) =>
     { error: ERROR, loading: LOADING, responder: LOAD }
   );
 
-export const getFaculties = (error, success) =>
+export const updateStudent = (
+  firstname,
+  lastname,
+  gender,
+  department,
+  faculty,
+  level,
+  error,
+  success
+) =>
   Helpers.api(
-    '/student/faculties',
+    "/student/update",
+    "PATCH",
+    {
+      firstname,
+      lastname,
+      gender,
+      department,
+      faculty,
+      level,
+    },
+    { error, success },
+    {
+      error: ERROR,
+      loading: LOADING,
+      responder: STUDENT_UPDATE,
+    }
+  );
+
+export const loadLookups = (error, success) =>
+  Helpers.api(
+    '/student/lookups',
     'GET',
     {},
     { error, success },
-    { error: ERROR, loading: LOADING, responder: FACULTIES }
+    {
+      error: ERROR,
+      loading: LOADING,
+      responder: LOOKUPS,
+    }
   );
 
-export const getDepartments = (error, success) =>
+export const getCourses = (error, success) =>
   Helpers.api(
-    '/student/departments',
-    'GET',
+    "/student/courses",
+    "GET",
     {},
     { error, success },
-    { error: ERROR, loading: LOADING, responder: DEPARTMENTS }
+    {
+      error: ERROR,
+      loading: LOADING,
+      responder: COURSES,
+    }
   );
-
-export const getLevels = (error, success) =>
-  Helpers.api(
-    '/student/levels',
-    'GET',
-    {},
-    { error, success },
-    { error: ERROR, loading: LOADING, responder: LEVELS }
-  );
-

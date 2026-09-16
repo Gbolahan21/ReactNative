@@ -10,11 +10,12 @@ export default StyleSheet.create({
 
   desktopContainer: {
     alignItems: "center",
+    justifyContent: "center"
   },
 
   card: {
     width: "100%",
-    maxWidth: 450,
+    maxWidth: 750,
     backgroundColor: COLORS.white,
     borderRadius: 16,
     padding: 30,
@@ -30,6 +31,16 @@ export default StyleSheet.create({
     },
     shadowOpacity: 0.15,
     shadowRadius: 12,
+  },
+
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+
+  gridItem: {
+    width: "50%",
+    paddingRight: 8,
   },
 
   button: {
@@ -69,7 +80,7 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     borderRadius: 10,
-    height: 50,
+    height: 55,
     paddingHorizontal: 15,
     marginBottom: 20,
     fontSize: 16,

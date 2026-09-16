@@ -7,9 +7,9 @@ import {
   SIGNUP,
   AUTH_INITIALIZED,
   LOAD,
-  FACULTIES,
-  DEPARTMENTS,
-  LEVELS,
+  STUDENT_UPDATE,
+  LOOKUPS,
+  COURSES
 } from '../types';
 
 export const initialState = {
@@ -20,6 +20,7 @@ export const initialState = {
   department: '',
   faculty: '',
   level: '',
+  gender: '',
   token: '',
   loading: [],
   authenticated: false,
@@ -27,6 +28,9 @@ export const initialState = {
   faculties: [],
   departments: [],
   levels: [],
+  semesters: [],
+  courses: [],
+  semester: ''
 };
 
 export default function (state = initialState, action) {
@@ -62,22 +66,26 @@ export default function (state = initialState, action) {
         authenticated: true,
       };
 
-    case FACULTIES:
+    case LOOKUPS:
       return {
         ...state,
         faculties: payload.faculties,
+        departments: payload.departments,
+        levels: payload.levels,
+        semesters: payload.semesters,
       };
     
-    case DEPARTMENTS:
+    case COURSES:
       return {
         ...state,
-        departments: payload.departments,
+        courses: payload.courses,
+        semester: payload.semester,
       };
 
-    case LEVELS:
+    case STUDENT_UPDATE:
       return {
         ...state,
-        levels: payload.levels,
+        ...payload.student,
       };
 
     case AUTH_INITIALIZED:

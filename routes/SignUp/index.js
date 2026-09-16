@@ -5,7 +5,6 @@ import Button from "../../components/Button";
 import Dropdown from "../../components/Dropdown";
 import register from "../../assets/styles/registerCSS";
 import useResponsive from "../../hooks/useResponsive";
-import * as Helpers from '../../helpers';
 import {
   View,
   Text,
@@ -24,6 +23,7 @@ export default function SignUp({ navigation, signup }) {
   const [department, setDepartment] = useState('');
   const [faculty, setFaculty] = useState('');
   const [level, setLevel] = useState('');
+  const [gender, setGender] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -71,6 +71,7 @@ export default function SignUp({ navigation, signup }) {
       lastname.trim(),
       matricNo.trim(),
       email.trim().toLowerCase(),
+      gender,
       department.trim(),
       faculty.trim(),
       level,
@@ -91,6 +92,7 @@ export default function SignUp({ navigation, signup }) {
         setLastName("");
         setMatricNo("");
         setEmail("");
+        setGender("");
         setDepartment("");
         setFaculty("");
         setLevel("");
@@ -108,7 +110,7 @@ export default function SignUp({ navigation, signup }) {
     )
   };
 
-  const details = !firstname || !lastname || !matricNo || !email || !department || !faculty || !level || !password || !confirmPassword;
+  const details = !firstname || !lastname || !matricNo || !email || !gender || !department || !faculty || !level || !password || !confirmPassword;
   
   return (
     <KeyboardAvoidingView
@@ -124,152 +126,184 @@ export default function SignUp({ navigation, signup }) {
           <IconButton name="arrow-back" size={28} onPress={() => navigation.navigate("Home")}/>
           <Text style={register.text}>Register</Text>
 
-          <TextInput 
-            style={register.input}
-            placeholder="Enter your firstname"
-            autoCapitalize="words"
-            autoCorrect={false}
-            value={firstname}
-            onChangeText={setFirstName}
-          />
-
-          <TextInput 
-            style={register.input}
-            placeholder="Enter your lastname"
-            autoCapitalize="words"
-            autoCorrect={false}
-            value={lastname}
-            onChangeText={setLastName}
-          />
-
-          <TextInput 
-            style={register.input}
-            placeholder="Enter your matric no"
-            keyboardType="phone-pad"
-            value={matricNo}
-            onChangeText={setMatricNo}
-          />
-
-          <TextInput 
-            style={register.input}
-            placeholder="Enter your school email"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-          />
-
-          <TextInput 
-            style={register.input}
-            placeholder="Enter your department"
-            keyboardType="words"
-            autoCorrect={false}
-            value={department}
-            onChangeText={setDepartment}
-          />
-
-          <TextInput 
-            style={register.input}
-            placeholder="Enter your faculty"
-            keyboardType="words"
-            autoCorrect={false}
-            value={faculty}
-            onChangeText={setFaculty}
-          />
-
-          <Dropdown
-            value={level}
-            placeholder="Select Level"
-            onSelect={setLevel}
-            options={[
-              { label: "100 Level", value: "100" },
-              { label: "200 Level", value: "200" },
-              { label: "300 Level", value: "300" },
-              { label: "400 Level", value: "400" },
-              { label: "500 Level", value: "500" },
-              { label: "600 Level", value: "600" },
-            ]}
-          />
-
-          <View style={register.inputContainer}>
-            <TextInput
-              style={register.inputs}
-              placeholder="Enter your password"
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={setPassword}
-            />
-        
-            <IconButton name={showPassword ? "eye" : "eye-off"} onPress={() => setShowPassword(!showPassword)} />
-          </View>
-
-          <View style={register.inputContainer}>
-            <TextInput
-              style={register.inputs}
-              placeholder="Confirm password"
-              secureTextEntry={!showConfirmPassword}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-            />
-          
-            <IconButton name={showConfirmPassword ? "eye" : "eye-off"} onPress={() => setShowConfirmPassword(!showConfirmPassword)} />
-          </View>
-
-          {password.length > 0 && (
-            <View style={{ marginBottom: 15 }}>
-              <Text
-                style={{
-                  color: password.length >= 8 ? "green" : "red",
-                }}
-              >
-                {password.length >= 8 ? "✓" : "✗"} At least 8 characters
-              </Text>
-
-              <Text
-                style={{
-                  color: /[A-Z]/.test(password) ? "green" : "red",
-                }}
-              >
-                {/[A-Z]/.test(password) ? "✓" : "✗"} One uppercase letter
-              </Text>
-
-              <Text
-                style={{
-                  color: /[a-z]/.test(password) ? "green" : "red",
-                }}
-              >
-                {/[a-z]/.test(password) ? "✓" : "✗"} One lowercase letter
-              </Text>
-
-              <Text
-                style={{
-                  color: /\d/.test(password) ? "green" : "red",
-                }}
-              >
-                {/\d/.test(password) ? "✓" : "✗"} One number
-              </Text>
-
-              <Text
-                style={{
-                  color: /[@$!%*?&]/.test(password) ? "green" : "red",
-                }}
-              >
-                {/[@$!%*?&]/.test(password) ? "✓" : "✗"} One special character
-              </Text>
+          <View style={register.grid}>
+            <View style={register.gridItem}>
+              <TextInput 
+                style={register.input}
+                placeholder="Enter your firstname"
+                autoCapitalize="words"
+                autoCorrect={false}
+                value={firstname}
+                onChangeText={setFirstName}
+              />
             </View>
-          )}
 
-          <View>
-            {confirmPassword.length > 0 && (
-              <Text
-                style={{
-                  color: password === confirmPassword ? "green" : "red",
-                  marginBottom: 15,
-                }}
-              >
-                {password === confirmPassword ? "✓ Passwords match" : "✗ Passwords do not match"}
-              </Text>
+            <View style={register.gridItem}>
+              <TextInput 
+                style={register.input}
+                placeholder="Enter your lastname"
+                autoCapitalize="words"
+                autoCorrect={false}
+                value={lastname}
+                onChangeText={setLastName}
+              />
+            </View>              
+
+            <View style={register.gridItem}>
+              <TextInput 
+                style={register.input}
+                placeholder="Enter your matric no"
+                keyboardType="phone-pad"
+                value={matricNo}
+                onChangeText={setMatricNo}
+              />
+            </View>
+
+            <View style={register.gridItem}>
+              <TextInput 
+                style={register.input}
+                placeholder="Enter your school email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+              />
+            </View>
+
+            <View style={register.gridItem}>
+              <Dropdown
+                value={gender}
+                placeholder="Select Gender"
+                onSelect={setGender}
+                options={[
+                    { label: "Male", value: "Male" },
+                    { label: "Female", value: "Female" },
+                ]}
+              />
+            </View>
+
+            <View style={register.gridItem}>
+              <TextInput 
+                style={register.input}
+                placeholder="Enter your department"
+                keyboardType="words"
+                autoCorrect={false}
+                value={department}
+                onChangeText={setDepartment}
+              />
+            </View>
+
+            <View style={register.gridItem}>
+              <TextInput 
+                style={register.input}
+                placeholder="Enter your faculty"
+                keyboardType="words"
+                autoCorrect={false}
+                value={faculty}
+                onChangeText={setFaculty}
+              />
+            </View>
+            
+            <View style={register.gridItem}>
+              <Dropdown
+                value={level}
+                placeholder="Select Level"
+                onSelect={setLevel}
+                options={[
+                  { label: "100 Level", value: "100 level" },
+                  { label: "200 Level", value: "200 level" },
+                  { label: "300 Level", value: "300 level" },
+                  { label: "400 Level", value: "400 level" },
+                  { label: "500 Level", value: "500 level" },
+                  { label: "600 Level", value: "600 level" },
+                ]}
+              />
+            </View>
+
+            <View style={register.gridItem}>
+              <View style={register.inputContainer}>
+                <TextInput
+                  style={register.inputs}
+                  placeholder="Enter your password"
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                />
+            
+                <IconButton name={showPassword ? "eye" : "eye-off"} onPress={() => setShowPassword(!showPassword)} />
+              </View>
+            </View>
+
+            <View style={register.gridItem}>
+              <View style={register.inputContainer}>
+                <TextInput
+                  style={register.inputs}
+                  placeholder="Confirm password"
+                  secureTextEntry={!showConfirmPassword}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                />
+              
+                <IconButton name={showConfirmPassword ? "eye" : "eye-off"} onPress={() => setShowConfirmPassword(!showConfirmPassword)} />
+              </View>
+            </View>
+
+            {password.length > 0 && (
+              <View style={{ marginBottom: 15 }}>
+                <Text
+                  style={{
+                    color: password.length >= 8 ? "green" : "red",
+                  }}
+                >
+                  {password.length >= 8 ? "✓" : "✗"} At least 8 characters
+                </Text>
+
+                <Text
+                  style={{
+                    color: /[A-Z]/.test(password) ? "green" : "red",
+                  }}
+                >
+                  {/[A-Z]/.test(password) ? "✓" : "✗"} One uppercase letter
+                </Text>
+
+                <Text
+                  style={{
+                    color: /[a-z]/.test(password) ? "green" : "red",
+                  }}
+                >
+                  {/[a-z]/.test(password) ? "✓" : "✗"} One lowercase letter
+                </Text>
+
+                <Text
+                  style={{
+                    color: /\d/.test(password) ? "green" : "red",
+                  }}
+                >
+                  {/\d/.test(password) ? "✓" : "✗"} One number
+                </Text>
+
+                <Text
+                  style={{
+                    color: /[@$!%*?&]/.test(password) ? "green" : "red",
+                  }}
+                >
+                  {/[@$!%*?&]/.test(password) ? "✓" : "✗"} One special character
+                </Text>
+              </View>
             )}
+
+            <View>
+              {confirmPassword.length > 0 && (
+                <Text
+                  style={{
+                    color: password === confirmPassword ? "green" : "red",
+                    marginBottom: 15,
+                  }}
+                >
+                  {password === confirmPassword ? "✓ Passwords match" : "✗ Passwords do not match"}
+                </Text>
+              )}
+            </View>
           </View>
 
           <Button title="Register" onPress={handleRegister} disabled={details} />

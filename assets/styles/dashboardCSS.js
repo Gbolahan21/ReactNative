@@ -44,7 +44,6 @@ export default StyleSheet.create({
   cardTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 15,
   },
 
   greeting: {
@@ -170,16 +169,23 @@ export default StyleSheet.create({
     backgroundColor: COLORS.background,
     borderRadius: 10,
     paddingVertical: 20,
-    paddingHorizontal: 40,
+    paddingHorizontal: 10,
     width: "90%",
   },
 
   desktopCardFilter: {
     width: "30%",
+    paddingHorizontal: 40
   },
 
   desktopCourseFilter: {
     width: "60%",
+    paddingHorizontal: 40
+  },
+
+  desktopEditFilter: {
+    width: "60%",
+    paddingHorizontal: 40
   },
 
   labelFilter: {
@@ -199,5 +205,79 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 20,
+  },
+
+  cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+
+  editButton: {
+    width: 95,
+    paddingVertical: 13,
+    paddingHorizontal: 10,
+  },
+
+  editButtonText: {
+    fontSize: 14,
+  },
+
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+
+  gridItem: {
+    width: "50%",
+    paddingVertical: 8,
+    paddingRight: 50,
+  },
+
+
+  input: {
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 10,
+    height: 55,
+    paddingHorizontal: 15,
+    marginBottom: 20,
+    fontSize: 16,
+  },
+
+  editTextInfo: {
+    marginBottom: 8,
+    fontSize: 15,
+    fontWeight: 600,
+  },
+
+  courseItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    marginBottom: 8,
+    marginTop: 10,
+    borderRadius: 10,
+    backgroundColor: COLORS.white,
+    elevation: 2,
+  },
+
+  courseCode: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: COLORS.text,
+  },
+
+  courseTitle: {
+    fontSize: 14,
+    color: COLORS.secondaryText,
+    marginTop: 3,
+  },
+
+  labelFilters: {
+    marginTop: 10,
   },
 })

@@ -10,9 +10,9 @@ export default function Button({
   style,
   textStyle,
   iconName,
-  iconSize,
+  iconSize = 20,
   iconRightName,
-  iconRightSize,
+  iconRightSize = 20,
 }) {
   return (
     <Pressable
@@ -25,11 +25,26 @@ export default function Button({
       ]}
     >
       <View style={styles.content}>
-        <Ionicons name={iconName} size={iconSize} color={COLORS.white} />
+        {iconName && (
+          <Ionicons
+            name={iconName}
+            size={iconSize}
+            color={COLORS.white}
+          />
+        )}
+
         <Text style={[styles.buttonText, textStyle]}>
           {title}
         </Text>
-        <Ionicons name={iconRightName} size={iconRightSize} color={COLORS.white} style={{ marginTop: 5 }} />
+
+        {iconRightName && (
+          <Ionicons
+            name={iconRightName}
+            size={iconRightSize}
+            color={COLORS.white}
+            style={{ marginTop: 5 }}
+          />
+        )}
       </View>
     </Pressable>
   );
