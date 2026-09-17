@@ -962,7 +962,7 @@ import Dropdown from "../../components/Dropdown";
 import { COLORS } from "../../constants/colors";
 
 export default function Dashboard({
-  onNavigate,
+  navigation,
   checkin,
   todayAttendance,
   checkout,
@@ -1153,7 +1153,7 @@ export default function Dashboard({
 
           <Pressable
             style={styles.profileButton}
-            onPress={() => onNavigate("Profile")}
+            onPress={() => navigation.navigate("Profile")}
           >
             <Ionicons
               name="person"
@@ -1307,7 +1307,7 @@ export default function Dashboard({
 
           <Pressable
             style={styles.quickCard}
-            onPress={() => onNavigate("Course")}
+            onPress={() => navigation.navigate("Course")}
           >
             <View style={styles.quickIcon}>
               <Ionicons
@@ -1328,7 +1328,7 @@ export default function Dashboard({
 
           <Pressable
             style={styles.quickCard}
-            onPress={() => onNavigate("Attendance")}
+            onPress={() => navigation.navigate("Attendance")}
           >
             <View style={styles.quickIcon}>
               <Ionicons

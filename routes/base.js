@@ -1,7 +1,10 @@
 import Home from "./Home";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
-import Navigation from "./Navigation";
+import Dashboard from "./Dashboard";
+import Course from "./Course";
+import Attendance from "./Attendance";
+import Profile from "./Profile";
 
 const baseRoutes = {
   public: [
@@ -24,8 +27,24 @@ const baseRoutes = {
 
   private: [
     {
-      name: "Navigation",
-      component: Navigation,
+      name: "Dashboard",
+      component: Dashboard,
+      path: "/dashboard"
+    },
+    {
+      name: "Course",
+      component: Course,
+      path: "/course"
+    },
+    {
+      name: "Attendance",
+      component: Attendance,
+      path: "/attendance"
+    },
+    {
+      name: "Profile",
+      component: Profile,
+      path: "/Profile"
     },
   ],
 };
