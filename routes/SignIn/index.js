@@ -51,7 +51,7 @@ export default function SignIn({ navigation, signin }) {
           text2: response?.message || "Welcome back!",
         });
 
-        navigation.replace("Dashboard");
+        navigation.replace("Navigation");
       }
     );
   };

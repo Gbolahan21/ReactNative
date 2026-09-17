@@ -9,12 +9,12 @@ import {
   ATTENDANCE_HISTORY
 } from "../types";
 
-export const checkin = (studentId, error, success) =>
+export const checkin = (studentId, courseId, error, success) =>
   Helpers.api(
     "/attendance/checkin",
     "POST",
     {
-      studentId,
+      studentId, courseId
     },
     {
       error,
@@ -27,11 +27,11 @@ export const checkin = (studentId, error, success) =>
     }
   );
 
-export const checkout = (studentId, error, success) =>
+export const checkout = (studentId, courseId, error, success) =>
   Helpers.api(
     "/attendance/checkout",
     "POST",
-    { studentId },
+    { studentId, courseId },
     { error, success },
     {
       error: ERROR,

@@ -10,10 +10,12 @@ const linking = {
 
   config: {
     screens: Object.fromEntries(
-      routes.map((route) => [
-        route.name,
-        route.path,
-      ])
+      routes
+        .filter((route) => route.path)
+        .map((route) => [
+          route.name,
+          route.path,
+        ])
     ),
   },
 };
