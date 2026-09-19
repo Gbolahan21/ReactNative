@@ -59,13 +59,13 @@ export default function Attendance({
 
   const page = attendance?.page || 1;
   const totalPages = attendance?.totalPages || 1;
-  const totalRecords = attendance?.totalRecords || 0;
+  const totalRecords = filteredHistory.length;
 
-  const presentCount = history.filter(
+  const presentCount = filteredHistory.filter(
     (item) => item.status === "Present"
   ).length;
 
-  const absentCount = history.filter(
+  const absentCount = filteredHistory.filter(
     (item) => item.status === "Absent"
   ).length;
 
@@ -161,6 +161,7 @@ export default function Attendance({
   };
 
   const handleResetFilter = () => {
+    setSearch("")
     setSelectedStatus("All");
     setSelectedCourse("All");
     setSelectedDate(null);
@@ -461,6 +462,11 @@ export default function Attendance({
             <Text style={styles.emptyText}>
               Your attendance records will appear here.
             </Text>
+            <Button
+              title="Clear"
+              onPress={handleResetFilter}
+              style={styles.clearButton}
+            />
           </View>
         }
       />
@@ -901,6 +907,12 @@ const styles = StyleSheet.create({
 
   applyFilterButton: {
     flex: 1,
+  },
+
+  clearButton: {
+    flex: 1,
+    width: '48%',
+    marginTop: 10
   },
 
   container: {
