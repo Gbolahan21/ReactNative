@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    maxWidth: 1400,
+    maxWidth: 1200,
     flexDirection: "row",
     backgroundColor: "#F8FAFC",
   },
