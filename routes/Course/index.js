@@ -227,6 +227,8 @@ export default function Course({
     (course) => course.registered
   );
 
+  const hasRegisteredCourses = registeredCourses.length > 0;
+ 
   const availableCourses = courses.filter(
     (course) => !course.registered
   );
@@ -333,314 +335,321 @@ export default function Course({
           </View>
         )}
 
-        {/* Courses */}
+        {/* Course Registration */}
+
         {!loadingCourses && (
           <>
-            <View style={styles.sectionHeader}>
-              <View>
-                <Text style={styles.sectionTitle}>
-                  Available Courses
-                </Text>
+            {!hasRegisteredCourses && (
+              <>
+                {/* Available Courses */}
 
-                <Text style={styles.sectionSubtitle}>
-                  Select the courses you want to register
-                </Text>
-              </View>
+                <View style={styles.sectionHeader}>
+                  <View>
+                    <Text style={styles.sectionTitle}>
+                      Available Courses
+                    </Text>
 
-              {unselectedCourses.length > 0 && (
-                <Pressable
-                  style={styles.registerAllButton}
-                  onPress={handleRegisterAll}
+                    <Text style={styles.sectionSubtitle}>
+                      Select the courses you want to register
+                    </Text>
+                  </View>
+
+                  {unselectedCourses.length > 0 && (
+                    <Pressable
+                      style={styles.registerAllButton}
+                      onPress={handleRegisterAll}
+                    >
+                      <Ionicons
+                        name="checkmark-done-outline"
+                        size={16}
+                        color={COLORS.primary}
+                      />
+
+                      <Text style={styles.registerAllText}>
+                        Register All
+                      </Text>
+                    </Pressable>
+                  )}
+                </View>
+
+                {availableCourses.length === 0 ? (
+                  <View style={styles.emptyCard}>
+                    <Ionicons
+                      name="book-outline"
+                      size={42}
+                      color="#94A3B8"
+                    />
+
+                    <Text style={styles.emptyTitle}>
+                      No Courses Available
+                    </Text>
+
+                    <Text style={styles.emptyText}>
+                      No courses are currently available
+                      for your registration information.
+                    </Text>
+                  </View>
+                ) : (
+                  <View style={styles.courseList}>
+                    {availableCourses.map((course) => {
+                      const selected =
+                        isCourseSelected(course.id);
+
+                      return (
+                        <View
+                          key={course.id}
+                          style={[
+                            styles.courseCard,
+                            selected &&
+                              styles.selectedCourseCard,
+                          ]}
+                        >
+                          <View style={styles.courseInformation}>
+                            <Text style={styles.courseCode}>
+                              {course.course_code}
+                            </Text>
+
+                            <Text style={styles.courseTitle}>
+                              {course.course_title}
+                            </Text>
+                          </View>
+
+                          <Pressable
+                            style={[
+                              styles.courseAction,
+                              selected
+                                ? styles.dropButton
+                                : styles.addButton,
+                            ]}
+                            onPress={() =>
+                              handleCourseAction(course)
+                            }
+                          >
+                            <Ionicons
+                              name={
+                                selected
+                                  ? "remove"
+                                  : "add"
+                              }
+                              size={18}
+                              color="#FFFFFF"
+                            />
+
+                            <Text style={styles.actionText}>
+                              {selected ? "DROP" : "ADD"}
+                            </Text>
+                          </Pressable>
+                        </View>
+                      );
+                    })}
+                  </View>
+                )}
+
+                {/* Selected Courses */}
+
+                {selectedCourses.length > 0 && (
+                  <View style={styles.selectedSection}>
+                    <View style={styles.sectionHeader}>
+                      <View>
+                        <Text style={styles.sectionTitle}>
+                          Selected Courses
+                        </Text>
+
+                        <Text style={styles.sectionSubtitle}>
+                          {selectedCourses.length} course
+                          {selectedCourses.length !== 1
+                            ? "s"
+                            : ""}{" "}
+                          selected
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.selectedCard}>
+                      {selectedCourses.map(
+                        (course, index) => (
+                          <View
+                            key={course.id}
+                            style={[
+                              styles.selectedRow,
+                              index !==
+                                selectedCourses.length - 1 &&
+                                styles.selectedRowBorder,
+                            ]}
+                          >
+                            <View
+                              style={styles.selectedIcon}
+                            >
+                              <Ionicons
+                                name="checkmark"
+                                size={16}
+                                color={COLORS.success}
+                              />
+                            </View>
+
+                            <View
+                              style={
+                                styles.selectedInformation
+                              }
+                            >
+                              <Text
+                                style={
+                                  styles.selectedCode
+                                }
+                              >
+                                {course.course_code}
+                              </Text>
+
+                              <Text
+                                style={
+                                  styles.selectedTitle
+                                }
+                              >
+                                {course.course_title}
+                              </Text>
+                            </View>
+
+                            <Text
+                              style={styles.selectedText}
+                            >
+                              Selected
+                            </Text>
+                          </View>
+                        )
+                      )}
+                    </View>
+
+                    {/* Submit */}
+
+                    <Button
+                      title={
+                        submittingCourses
+                          ? "Submitting..."
+                          : "Submit Registration"
+                      }
+                      iconName={
+                        submittingCourses
+                          ? undefined
+                          : "checkmark-circle-outline"
+                      }
+                      iconSize={21}
+                      onPress={handleSubmitCourses}
+                      disabled={submittingCourses}
+                      style={styles.submitButton}
+                      textStyle={styles.submitButtonText}
+                    />
+
+                    <Text style={styles.submitNote}>
+                      Your changes will only be saved when
+                      you press Submit Registration.
+                    </Text>
+                  </View>
+                )}
+              </>
+            )}
+
+            {hasRegisteredCourses && (
+              <View style={styles.registeredSection}>
+                <View style={styles.sectionHeader}>
+                  <View>
+                    <Text style={styles.sectionTitle}>
+                      Registered Courses
+                    </Text>
+
+                    <Text style={styles.sectionSubtitle}>
+                      {registeredCourses.length} course
+                      {registeredCourses.length !== 1
+                        ? "s"
+                        : ""}{" "}
+                      registered for this semester
+                    </Text>
+                  </View>
+                </View>
+
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ width: "100%" }}
                 >
-                  <Ionicons
-                    name="checkmark-done-outline"
-                    size={16}
-                    color={COLORS.primary}
-                  />
+                  <View style={styles.table}>
+                    {/* Table Header */}
 
-                  <Text
-                    style={styles.registerAllText}
-                  >
-                    Register All
-                  </Text>
-                </Pressable>
-              )}
-            </View>
-
-            {availableCourses.length === 0 ? (
-              <View style={styles.emptyCard}>
-                <Ionicons
-                  name="book-outline"
-                  size={42}
-                  color="#94A3B8"
-                />
-
-                <Text style={styles.emptyTitle}>
-                  No Courses Available
-                </Text>
-
-                <Text style={styles.emptyText}>
-                  No courses are currently available
-                  for your registration information.
-                </Text>
-              </View>
-            ) : (
-              <View style={styles.courseList}>
-                {availableCourses.map((course) => {
-                  const selected =
-                    isCourseSelected(course.id);
-
-                  return (
                     <View
-                      key={course.id}
                       style={[
-                        styles.courseCard,
-                        selected &&
-                          styles.selectedCourseCard,
+                        styles.tableRow,
+                        styles.tableHeader,
                       ]}
                     >
+                      <Text
+                        style={[
+                          styles.tableCell,
+                          styles.codeColumn,
+                        ]}
+                      >
+                        Course Code
+                      </Text>
+
+                      <Text
+                        style={[
+                          styles.tableCell,
+                          styles.titleColumn,
+                        ]}
+                      >
+                        Course Title
+                      </Text>
+
+                      <Text
+                        style={[
+                          styles.tableCell,
+                          styles.unitColumn,
+                        ]}
+                      >
+                        Course Unit
+                      </Text>
+                    </View>
+
+                    {/* Registered Courses */}
+
+                    {registeredCourses.map((course) => (
                       <View
-                        style={
-                          styles.courseInformation
-                        }
+                        key={course.id}
+                        style={styles.tableRow}
                       >
                         <Text
-                          style={
-                            styles.courseCode
-                          }
+                          style={[
+                            styles.tableCell,
+                            styles.codeColumn,
+                            styles.tableCourseCode,
+                          ]}
                         >
                           {course.course_code}
                         </Text>
 
                         <Text
-                          style={
-                            styles.courseTitle
-                          }
+                          style={[
+                            styles.tableCell,
+                            styles.titleColumn,
+                          ]}
+                          numberOfLines={2}
                         >
                           {course.course_title}
                         </Text>
-                      </View>
-
-                      <Pressable
-                        style={[
-                          styles.courseAction,
-                          selected
-                            ? styles.dropButton
-                            : styles.addButton,
-                        ]}
-                        onPress={() =>
-                          handleCourseAction(
-                            course
-                          )
-                        }
-                      >
-                        <Ionicons
-                          name={
-                            selected
-                              ? "remove"
-                              : "add"
-                          }
-                          size={18}
-                          color="#FFFFFF"
-                        />
 
                         <Text
-                          style={
-                            styles.actionText
-                          }
+                          style={[
+                            styles.tableCell,
+                            styles.unitColumn,
+                          ]}
                         >
-                          {selected
-                            ? "DROP"
-                            : "ADD"}
+                          {course.course_unit ||  "-"}
                         </Text>
-                      </Pressable>
-                    </View>
-                  );
-                })}
-              </View>
-            )}
-
-            {/* Selected Courses */}
-            {selectedCourses.length > 0 && (
-              <View style={styles.selectedSection}>
-                <View style={styles.sectionHeader}>
-                  <View>
-                    <Text
-                      style={styles.sectionTitle}
-                    >
-                      Selected Courses
-                    </Text>
-
-                    <Text
-                      style={styles.sectionSubtitle}
-                    >
-                      {selectedCourses.length} course
-                      {selectedCourses.length !== 1
-                        ? "s"
-                        : ""}{" "}
-                      selected
-                    </Text>
+                      </View>
+                    ))}
                   </View>
-                </View>
-
-                <View style={styles.selectedCard}>
-                  {selectedCourses.map(
-                    (course, index) => (
-                      <View
-                        key={course.id}
-                        style={[
-                          styles.selectedRow,
-                          index !==
-                            selectedCourses.length -
-                              1 &&
-                            styles.selectedRowBorder,
-                        ]}
-                      >
-                        <View
-                          style={
-                            styles.selectedIcon
-                          }
-                        >
-                          <Ionicons
-                            name="checkmark"
-                            size={16}
-                            color={
-                              COLORS.success
-                            }
-                          />
-                        </View>
-
-                        <View
-                          style={
-                            styles.selectedInformation
-                          }
-                        >
-                          <Text
-                            style={
-                              styles.selectedCode
-                            }
-                          >
-                            {course.course_code}
-                          </Text>
-
-                          <Text
-                            style={
-                              styles.selectedTitle
-                            }
-                          >
-                            {course.course_title}
-                          </Text>
-                        </View>
-
-                        <Text
-                          style={
-                            styles.selectedText
-                          }
-                        >
-                          Selected
-                        </Text>
-                      </View>
-                    )
-                  )}
-                </View>
-
-                {/* Submit */}
-                <Button
-                  title={
-                    submittingCourses
-                      ? "Submitting..."
-                      : "Submit Registration"
-                  }
-                  iconName={
-                    submittingCourses
-                      ? undefined
-                      : "checkmark-circle-outline"
-                  }
-                  iconSize={21}
-                  onPress={handleSubmitCourses}
-                  disabled={
-                    submittingCourses
-                  }
-                  style={styles.submitButton}
-                  textStyle={
-                    styles.submitButtonText
-                  }
-                />
-
-                <Text style={styles.submitNote}>
-                  Your changes will only be saved
-                  when you press Submit Registration.
-                </Text>
+                </ScrollView>
               </View>
             )}
           </>
-        )}
-
-        {registeredCourses.length > 0 && (
-            <View style={styles.registeredSection}>
-                <View style={styles.sectionHeader}>
-                <View>
-                    <Text style={styles.sectionTitle}>
-                    Registered Courses
-                    </Text>
-
-                    <Text style={styles.sectionSubtitle}>
-                        {registeredCourses.length} course
-                        {registeredCourses.length !== 1 ? "s" : ""} registered
-                    </Text>
-                </View>
-                </View>
-
-                <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                >
-                <View style={styles.table}>
-                    {/* Table Header */}
-                    <View style={[styles.tableRow, styles.tableHeader]}>
-                    <Text style={[styles.tableCell, styles.codeColumn]}>
-                        Code
-                    </Text>
-
-                    <Text style={[styles.tableCell, styles.titleColumn]}>
-                        Course
-                    </Text>
-
-                    <Text style={[styles.tableCell, styles.unitColumn]}>
-                        Unit
-                    </Text>
-                    </View>
-
-                    {/* Registered Courses */}
-                    {registeredCourses.map((course) => (
-                    <View
-                        key={course.id}
-                        style={styles.tableRow}
-                    >
-                        <Text
-                        style={[
-                            styles.tableCell,
-                            styles.codeColumn,
-                            styles.courseCode,
-                        ]}
-                        >
-                            {course.course_code}
-                        </Text>
-
-                        <Text
-                        style={[
-                            styles.tableCell,
-                            styles.titleColumn,
-                        ]}
-                        numberOfLines={2}
-                        >
-                            {course.course_title}
-                        </Text>
-                    </View>
-                    ))}
-                </View>
-                </ScrollView>
-            </View>
         )}
       </ScrollView>
     </View>
@@ -648,6 +657,10 @@ export default function Course({
 }
 
 const styles = StyleSheet.create({
+  tableCourseCode: {
+    fontWeight: "700",
+    color: COLORS.primary,
+  },
   container: {
     flex: 1,
     backgroundColor: "#F8FAFC",
@@ -681,7 +694,7 @@ const styles = StyleSheet.create({
   headerIcon: {
     width: 46,
     height: 46,
-    borderRadius: 14,
+    borderRadius: 23,
     backgroundColor: "#EEF2FF",
     alignItems: "center",
     justifyContent: "center",
@@ -968,7 +981,8 @@ const styles = StyleSheet.create({
 },
 
 table: {
-  minWidth: 500,
+  width: "100%",
+  minWidth: 300,
   backgroundColor: "#FFFFFF",
   borderRadius: 14,
   overflow: "hidden",
@@ -1004,7 +1018,7 @@ titleColumn: {
 },
 
 unitColumn: {
-  width: 80,
+  width: 100,
   textAlign: "center",
 },
 

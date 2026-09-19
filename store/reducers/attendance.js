@@ -9,7 +9,7 @@ import {
 
 const initialState = {
   loading: [],
-  today: null,
+  today: [],
   checkin: null,
   history: [],
   page: 1,
@@ -40,24 +40,21 @@ export default function attendance(
       return {
         ...state,
         checkin: payload,
-        today: {
-          status: "Present",
-          ...payload,
-        },
         error: null,
       };
 
     case CHECKOUT:
       return {
         ...state,
-        today: payload.attendance,
         error: null,
       };
 
     case TODAY_ATTENDANCE:
       return {
         ...state,
-        today: payload,
+        today: Array.isArray(payload)
+          ? payload
+          : [],
         error: null,
       };
 

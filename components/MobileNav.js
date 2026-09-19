@@ -1,55 +1,94 @@
 import React from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+} from "react-native";
+
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
+
 import { COLORS } from "../constants/colors";
 
 const tabs = [
   {
-    name: "Dashboard",
+    route: "Dashboard",
+    label: "Dashboard",
     icon: "grid-outline",
     activeIcon: "grid",
   },
   {
-    name: "Course",
+    route: "Course",
+    label: "Course",
     icon: "book-outline",
     activeIcon: "book",
   },
   {
-    name: "Attendance",
+    route: "Attendance",
+    label: "Attendance",
     icon: "checkmark-circle-outline",
     activeIcon: "checkmark-circle",
   },
   {
-    name: "Profile",
+    route: "Profile",
+    label: "Profile",
     icon: "person-outline",
     activeIcon: "person",
   },
 ];
 
-export default function MobileNav({
-  activeTab,
-  onTabPress,
-}) {
+export default function MobileNav() {
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  const handleTabPress = (routeName) => {
+    if (route.name === routeName) {
+      return;
+    }
+
+    navigation.navigate(routeName);
+  };
+
   return (
     <View style={styles.container}>
       {tabs.map((tab) => {
-        const isActive = activeTab === tab.name;
+        const isActive = route.name === tab.route;
 
         return (
           <Pressable
-            key={tab.name}
+            key={tab.route}
             style={styles.tab}
-            onPress={() => onTabPress(tab.name)}
+            onPress={() => handleTabPress(tab.route)}
+            accessibilityRole="button"
+            accessibilityLabel={tab.label}
+            accessibilityState={{
+              selected: isActive,
+            }}
           >
-            <Ionicons
-              name={isActive ? tab.activeIcon : tab.icon}
-              size={24}
-              color={
-                isActive
-                  ? COLORS.primary
-                  : COLORS.gray
-              }
-            />
+            <View
+              style={[
+                styles.iconContainer,
+                isActive && styles.activeIconContainer,
+              ]}
+            >
+              <Ionicons
+                name={
+                  isActive
+                    ? tab.activeIcon
+                    : tab.icon
+                }
+                size={23}
+                color={
+                  isActive
+                    ? COLORS.primary
+                    : COLORS.gray
+                }
+              />
+            </View>
 
             <Text
               style={[
@@ -57,7 +96,7 @@ export default function MobileNav({
                 isActive && styles.activeLabel,
               ]}
             >
-              {tab.name}
+              {tab.label}
             </Text>
           </Pressable>
         );
@@ -68,25 +107,39 @@ export default function MobileNav({
 
 const styles = StyleSheet.create({
   container: {
-    height: 70,
+    width: "100%",
+    height: 72,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
     backgroundColor: "#FFFFFF",
     borderTopWidth: 1,
     borderTopColor: "#E5E7EB",
+    paddingHorizontal: 8,
     paddingBottom: 6,
   },
-
   tab: {
     flex: 1,
+    height: 66,
     alignItems: "center",
     justifyContent: "center",
-    gap: 3,
+  },
+
+  iconContainer: {
+    width: 42,
+    height: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    marginBottom: 2,
+  },
+
+  activeIconContainer: {
+    backgroundColor: "#EEF4FF",
   },
 
   label: {
     fontSize: 11,
+    lineHeight: 16,
     color: COLORS.gray,
   },
 

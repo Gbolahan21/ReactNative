@@ -98,6 +98,10 @@ export default StyleSheet.create({
     borderRadius: 12,
     maxHeight: 250,
     overflow: "hidden",
+    minWidth: 300,
+  },
+
+  desktopdropdownModal: {
     minWidth: 400,
   },
 

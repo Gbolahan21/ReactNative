@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import baseRoutes from "./base";
 import PrivateRoute from "../components/PrivateRoute";
 import ReduxRoute from "../components/ReduxRoute";
+import Layout from "../components/Layout";
 
 const Stack = createNativeStackNavigator();
 
@@ -36,10 +37,12 @@ function Routes() {
         >
           {(navigationProps) => (
             <PrivateRoute {...navigationProps}>
-              <ReduxRoute
-                component={route.component}
-                {...navigationProps}
-              />
+              <Layout>
+                <ReduxRoute
+                  component={route.component}
+                  {...navigationProps}
+                />
+              </Layout>
             </PrivateRoute>
           )}
         </Stack.Screen>

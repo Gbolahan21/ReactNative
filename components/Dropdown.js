@@ -3,6 +3,8 @@ import { View, Text, Pressable, Modal, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "../assets/styles/commonCSS";
 
+import useResponsive from "../hooks/useResponsive";
+
 export default function Dropdown({
   label,
   placeholder = "Select",
@@ -11,6 +13,7 @@ export default function Dropdown({
   onSelect,
 }) {
   const [visible, setVisible] = useState(false);
+  const { isDesktop } = useResponsive();
 
   return (
     <View style={styles.dropdownContainer}>
@@ -49,7 +52,10 @@ export default function Dropdown({
           style={styles.modalOverlay}
           onPress={() => setVisible(false)}
         >
-          <View style={styles.dropdownModal}>
+          <View style={[
+            styles.dropdownModal,
+            isDesktop && styles.desktopdropdownModal,
+          ]}>
             <FlatList
               data={options}
               keyExtractor={(item) => item.value}

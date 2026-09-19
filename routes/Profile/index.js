@@ -152,12 +152,7 @@ export default function Profile({
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        isDesktop && styles.desktopContainer,
-      ]}
-    >
+    <View style={styles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
@@ -172,6 +167,14 @@ export default function Profile({
             <Text style={styles.subtitle}>
               Manage your student information
             </Text>
+          </View>
+
+          <View style={styles.headerIcon}>
+            <Ionicons
+              name="person"
+              size={22}
+              color={COLORS.primary}
+            />
           </View>
         </View>
 
@@ -491,10 +494,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F7F9FC",
   },
 
-  desktopContainer: {
-    paddingHorizontal: 30,
-  },
-
   content: {
     paddingHorizontal: 18,
     paddingTop: 22,
@@ -506,7 +505,19 @@ const styles = StyleSheet.create({
   // =========================
 
   header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 22,
+  },
+
+  headerIcon: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: "#EEF2FF",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   title: {
