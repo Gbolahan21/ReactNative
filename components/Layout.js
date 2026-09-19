@@ -11,38 +11,49 @@ import MobileNav from "./MobileNav";
 export default function StudentLayout({ children }) {
   const { width } = useWindowDimensions();
 
-  const isMobile = width < 768;
+  const isMobile = width < 1024;
 
   return (
-    <View
-      style={[
-        styles.container,
-        isMobile && styles.mobileContainer,
-      ]}
-    >
-      {/* Desktop Sidebar */}
-      {!isMobile && <SidebarMenu />}
+    <View style={styles.page}>
+      <View
+        style={[
+          styles.container,
+          isMobile && styles.mobileContainer,
+        ]}
+      >
+        {/* Desktop Sidebar */}
+        {!isMobile && <SidebarMenu />}
 
-      {/* Page Content */}
-      <View style={styles.content}>
-        {children}
+        {/* Page Content */}
+        <View style={styles.content}>
+          {children}
+        </View>
+
+        {/* Mobile Bottom Navigation */}
+        {isMobile && <MobileNav />}
       </View>
-
-      {/* Mobile Bottom Navigation */}
-      {isMobile && <MobileNav />}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+    backgroundColor: "#E5E7EB",
+    alignItems: "center",
+  },
+
   container: {
     flex: 1,
+    width: "100%",
+    maxWidth: 1400,
     flexDirection: "row",
     backgroundColor: "#F8FAFC",
   },
 
   mobileContainer: {
     flexDirection: "column",
+    maxWidth: "100%",
   },
 
   content: {
