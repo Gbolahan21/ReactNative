@@ -9,7 +9,8 @@ import {
   LOAD,
   STUDENT_UPDATE,
   LOOKUPS,
-  COURSES
+  COURSES,
+  REGISTER_COURSE
 } from '../types';
 
 export const initialState = {
@@ -55,6 +56,11 @@ export default function (state = initialState, action) {
       };
 
     case SIGNUP:
+      return {
+        ...state,
+      };
+
+    case REGISTER_COURSE:
       return {
         ...state,
       };

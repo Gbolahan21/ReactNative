@@ -7,3 +7,4 @@ export const LOAD = 'LOAD';
 export const STUDENT_UPDATE = "STUDENT_UPDATE";
 export const LOOKUPS = 'LOOKUPS';
 export const COURSES = "COURSES";
+export const REGISTER_COURSE = "REGISTER_COURSE";

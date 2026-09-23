@@ -8,7 +8,8 @@ import {
   LOAD,
   STUDENT_UPDATE,
   LOOKUPS,
-  COURSES
+  COURSES,
+  REGISTER_COURSE
 } from '../types';
 
 export const signup = (firstname, lastname, matricNo, email, gender, department, faculty, level, password, error, success) => 
@@ -112,6 +113,7 @@ export const registerCourse = (courseId, error, success) =>
     {
       error: ERROR,
       loading: LOADING,
+      responder: REGISTER_COURSE,
     }
   );
 
