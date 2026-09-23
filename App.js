@@ -11,6 +11,8 @@ import { load } from "./store/actions";
 import { AUTH_INITIALIZED } from "./store/types";
 import * as Helpers from './helpers';
 
+import "./assets/styles/autofill.css";
+
 function AppContent() {
   const dispatch = useDispatch();
 
