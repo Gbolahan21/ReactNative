@@ -126,8 +126,8 @@ export default function SignUp({ navigation, signup }) {
           <IconButton name="arrow-back" size={28} onPress={() => navigation.navigate("Home")}/>
           <Text style={register.text}>Register</Text>
 
-          <View style={register.grid}>
-            <View style={register.gridItem}>
+          <View style={isDesktop ? register.desktopGrid : null}>
+            <View style={isDesktop ? register.desktopGridItem : null}>
               <TextInput 
                 style={register.input}
                 placeholder="Enter your firstname"
@@ -138,7 +138,7 @@ export default function SignUp({ navigation, signup }) {
               />
             </View>
 
-            <View style={register.gridItem}>
+            <View style={isDesktop ? register.desktopGridItem : null}>
               <TextInput 
                 style={register.input}
                 placeholder="Enter your lastname"
@@ -149,7 +149,7 @@ export default function SignUp({ navigation, signup }) {
               />
             </View>              
 
-            <View style={register.gridItem}>
+            <View style={isDesktop ? register.desktopGridItem : null}>
               <TextInput 
                 style={register.input}
                 placeholder="Enter your matric no"
@@ -159,7 +159,7 @@ export default function SignUp({ navigation, signup }) {
               />
             </View>
 
-            <View style={register.gridItem}>
+            <View style={isDesktop ? register.desktopGridItem : null}>
               <TextInput 
                 style={register.input}
                 placeholder="Enter your school email"
@@ -170,7 +170,7 @@ export default function SignUp({ navigation, signup }) {
               />
             </View>
 
-            <View style={register.gridItem}>
+            <View style={isDesktop ? register.desktopGridItem : null}>
               <Dropdown
                 value={gender}
                 placeholder="Select Gender"
@@ -182,7 +182,7 @@ export default function SignUp({ navigation, signup }) {
               />
             </View>
 
-            <View style={register.gridItem}>
+            <View style={isDesktop ? register.desktopGridItem : null}>
               <TextInput 
                 style={register.input}
                 placeholder="Enter your department"
@@ -193,7 +193,7 @@ export default function SignUp({ navigation, signup }) {
               />
             </View>
 
-            <View style={register.gridItem}>
+            <View style={isDesktop ? register.desktopGridItem : null}>
               <TextInput 
                 style={register.input}
                 placeholder="Enter your faculty"
@@ -204,7 +204,7 @@ export default function SignUp({ navigation, signup }) {
               />
             </View>
             
-            <View style={register.gridItem}>
+            <View style={isDesktop ? register.desktopGridItem : null}>
               <Dropdown
                 value={level}
                 placeholder="Select Level"
@@ -220,7 +220,7 @@ export default function SignUp({ navigation, signup }) {
               />
             </View>
 
-            <View style={register.gridItem}>
+            <View style={isDesktop ? register.desktopGridItem : null}>
               <View style={register.inputContainer}>
                 <TextInput
                   style={register.inputs}
@@ -234,7 +234,7 @@ export default function SignUp({ navigation, signup }) {
               </View>
             </View>
 
-            <View style={register.gridItem}>
+            <View style={isDesktop ? register.desktopGridItem : null}>
               <View style={register.inputContainer}>
                 <TextInput
                   style={register.inputs}

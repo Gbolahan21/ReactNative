@@ -10,6 +10,8 @@ import {
   ScrollView,
   Pressable,
   StyleSheet,
+  Modal,
+  TextInput
 } from "react-native";
 
 import { useSelector } from "react-redux";
@@ -35,6 +37,9 @@ export default function Dashboard({
     courses = [],
   } = student;
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const [showCheckinModal, setShowCheckinModal] = useState(false);
+  const [sessionCode, setSessionCode] = useState("");
+  const [checkingIn, setCheckingIn] = useState(false);
   const currentAttendance = attendance?.today?.find(
     (item) => Number(item.course_id) === Number(selectedCourse)
   );
@@ -133,29 +138,52 @@ export default function Dashboard({
   ]);
 
   const handleCheckIn = useCallback(() => {
-    if (!student?.id) {
-      Toast.show({
-        type: "error",
-        text1: "Student Error",
-        text2: "Student information is not available.",
-      });
-      return;
-    }
-
     if (!selectedCourse) {
       Toast.show({
         type: "error",
         text1: "Select a Course",
         text2: "Please select a course before checking in.",
       });
+
       return;
     }
 
+    setSessionCode("");
+    setShowCheckinModal(true);
+  }, [selectedCourse]);
+
+  const submitCheckIn = useCallback(() => {
+    const code = sessionCode.trim();
+
+    if (!code) {
+      Toast.show({
+        type: "error",
+        text1: "Attendance Code Required",
+        text2: "Enter the code provided by your lecturer.",
+      });
+
+      return;
+    }
+
+    if (code.length !== 6) {
+      Toast.show({
+        type: "error",
+        text1: "Invalid Code",
+        text2: "The attendance code must contain 6 digits.",
+      });
+
+      return;
+    }
+
+    setCheckingIn(true);
+
     checkin(
-      student.id,
       selectedCourse,
+      code,
 
       (error) => {
+        setCheckingIn(false);
+
         Toast.show({
           type: "error",
           text1: "Attendance Failed",
@@ -166,6 +194,10 @@ export default function Dashboard({
       },
 
       (response) => {
+        setCheckingIn(false);
+        setShowCheckinModal(false);
+        setSessionCode("");
+
         Toast.show({
           type: "success",
           text1: "Attendance Recorded",
@@ -179,61 +211,10 @@ export default function Dashboard({
     );
   }, [
     checkin,
+    selectedCourse,
+    sessionCode,
     todayAttendance,
     student?.id,
-    selectedCourse,
-  ]);
-
-  const handleCheckOut = useCallback(() => {
-    if (!student?.id) {
-      Toast.show({
-        type: "error",
-        text1: "Student Error",
-        text2: "Student information is not available.",
-      });
-      return;
-    }
-
-    if (!selectedCourse) {
-      Toast.show({
-        type: "error",
-        text1: "Select a Course",
-        text2: "Please select a course before checking out.",
-      });
-      return;
-    }
-
-    checkout(
-      student.id,
-      selectedCourse,
-
-      (error) => {
-        Toast.show({
-          type: "error",
-          text1: "Checkout Failed",
-          text2:
-            error?.message ||
-            "Unable to record checkout.",
-        });
-      },
-
-      (response) => {
-        Toast.show({
-          type: "success",
-          text1: "Checkout Recorded",
-          text2:
-            response?.message ||
-            "You have been checked out.",
-        });
-
-        todayAttendance(student.id);
-      }
-    );
-  }, [
-    checkout,
-    todayAttendance,
-    student?.id,
-    selectedCourse,
   ]);
 
   const formatLevel = (level) => {
@@ -368,7 +349,6 @@ export default function Dashboard({
                       style={styles.checkOutButton}
                       onPress={() => {
                         checkout(
-                          student.id,
                           item.course_id,
 
                           (error) => {
@@ -655,11 +635,223 @@ export default function Dashboard({
 
         </View>
       </ScrollView>
+
+      <Modal
+        visible={showCheckinModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {
+          if (!checkingIn) {
+            setShowCheckinModal(false);
+          }
+        }}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.checkinModal}>
+
+            <View style={styles.modalIcon}>
+              <Ionicons
+                name="keypad-outline"
+                size={28}
+                color={COLORS.primary}
+              />
+            </View>
+
+            <Text style={styles.modalTitle}>
+              Check In
+            </Text>
+
+            <Text style={styles.modalDescription}>
+              Enter the 6-digit attendance code provided by your lecturer.
+            </Text>
+
+            <Text style={styles.modalLabel}>
+              Attendance Code
+            </Text>
+
+            <TextInput
+              value={sessionCode}
+              onChangeText={(text) => {
+                const numericValue = text
+                  .replace(/[^0-9]/g, "")
+                  .slice(0, 6);
+
+                setSessionCode(numericValue);
+              }}
+              placeholder="000000"
+              placeholderTextColor="#94A3B8"
+              keyboardType="number-pad"
+              maxLength={6}
+              editable={!checkingIn}
+              style={styles.codeInput}
+            />
+
+            <Text style={styles.codeHint}>
+              The code is provided by your lecturer during class.
+            </Text>
+
+            <View style={styles.modalActions}>
+
+              <Pressable
+                style={styles.cancelButton}
+                disabled={checkingIn}
+                onPress={() => {
+                  setShowCheckinModal(false);
+                  setSessionCode("");
+                }}
+              >
+                <Text style={styles.cancelButtonText}>
+                  Cancel
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={[
+                  styles.confirmCheckinButton,
+                  (sessionCode.length !== 6 || checkingIn) &&
+                    styles.disabledCheckinButton,
+                ]}
+                disabled={
+                  sessionCode.length !== 6 ||
+                  checkingIn
+                }
+                onPress={submitCheckIn}
+              >
+                <Ionicons
+                  name="finger-print-outline"
+                  size={18}
+                  color="#FFFFFF"
+                />
+
+                <Text style={styles.confirmCheckinText}>
+                  {checkingIn ? "Checking In..." : "Check In"}
+                </Text>
+              </Pressable>
+
+            </View>
+
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(15, 23, 42, 0.55)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+
+  checkinModal: {
+    width: "100%",
+    maxWidth: 420,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 22,
+    padding: 24,
+  },
+
+  modalIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 18,
+    backgroundColor: "#EEF2FF",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginBottom: 16,
+  },
+
+  modalTitle: {
+    fontSize: 21,
+    fontWeight: "700",
+    color: "#0F172A",
+    textAlign: "center",
+  },
+
+  modalDescription: {
+    fontSize: 13,
+    lineHeight: 19,
+    color: "#64748B",
+    textAlign: "center",
+    marginTop: 8,
+    marginBottom: 22,
+  },
+
+  modalLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#0F172A",
+    marginBottom: 8,
+  },
+
+  codeInput: {
+    height: 58,
+    borderWidth: 1,
+    borderColor: "#CBD5E1",
+    borderRadius: 14,
+    backgroundColor: "#F8FAFC",
+    textAlign: "center",
+    fontSize: 25,
+    fontWeight: "700",
+    letterSpacing: 8,
+    color: "#0F172A",
+  },
+
+  codeHint: {
+    fontSize: 11,
+    lineHeight: 16,
+    color: "#94A3B8",
+    textAlign: "center",
+    marginTop: 9,
+  },
+
+  modalActions: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 22,
+  },
+
+  cancelButton: {
+    flex: 1,
+    height: 48,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  cancelButtonText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#475569",
+  },
+
+  confirmCheckinButton: {
+    flex: 1,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: COLORS.primary,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 7,
+  },
+
+  confirmCheckinText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+
+  disabledCheckinButton: {
+    opacity: 0.5,
+  },
+
   checkOutButton: {
     flexDirection: "row",
     alignItems: "center",

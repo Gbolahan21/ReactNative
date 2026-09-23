@@ -33,12 +33,12 @@ export default StyleSheet.create({
     shadowRadius: 12,
   },
 
-  grid: {
+  desktopGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
   },
 
-  gridItem: {
+  desktopGridItem: {
     width: "50%",
     paddingRight: 8,
   },
