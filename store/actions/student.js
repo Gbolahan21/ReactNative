@@ -9,7 +9,10 @@ import {
   STUDENT_UPDATE,
   LOOKUPS,
   COURSES,
-  REGISTER_COURSE
+  REGISTER_COURSE,
+  FORGOT_PASSWORD,
+  VERIFY_RESET_CODE,
+  RESET_PASSWORD
 } from '../types';
 
 export const signup = (firstname, lastname, matricNo, email, gender, department, faculty, level, password, error, success) => 
@@ -117,26 +120,41 @@ export const registerCourse = (courseId, error, success) =>
     }
   );
 
-export const dropCourse = (courseId, error, success) =>
+export const forgotPassword = (data, error, success) =>
   Helpers.api(
-    `/course-registration/${courseId}/drop`,
-    "DELETE",
-    {},
+    "/reset-password/student/forgot-password",
+    "POST",
+    data,
     { error, success },
     {
       error: ERROR,
       loading: LOADING,
+      responder: FORGOT_PASSWORD,
     }
   );
 
-export const registerAllCourses = (error, success) =>
+export const verifyResetCode = (data, error, success) =>
   Helpers.api(
-    "/course-registration/registerr-all",
+    "/reset-password/student/verify-reset-code",
     "POST",
-    {},
+    data,
     { error, success },
     {
       error: ERROR,
       loading: LOADING,
+      responder: VERIFY_RESET_CODE,
+    }
+  );
+
+export const resetPassword = (data, error, success) =>
+  Helpers.api(
+    "/reset-password/student/reset-password",
+    "POST",
+    data,
+    { error, success },
+    {
+      error: ERROR,
+      loading: LOADING,
+      responder: RESET_PASSWORD,
     }
   );

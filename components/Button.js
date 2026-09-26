@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, View, ActivityIndicator } from "react-native";
 import { COLORS } from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "../assets/styles/commonCSS";
@@ -13,11 +13,12 @@ export default function Button({
   iconSize = 20,
   iconRightName,
   iconRightSize = 20,
+  loading
 }) {
   return (
     <Pressable
       onPress={onPress}
-      disabled={disabled}
+      disabled={disabled || loading}
       style={[
         styles.button,
         disabled && styles.disabledButton,
@@ -33,9 +34,16 @@ export default function Button({
           />
         )}
 
-        <Text style={[styles.buttonText, textStyle]}>
-          {title}
-        </Text>
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            color="#FFFFFF"
+          />
+        ) : (
+          <Text style={[styles.buttonText, textStyle]}>
+            {title}
+          </Text>
+        )}
 
         {iconRightName && (
           <Ionicons

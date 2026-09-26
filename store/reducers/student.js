@@ -10,7 +10,10 @@ import {
   STUDENT_UPDATE,
   LOOKUPS,
   COURSES,
-  REGISTER_COURSE
+  REGISTER_COURSE,
+  FORGOT_PASSWORD,
+  VERIFY_RESET_CODE,
+  RESET_PASSWORD
 } from '../types';
 
 export const initialState = {
@@ -92,6 +95,21 @@ export default function (state = initialState, action) {
       return {
         ...state,
         ...payload.student,
+      };
+
+    case FORGOT_PASSWORD:
+      return {
+        ...state,
+      };
+
+    case VERIFY_RESET_CODE:
+      return {
+        ...state,
+      };
+
+    case RESET_PASSWORD:
+      return {
+        ...state,
       };
 
     case AUTH_INITIALIZED:

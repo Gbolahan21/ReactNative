@@ -18,13 +18,16 @@ export default function SignIn({ navigation, signin }) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [loginUser, setLoginUser] = useState(false);
 
   const handleLogin = () => {
+    setLoginUser(true)
     signin(
       matricNo.trim(),
       password,
 
       (error) => {
+        setLoginUser(false)
         Toast.show({
           type: "error",
           text1: "Login Failed",
@@ -36,6 +39,7 @@ export default function SignIn({ navigation, signin }) {
       },
 
       async (response) => {
+        setLoginUser(false)
         if (rememberMe) {
           await AsyncStorage.setItem(
             "savedMatricNo",
@@ -99,6 +103,8 @@ export default function SignIn({ navigation, signin }) {
             secureTextEntry={!showPassword}
             value={password}
             onChangeText={setPassword}
+            textContentType="password"
+            autoComplete="current-password"
           />
 
           <IconButton name={showPassword ? "eye" : "eye-off"} onPress={() => setShowPassword(!showPassword)} />
@@ -117,9 +123,15 @@ export default function SignIn({ navigation, signin }) {
               Remember Me
             </Text>
           </Pressable>
+
+          <Pressable onPress={() => navigation.navigate("ForgotPassword")}>
+            <Text style={login.forgotText}>
+              Forgot Password?
+            </Text>
+          </Pressable>
         </View>
 
-        <Button title="Login" onPress={handleLogin} disabled={details} />
+        <Button title="Login" onPress={handleLogin} disabled={details || loginUser} loading={loginUser} />
 
         <Text style={login.footerText}>
           Don't have an account?{" "}

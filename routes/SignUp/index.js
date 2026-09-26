@@ -228,6 +228,9 @@ export default function SignUp({ navigation, signup }) {
                   secureTextEntry={!showPassword}
                   value={password}
                   onChangeText={setPassword}
+                  autoCorrect={false}
+                  textContentType="newPassword"
+                  autoComplete="new-password"
                 />
             
                 <IconButton name={showPassword ? "eye" : "eye-off"} onPress={() => setShowPassword(!showPassword)} />
@@ -242,6 +245,9 @@ export default function SignUp({ navigation, signup }) {
                   secureTextEntry={!showConfirmPassword}
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
+                  autoCorrect={false}
+                  textContentType="newPassword"
+                  autoComplete="new-password"
                 />
               
                 <IconButton name={showConfirmPassword ? "eye" : "eye-off"} onPress={() => setShowConfirmPassword(!showConfirmPassword)} />

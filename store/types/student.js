@@ -8,3 +8,6 @@ export const STUDENT_UPDATE = "STUDENT_UPDATE";
 export const LOOKUPS = 'LOOKUPS';
 export const COURSES = "COURSES";
 export const REGISTER_COURSE = "REGISTER_COURSE";
+export const FORGOT_PASSWORD = "FORGOT_PASSWORD";
+export const VERIFY_RESET_CODE = "VERIFY_RESET_CODE";
+export const RESET_PASSWORD = "RESET_PASSWORD";

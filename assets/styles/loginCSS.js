@@ -95,6 +95,9 @@ export default StyleSheet.create({
 
   rememberContainer: {
     marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 
   rememberButton: {
@@ -106,4 +109,9 @@ export default StyleSheet.create({
     marginLeft: 8,
     fontSize: 16,
   },
+
+  forgotText: {
+    fontSize: 16,
+    color: COLORS.danger
+  }
 });

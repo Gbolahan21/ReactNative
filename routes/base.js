@@ -5,6 +5,9 @@ import Dashboard from "./Dashboard";
 import Course from "./Course";
 import Attendance from "./Attendance";
 import Profile from "./Profile";
+import ForgotPassword from "./ForgotPassword";
+import PasswordVerification from "./PasswordVerification";
+import ResetPassword from "./ResetPassword";
 
 const baseRoutes = {
   public: [
@@ -22,6 +25,21 @@ const baseRoutes = {
       name: "SignUp",
       component: SignUp,
       path: "/signup",
+    },
+    {
+      name: "ForgotPassword",
+      component: ForgotPassword,
+      path: "/forgot-password",
+    },
+    {
+      name: "PasswordVerification",
+      component: PasswordVerification,
+      path: "/verify-code",
+    },
+    {
+      name: "ResetPassword",
+      component: ResetPassword,
+      path: "/reset-password"
     },
   ],
 
