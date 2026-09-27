@@ -1,7 +1,7 @@
 import { Pressable, Text, View, ActivityIndicator } from "react-native";
 import { COLORS } from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "../assets/styles/commonCSS";
+import styles from "../assets/styles/commonStyles";
 
 export default function Button({
   title,

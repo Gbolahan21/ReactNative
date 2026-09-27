@@ -3,7 +3,7 @@ import Toast from "react-native-toast-message";
 import IconButton from "../../components/IconButton";
 import Button from "../../components/Button";
 import Dropdown from "../../components/Dropdown";
-import register from "../../assets/styles/registerCSS";
+import register from "../../assets/styles/styles";
 import useResponsive from "../../hooks/useResponsive";
 import {
   View,
@@ -127,11 +127,11 @@ export default function SignUp({ navigation, signup }) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView 
-        contentContainerStyle={[register.container, isDesktop && register.desktopContainer]}
+        contentContainerStyle={[register.container, isDesktop && register.desktopRegisterContainer]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={isDesktop ? register.card : null}>
+        <View style={isDesktop ? register.registerCard : null}>
           <IconButton name="arrow-back" size={28} onPress={() => navigation.navigate("Home")}/>
           <Text style={register.text}>Register</Text>
 
@@ -325,7 +325,7 @@ export default function SignUp({ navigation, signup }) {
 
           <Text style={register.footerText}>
             Already have an account.{" "}
-            <Text style={register.link} onPress={() => navigation.navigate("SignIn")}>Login</Text>
+            <Text style={register.loginLink} onPress={() => navigation.navigate("SignIn")}>Login</Text>
           </Text>
         </View>
       </ScrollView>

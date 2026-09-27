@@ -1,7 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../constants/colors";
-import styles from "../assets/styles/commonCSS";
+import styles from "../assets/styles/commonStyles";
 
 export default function Pagination({
   page,

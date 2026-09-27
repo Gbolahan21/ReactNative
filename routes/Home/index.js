@@ -1,6 +1,6 @@
 import { View, Text, Pressable, Image } from "react-native";
 import moh from '../../assets/images/moh.png';
-import home from "../../assets/styles/homeCSS";
+import home from "../../assets/styles/styles";
 import useResponsive from "../../hooks/useResponsive";
 
 export default function HomeScreen({ navigation }) {

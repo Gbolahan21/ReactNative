@@ -7,7 +7,6 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
-    StyleSheet
 } from "react-native";
 
 import Toast from "react-native-toast-message";
@@ -16,6 +15,7 @@ import Button from "../../components/Button";
 import IconButton from "../../components/IconButton";
 import { COLORS } from "../../constants/colors";
 import useResponsive from "../../hooks/useResponsive";
+import styles from "../../assets/styles/styles";
 
 function ResetPassword({
     navigation,
@@ -174,7 +174,7 @@ function ResetPassword({
             behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
             <ScrollView
-                contentContainerStyle={styles.scrollContent}
+                contentContainerStyle={[styles.container, isDesktop && styles.desktopLoginContainer]}
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
             >
@@ -190,7 +190,7 @@ function ResetPassword({
                     </View>
 
                     {/* Title */}
-                    <Text style={styles.title}>
+                    <Text style={styles.text}>
                         Reset Password
                     </Text>
 
@@ -206,19 +206,17 @@ function ResetPassword({
                             color="#64748B"
                         />
 
-                        <Text style={styles.email} numberOfLines={1}>
+                        <Text style={styles.resetEmail} numberOfLines={1}>
                             {email}
                         </Text>
                     </View>
 
                     {/* Password */}
-                    <Text style={styles.label}>
-                        New Password
-                    </Text>
+                    <Text style={styles.label}>New Password</Text>
 
                     <View style={styles.inputContainer}>
                         <TextInput
-                            style={styles.input}
+                            style={styles.inputs}
                             placeholder="Enter new password"
                             placeholderTextColor="#94A3B8"
                             secureTextEntry={!showPassword}
@@ -234,17 +232,11 @@ function ResetPassword({
                     </View>
 
                     {/* Confirm Password */}
-                    <Text style={styles.label}>
-                        Confirm Password
-                    </Text>
+                    <Text style={styles.label}>Confirm Password</Text>
 
-                    <View
-                        style={
-                            styles.inputContainer
-                        }
-                    >
+                    <View style={styles.inputContainer}>
                         <TextInput
-                            style={styles.input}
+                            style={styles.inputs}
                             placeholder="Confirm new password"
                             placeholderTextColor="#94A3B8"
                             secureTextEntry={!showConfirmPassword}
@@ -306,143 +298,5 @@ function ResetPassword({
         </KeyboardAvoidingView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: { 
-        flex: 1, 
-        backgroundColor: 
-        COLORS.background, 
-        padding: 20
-    }, 
-    
-    scrollContent: { 
-        flexGrow: 1, 
-        justifyContent: "center", 
-        alignItems: "center", 
-    }, 
-    
-    card: { 
-        width: "100%", 
-        maxWidth: 450, 
-        backgroundColor: COLORS.white, 
-        borderRadius: 16, 
-        padding: 30, 
-        elevation: 8, 
-        shadowColor: "#000", 
-        shadowOffset: { 
-            width: 0, 
-            height: 4 
-        }, 
-        shadowOpacity: 0.15, 
-        shadowRadius: 12 
-    }, 
-    
-    iconContainer: { 
-        width: 64, 
-        height: 64, 
-        borderRadius: 32, 
-        backgroundColor: "#EEF2FF", 
-        alignItems: "center", 
-        justifyContent: "center", 
-        alignSelf: "center", 
-        marginBottom: 18 
-    }, 
-    
-    title: { 
-        fontSize: 26, 
-        fontWeight: "bold", 
-        color: COLORS.text, 
-        textAlign: "center", 
-        marginBottom: 8 
-    }, 
-    
-    description: { 
-        fontSize: 14, 
-        lineHeight: 21, 
-        color: "#64748B", 
-        textAlign: "center", 
-        marginBottom: 20 
-    }, 
-    
-    emailContainer: { 
-        flexDirection: "row", 
-        alignItems: "center", 
-        backgroundColor: "#F8FAFC", 
-        borderWidth: 1, 
-        borderColor: COLORS.border, 
-        borderRadius: 10, 
-        paddingHorizontal: 14, 
-        height: 48, 
-        marginBottom: 22 
-    }, 
-    
-    email: { 
-        flex: 1, 
-        marginLeft: 9, 
-        fontSize: 14, 
-        color: COLORS.text, 
-        fontWeight: "500" 
-    }, 
-    
-    label: { 
-        fontSize: 14, 
-        fontWeight: "600", 
-        color: COLORS.text, 
-        marginBottom: 8 
-    }, 
-    
-    inputContainer: { 
-        flexDirection: "row", 
-        alignItems: "center", 
-        borderWidth: 1, 
-        borderColor: COLORS.border, 
-        borderRadius: 10, 
-        height: 52, 
-        paddingHorizontal: 15, 
-        marginBottom: 18, 
-        backgroundColor: COLORS.white 
-    }, 
-    
-    input: { 
-        flex: 1, 
-        fontSize: 16, 
-        color: COLORS.text, 
-        outlineStyle: "none" 
-    }, 
-    
-    requirements: { 
-        backgroundColor: "#F8FAFC", 
-        borderRadius: 10, 
-        padding: 14, 
-        marginBottom: 22, 
-        borderWidth: 1, 
-        borderColor: "#E2E8F0" 
-    }, 
-    
-    requirementsTitle: { 
-        fontSize: 13, 
-        fontWeight: "700", 
-        color: COLORS.text, 
-        marginBottom: 7 
-    }, 
-    
-    requirement: { 
-        fontSize: 12, 
-        color: "#64748B", 
-        marginBottom: 3 
-    }, 
-    
-    button: { 
-        width: "100%", 
-        marginBottom: 16 
-    }, 
-    
-    backText: { 
-        textAlign: "center", 
-        color: COLORS.primary, 
-        fontSize: 14, 
-        fontWeight: "600" 
-    },
-})
 
 export default ResetPassword;

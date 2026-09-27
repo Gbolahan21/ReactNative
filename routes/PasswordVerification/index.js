@@ -3,12 +3,12 @@ import {
     View,
     Text,
     TextInput,
-    StyleSheet,
     Pressable,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import Button from "../../components/Button";
 import useResponsive from "../../hooks/useResponsive";
+import styles from "../../assets/styles/styles";
 
 function PasswordVerification({
     verifyResetCode,
@@ -91,9 +91,9 @@ function PasswordVerification({
     }, [verifyResetCode, navigation, code, email]);
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, isDesktop && styles.desktopLoginContainer]}>
             <View style={isDesktop ? styles.card : null}>
-                <Text style={styles.title}>
+                <Text style={styles.text}>
                     Verify Your Email
                 </Text>
 
@@ -111,7 +111,7 @@ function PasswordVerification({
                 </Text>
 
                 <TextInput
-                    style={styles.codeInput}
+                    style={styles.passCodeInput}
                     placeholder="000000"
                     placeholderTextColor="#999"
                     value={code}
@@ -143,69 +143,5 @@ function PasswordVerification({
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: "#f5f7fa",
-    },
-
-    card: {
-        width: "100%",
-        maxWidth: 450,
-        backgroundColor: "#fff",
-        padding: 30,
-        borderRadius: 12,
-    },
-
-    title: {
-        fontSize: 26,
-        fontWeight: "700",
-        textAlign: "center",
-        marginBottom: 10,
-    },
-
-    description: {
-        fontSize: 15,
-        lineHeight: 22,
-        color: "#666",
-        textAlign: "center",
-        marginBottom: 12,
-    },
-
-    email: {
-        fontSize: 14,
-        fontWeight: "600",
-        textAlign: "center",
-        marginBottom: 25,
-    },
-
-    label: {
-        fontSize: 14,
-        fontWeight: "600",
-        marginBottom: 8,
-    },
-
-    codeInput: {
-        height: 55,
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 8,
-        fontSize: 24,
-        fontWeight: "700",
-        letterSpacing: 8,
-        marginBottom: 20,
-        paddingHorizontal: 15
-    },
-
-    backText: {
-        textAlign: "center",
-        marginTop: 20,
-        fontSize: 14,
-        color: "#1F2937",
-        fontWeight: "600",
-    },
-});
 
 export default PasswordVerification;

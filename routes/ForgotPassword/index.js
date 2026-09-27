@@ -3,12 +3,12 @@ import {
     View,
     Text,
     TextInput,
-    StyleSheet,
     Pressable,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import Button from "../../components/Button";
 import useResponsive from "../../hooks/useResponsive";
+import styles from "../../assets/styles/styles";
 
 function ForgotPassword({
     forgotPassword,
@@ -62,9 +62,9 @@ function ForgotPassword({
     }, [forgotPassword, navigation, email]);
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, isDesktop && styles.desktopLoginContainer]}>
             <View style={isDesktop ? styles.card : null}>
-                <Text style={styles.title}>
+                <Text style={styles.text}>
                     Forgot Password?
                 </Text>
 
@@ -105,60 +105,5 @@ function ForgotPassword({
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: "#f5f7fa",
-    },
-
-    card: {
-        width: "100%",
-        maxWidth: 450,
-        backgroundColor: "#fff",
-        padding: 30,
-        borderRadius: 12,
-    },
-
-    title: {
-        fontSize: 26,
-        fontWeight: "700",
-        marginBottom: 10,
-        textAlign: "center",
-    },
-
-    description: {
-        fontSize: 15,
-        lineHeight: 22,
-        color: "#666",
-        textAlign: "center",
-        marginBottom: 25,
-    },
-
-    label: {
-        fontSize: 14,
-        fontWeight: "600",
-        marginBottom: 8,
-    },
-
-    input: {
-        height: 50,
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 8,
-        paddingHorizontal: 15,
-        fontSize: 15,
-        marginBottom: 20,
-    },
-
-    backText: {
-        textAlign: "center",
-        marginTop: 20,
-        fontSize: 14,
-        color: "#1F2937",
-        fontWeight: "600",
-    },
-});
 
 export default ForgotPassword;

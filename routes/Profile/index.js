@@ -5,7 +5,6 @@ import {
   ScrollView,
   Pressable,
   Modal,
-  StyleSheet,
   TextInput
 } from "react-native";
 import { useSelector } from "react-redux";
@@ -17,6 +16,7 @@ import Dropdown from "../../components/Dropdown";
 
 import { COLORS } from "../../constants/colors";
 import useResponsive from "../../hooks/useResponsive";
+import styles from "../../assets/styles/styles";
 
 export default function Profile({
   navigation,
@@ -162,18 +162,15 @@ export default function Profile({
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
-      >
+      <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.title}>
+            <Text style={styles.attendanceTitle}>
                 My Profile
             </Text>
 
-            <Text style={styles.subtitle}>
+            <Text style={styles.attendanceSubtitle}>
               Manage your student information
             </Text>
           </View>
@@ -188,7 +185,7 @@ export default function Profile({
         </View>
 
         {/* Student Card */}
-        <View style={styles.card}>
+        <View style={styles.attendanceCard}>
           <View style={styles.cardHeader}>
             <View>
               <Text style={styles.cardTitle}>
@@ -215,7 +212,7 @@ export default function Profile({
 
           <View style={styles.infoGrid}>
             <View style={styles.infoItem}>
-              <Text style={styles.label}>
+              <Text style={styles.profileLabel}>
                 First Name
               </Text>
 
@@ -225,7 +222,7 @@ export default function Profile({
             </View>
 
             <View style={styles.infoItem}>
-              <Text style={styles.label}>
+              <Text style={styles.profileLabel}>
                 Last Name
               </Text>
 
@@ -235,7 +232,7 @@ export default function Profile({
             </View>
 
             <View style={styles.infoItem}>
-              <Text style={styles.label}>
+              <Text style={styles.profileLabel}>
                 Matric Number
               </Text>
 
@@ -245,7 +242,7 @@ export default function Profile({
             </View>
 
             <View style={styles.infoItem}>
-              <Text style={styles.label}>
+              <Text style={styles.profileLabel}>
                 Email
               </Text>
 
@@ -255,7 +252,7 @@ export default function Profile({
             </View>
 
             <View style={styles.infoItem}>
-              <Text style={styles.label}>
+              <Text style={styles.profileLabel}>
                 Gender
               </Text>
 
@@ -265,7 +262,7 @@ export default function Profile({
             </View>
 
             <View style={styles.infoItem}>
-              <Text style={styles.label}>
+              <Text style={styles.profileLabel}>
                 Faculty
               </Text>
 
@@ -275,7 +272,7 @@ export default function Profile({
             </View>
 
             <View style={styles.infoItem}>
-              <Text style={styles.label}>
+              <Text style={styles.profileLabel}>
                 Department
               </Text>
 
@@ -285,7 +282,7 @@ export default function Profile({
             </View>
 
             <View style={styles.infoItem}>
-              <Text style={styles.label}>
+              <Text style={styles.profileLabel}>
                 Level
               </Text>
 
@@ -297,7 +294,7 @@ export default function Profile({
         </View>
 
         {/* Account Actions */}
-        <View style={styles.card}>
+        <View style={styles.attendanceCard}>
           <Text style={styles.cardTitle}>
             Account
           </Text>
@@ -343,7 +340,7 @@ export default function Profile({
             ]}
             onPress={(event) => event.stopPropagation()}
           >
-            <Text style={styles.modalTitle}>
+            <Text style={styles.profileModalTitle}>
               Edit Profile
             </Text>
 
@@ -496,320 +493,3 @@ export default function Profile({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F7F9FC",
-  },
-
-  content: {
-    paddingHorizontal: 18,
-    paddingTop: 22,
-    paddingBottom: 40,
-  },
-
-  // =========================
-  // HEADER
-  // =========================
-
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 22,
-  },
-
-  headerIcon: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: "#EEF2FF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  title: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: "#111827",
-    letterSpacing: -0.5,
-  },
-
-  subtitle: {
-    marginTop: 5,
-    fontSize: 14,
-    color: "#6B7280",
-    lineHeight: 20,
-  },
-
-  // =========================
-  // STUDENT CARD
-  // =========================
-
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 18,
-
-    borderWidth: 1,
-    borderColor: "#E8ECF2",
-
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 12,
-    elevation: 2,
-  },
-
-  cardHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 18,
-  },
-
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#111827",
-  },
-
-  cardSubtitle: {
-    marginTop: 4,
-    fontSize: 13,
-    color: "#6B7280",
-  },
-
-  divider: {
-    height: 1,
-    backgroundColor: "#EEF1F5",
-    marginTop: 5,
-    marginBottom: 18,
-  },
-
-  // =========================
-  // INFORMATION GRID
-  // =========================
-
-  infoGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginHorizontal: -6,
-  },
-
-  infoItem: {
-    width: "50%",
-    paddingHorizontal: 6,
-    marginBottom: 18,
-  },
-
-  label: {
-    fontSize: 11,
-    fontWeight: "600",
-    color: "#9CA3AF",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginBottom: 5,
-  },
-
-  value: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#1F2937",
-    lineHeight: 20,
-  },
-
-  // =========================
-  // EDIT BUTTON
-  // =========================
-
-  editButton: {
-    height: 40,
-    width: 50,
-    borderRadius: 14,
-    backgroundColor: COLORS.primary,
-
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-
-    marginTop: 4,
-  },
-
-  editButtonText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-
-  // =========================
-  // ACCOUNT CARD
-  // =========================
-
-  accountCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    padding: 20,
-
-    borderWidth: 1,
-    borderColor: "#E8ECF2",
-
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    elevation: 2,
-  },
-
-  accountHeader: {
-    marginBottom: 16,
-  },
-
-  accountTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: "#111827",
-  },
-
-  accountSubtitle: {
-    marginTop: 4,
-    fontSize: 13,
-    color: "#6B7280",
-  },
-
-  logoutButton: {
-    height: 50,
-    borderRadius: 14,
-
-    backgroundColor: "#FFF5F5",
-    borderWidth: 1,
-    borderColor: "#FECACA",
-
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-  },
-
-  logoutText: {
-    color: "#DC2626",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-
-  // =========================
-  // EDIT MODAL
-  // =========================
-
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "rgba(15, 23, 42, 0.55)",
-    justifyContent: "center",
-    paddingHorizontal: 18,
-  },
-
-  modalCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 22,
-    padding: 22,
-
-    maxHeight: "90%",
-
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 8,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
-    elevation: 8,
-  },
-
-  desktopModalCard: {
-    width: 560,
-    alignSelf: "center",
-  },
-
-  modalTitle: {
-    fontSize: 21,
-    fontWeight: "800",
-    color: "#111827",
-    marginBottom: 20,
-  },
-
-  modalTitleLogOut: {
-    fontSize: 21,
-    fontWeight: "800",
-    color: "#111827",
-    marginBottom: 20,
-    textAlign: "center"
-  },
-
-  formRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-
-  formItem: {
-    flex: 1,
-    marginBottom: 14,
-  },
-
-  formLabel: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#374151",
-    marginBottom: 7,
-  },
-
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 12,
-
-    backgroundColor: "#F9FAFB",
-
-    paddingHorizontal: 14,
-
-    fontSize: 14,
-    color: "#111827",
-  },
-
-  buttonRow: {
-    flexDirection: "row",
-    gap: 10,
-    marginTop: 10,
-  },
-
-  // =========================
-  // LOGOUT MODAL
-  // =========================
-
-  logoutModal: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 22,
-    padding: 24,
-  },
-
-  desktopLogoutModal: {
-    width: 420,
-    alignSelf: "center",
-  },
-
-  modalMessage: {
-    fontSize: 14,
-    lineHeight: 21,
-    color: "#6B7280",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-});

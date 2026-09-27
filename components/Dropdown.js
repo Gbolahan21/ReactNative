@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Text, Pressable, Modal, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "../assets/styles/commonCSS";
+import styles from "../assets/styles/commonStyles";
 
 import useResponsive from "../hooks/useResponsive";
 

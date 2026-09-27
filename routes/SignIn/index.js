@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import IconButton from "../../components/IconButton";
 import Button from "../../components/Button";
-import login from "../../assets/styles/loginCSS";
+import login from "../../assets/styles/styles";
 import useResponsive from "../../hooks/useResponsive";
 import {
   View,
@@ -81,7 +81,7 @@ export default function SignIn({ navigation, signin }) {
   }, []);
 
   return (
-    <View style={[login.container, isDesktop && login.desktopContainer]}>
+    <View style={[login.container, isDesktop && login.desktopLoginContainer]}>
       <View style={isDesktop ? login.card : null}>
         <IconButton name="arrow-back" size={28} onPress={() => navigation.navigate('Home')} />
 
@@ -135,7 +135,7 @@ export default function SignIn({ navigation, signin }) {
 
         <Text style={login.footerText}>
           Don't have an account?{" "}
-          <Text style={login.link} onPress={() => navigation.navigate("SignUp")}>Register</Text>
+          <Text style={login.loginLink} onPress={() => navigation.navigate("SignUp")}>Register</Text>
         </Text>
       </View>
     </View>
