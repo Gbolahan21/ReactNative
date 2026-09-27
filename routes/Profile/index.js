@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useCallback, useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -25,18 +25,10 @@ export default function Profile({
   loadLookups,
 }) {
   const { isDesktop } = useResponsive();
-
   const student = useSelector((state) => state.student);
-
-  const {
-    faculties,
-    departments,
-    levels,
-  } = student;
-
+  const {faculties, departments, levels} = student;
   const [editVisible, setEditVisible] = useState(false);
   const [logoutVisible, setLogoutVisible] = useState(false);
-
   const [editFirstname, setEditFirstname] = useState("");
   const [editLastname, setEditLastname] = useState("");
   const [editGender, setEditGender] = useState("");
@@ -44,25 +36,34 @@ export default function Profile({
   const [editDepartment, setEditDepartment] = useState("");
   const [editLevel, setEditLevel] = useState("");
 
-  const facultyOptions =
-    faculties?.map((faculty) => ({
-      label: faculty.name,
-      value: faculty.name,
-    })) || [];
+  const facultyOptions = useMemo(
+    () =>
+      faculties?.map((faculty) => ({
+        label: faculty.name,
+        value: faculty.name,
+      })) || [],
+    [faculties]
+  );
 
-  const departmentOptions =
-    departments?.map((department) => ({
-      label: department.name,
-      value: department.name,
-    })) || [];
+  const departmentOptions = useMemo(
+    () =>
+      departments?.map((department) => ({
+        label: department.name,
+        value: department.name,
+      })) || [],
+    [departments]
+  );
 
-  const levelOptions =
-    levels?.map((level) => ({
-      label: level.name,
-      value: level.name,
-    })) || [];
+  const levelOptions = useMemo(
+    () =>
+      levels?.map((level) => ({
+        label: level.name,
+        value: level.name,
+      })) || [],
+    [levels]
+  );
 
-  const handleOpenEdit = () => {
+  const handleOpenEdit = useCallback(() => {
     setEditFirstname(student?.firstname || "");
     setEditLastname(student?.lastname || "");
     setEditGender(student?.gender || "");
@@ -76,9 +77,9 @@ export default function Profile({
       () => {},
       () => {}
     );
-  };
+  }, [student, loadLookups]);
 
-  const handleUpdateStudent = () => {
+  const handleUpdateStudent = useCallback(() => {
     if (
       !editFirstname.trim() ||
       !editLastname.trim() ||
@@ -127,9 +128,17 @@ export default function Profile({
         setEditVisible(false);
       }
     );
-  };
+  }, [
+    updateStudent,
+    editDepartment,
+    editFaculty,
+    editFirstname,
+    editGender,
+    editLastname,
+    editLevel
+  ]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logout();
 
     Toast.show({
@@ -141,7 +150,7 @@ export default function Profile({
     setLogoutVisible(false);
 
     navigation.replace("SignIn");
-  };
+  }, [logout, navigation]);
 
   const formatLevel = (level) => {
     if (!level) return "N/A";

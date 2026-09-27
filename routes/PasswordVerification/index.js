@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useCallback, useState } from "react";
 import {
     View,
     Text,
@@ -21,7 +21,7 @@ function PasswordVerification({
 
     const email = route?.params?.email || "";
 
-    const handleVerify = () => {
+    const handleVerify = useCallback(() => {
         const trimmedCode = code.trim();
         setVerifying(true);
 
@@ -88,7 +88,7 @@ function PasswordVerification({
                 });
             }
         );
-    };
+    }, [verifyResetCode, navigation, code, email]);
 
     return (
         <View style={styles.container}>

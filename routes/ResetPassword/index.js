@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
     View,
     Text,
@@ -25,21 +25,13 @@ function ResetPassword({
     const { isDesktop } = useResponsive();
     const email = route?.params?.email || "";
     const resetToken = route?.params?.resetToken;
-
     const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] =
-        useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
-    const [showPassword, setShowPassword] =
-        useState(false);
-
-    const [showConfirmPassword, setShowConfirmPassword] =
-        useState(false);
-
-    const [submitting, setSubmitting] =
-        useState(false);
-
-    const validatePassword = () => {
+    const validatePassword = useCallback(() => {
         if (!password) {
             Toast.show({
                 type: "error",
@@ -118,9 +110,9 @@ function ResetPassword({
         }
 
         return true;
-    };
+    }, [password, confirmPassword]);
 
-    const handleSubmit = () => {
+    const handleSubmit = useCallback(() => {
         if (!email || !resetToken) {
             Toast.show({
                 type: "error",
@@ -174,7 +166,7 @@ function ResetPassword({
                 navigation.replace("SignIn");
             }
         );
-    };
+    }, [resetPassword, navigation, email, password, resetToken, validatePassword]);
 
     return (
         <KeyboardAvoidingView

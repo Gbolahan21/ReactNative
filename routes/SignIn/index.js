@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import IconButton from "../../components/IconButton";
@@ -20,7 +20,7 @@ export default function SignIn({ navigation, signin }) {
   const [rememberMe, setRememberMe] = useState(false);
   const [loginUser, setLoginUser] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = useCallback(() => {
     setLoginUser(true)
     signin(
       matricNo.trim(),
@@ -58,27 +58,27 @@ export default function SignIn({ navigation, signin }) {
         navigation.replace("Dashboard");
       }
     );
-  };
-
-  const loadSavedMatricNo = async () => {
-    try {
-      const savedMatricNo =
-        await AsyncStorage.getItem("savedMatricNo");
-
-      if (savedMatricNo) {
-        setMatricNo(savedMatricNo);
-        setRememberMe(true);
-      }
-    } catch (error) {
-      console.log("LOAD SAVED MATRIC ERROR:", error);
-    }
-  };
-
-  useEffect(() => {
-    loadSavedMatricNo();
-  }, []);
+  }, [signin, navigation, matricNo, password, rememberMe]);
 
   const details = !matricNo || !password;
+
+  useEffect(() => {
+    const loadSavedMatricNo = async () => {
+      try {
+        const savedMatricNo =
+          await AsyncStorage.getItem("savedMatricNo");
+
+        if (savedMatricNo) {
+          setMatricNo(savedMatricNo);
+          setRememberMe(true);
+        }
+      } catch (error) {
+        console.log("LOAD SAVED MATRIC ERROR:", error);
+      }
+    };
+
+    loadSavedMatricNo();
+  }, []);
 
   return (
     <View style={[login.container, isDesktop && login.desktopContainer]}>

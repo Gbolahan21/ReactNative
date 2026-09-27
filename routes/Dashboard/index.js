@@ -1,7 +1,8 @@
-import React, {
+import {
   useCallback,
   useEffect,
-  useState
+  useState,
+  useMemo
 } from "react";
 
 import {
@@ -30,12 +31,8 @@ export default function Dashboard({
   attendance,
   getCourses
 }) {
-  const student = useSelector(
-    (state) => state.student
-  );
-  const {
-    courses = [],
-  } = student;
+  const student = useSelector((state) => state.student);
+  const {courses = []} = student;
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showCheckinModal, setShowCheckinModal] = useState(false);
   const [sessionCode, setSessionCode] = useState("");
@@ -48,31 +45,46 @@ export default function Dashboard({
   const hasCheckedIn = !!currentAttendance?.check_in;
   const hasCheckedOut = !!currentAttendance?.check_out;
 
-  const registeredCourses = courses.filter(
-    (course) => course.registered
+  const registeredCourses = useMemo(
+    () => courses.filter((course) => course.registered),
+    [courses]
   );
 
-  const activeCourse = registeredCourses.find(
-    (course) =>
-      Number(course.id) ===
-      Number(currentAttendance?.course_id)
+  const activeCourse = useMemo(
+    () => 
+      registeredCourses.find(
+        (course) =>
+          Number(course.id) ===
+          Number(currentAttendance?.course_id)
+      ),
+    [registeredCourses, currentAttendance?.course_id]
   );
 
-  const todayRecords = Array.isArray(attendance?.today)
-    ? attendance.today
-    : [];
+  const todayRecords = useMemo(
+    () => 
+      Array.isArray(attendance?.today)
+        ? attendance.today
+        : [], [attendance.today])
 
-  const inProgressAttendance = todayRecords.filter(
-    (item) =>
-      item.check_in &&
-      !item.check_out
-  );
+  const { inProgressAttendance, completedAttendance } = useMemo(() => {
+    const inProgress = [];
+    const completed = [];
 
-  const completedAttendance = todayRecords.filter(
-    (item) =>
-      item.check_in &&
-      item.check_out
-  );
+    todayRecords.forEach((item) => {
+      if (item.check_in && !item.check_out) {
+        inProgress.push(item);
+      }
+
+      if (item.check_in && item.check_out) {
+        completed.push(item);
+      }
+    });
+
+    return {
+      inProgressAttendance: inProgress,
+      completedAttendance: completed,
+    };
+  }, [todayRecords]);
 
   const getCourse = (courseId) => {
     return registeredCourses.find(
@@ -81,18 +93,20 @@ export default function Dashboard({
     );
   };
 
-  const registeredCourseOptions = registeredCourses.map(
-    (course) => ({
-      label: `${course.course_code} - ${course.course_title} (${course.course_unit} Unit${
-        Number(course.course_unit) !== 1 ? "s" : ""
-      })`,
-      value: course.id,
-    })
+  const registeredCourseOptions = useMemo(
+    () =>
+      registeredCourses.map((course) => ({
+        label: `${course.course_code} - ${course.course_title} (${course.course_unit} Unit${
+          Number(course.course_unit) !== 1 ? "s" : ""
+        })`,
+        value: course.id,
+      })),
+    [registeredCourses]
   );
 
-  const handleCourseSelect = (courseId) => {
+  const handleCourseSelect = useCallback((courseId) => {
     setSelectedCourse(courseId);
-  };
+  }, []);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -107,35 +121,6 @@ export default function Dashboard({
 
     return "Good Evening";
   };
-
-  useEffect(() => {
-    if (!student?.id) {
-      return;
-    }
-
-    getCourses();
-
-    todayAttendance(
-      student.id,
-
-      (error) => {
-        Toast.show({
-          type: "error",
-          text1: "Attendance Error",
-          text2:
-            error?.message ||
-            "Unable to load today's attendance.",
-        });
-      },
-
-      () => {
-        // Attendance loaded
-      }
-    );
-  }, [
-    student?.id,
-    todayAttendance,
-  ]);
 
   const handleCheckIn = useCallback(() => {
     if (!selectedCourse) {
@@ -226,6 +211,36 @@ export default function Dashboard({
       .trim()
       .replace(/\blevel\b/i, "Level");
   };
+
+  useEffect(() => {
+    if (!student?.id) {
+      return;
+    }
+
+    getCourses();
+
+    todayAttendance(
+      student.id,
+
+      (error) => {
+        Toast.show({
+          type: "error",
+          text1: "Attendance Error",
+          text2:
+            error?.message ||
+            "Unable to load today's attendance.",
+        });
+      },
+
+      () => {
+        // Attendance loaded
+      }
+    );
+  }, [
+    student?.id,
+    todayAttendance,
+    getCourses
+  ]);
 
   return (
     <View style={styles.container}>
@@ -861,13 +876,14 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
     borderRadius: 10,
     minWidth: 92,
+    marginLeft: 8,
   },
 
   checkOutButtonText: {
     marginLeft: 5,
-    fontSize: 11,
     fontWeight: "700",
     color: "#FFFFFF",
+    fontSize: 12,
   },
 
   attendanceGroup: {
@@ -916,6 +932,7 @@ const styles = StyleSheet.create({
   courseInfo: {
     flex: 1,
     marginRight: 10,
+    minWidth: 0,
   },
 
   courseCode: {
@@ -929,16 +946,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.gray,
     marginBottom: 7,
+    marginTop: 3,
   },
 
   checkInTime: {
     fontSize: 11,
     fontWeight: "600",
     color: COLORS.success,
-  },
-
-  attendanceGroup: {
-    marginTop: 20,
   },
 
   groupHeader: {
@@ -951,14 +965,6 @@ const styles = StyleSheet.create({
   groupTitleRow: {
     flexDirection: "row",
     alignItems: "center",
-  },
-
-  attendanceGroupTitle: {
-    marginLeft: 7,
-    fontSize: 15,
-    fontWeight: "700",
-    color: COLORS.text,
-    marginBottom: 10,
   },
 
   groupCount: {
@@ -1005,23 +1011,6 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
 
-  courseInfo: {
-    flex: 1,
-    minWidth: 0,
-  },
-
-  courseCode: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: COLORS.text,
-  },
-
-  courseTitle: {
-    marginTop: 3,
-    fontSize: 12,
-    color: COLORS.gray,
-  },
-
   checkInRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -1033,24 +1022,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: COLORS.success,
     fontWeight: "600",
-  },
-
-  checkOutButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 11,
-    paddingVertical: 9,
-    borderRadius: 10,
-    backgroundColor: COLORS.primary,
-    marginLeft: 8,
-  },
-
-  checkOutButtonText: {
-    marginLeft: 5,
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#FFFFFF",
   },
 
   /* Completed */
@@ -1107,9 +1078,11 @@ const styles = StyleSheet.create({
     padding: 16,
     marginTop: 16,
     borderRadius: 14,
-    backgroundColor: "#F0FDF4",
     borderWidth: 1,
     borderColor: "#BBF7D0",
+    backgroundColor: "#DCFCE7",
+    justifyContent: "center",
+    gap: 8,
   },
 
   completedIcon: {
@@ -1292,16 +1265,6 @@ const styles = StyleSheet.create({
 
   buttonText: {
     marginLeft: 8,
-  },
-
-  completedBox: {
-    backgroundColor: "#DCFCE7",
-    borderRadius: 14,
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
   },
 
   completedText: {

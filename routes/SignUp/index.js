@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import Toast from "react-native-toast-message";
 import IconButton from "../../components/IconButton";
 import Button from "../../components/Button";
@@ -29,11 +29,7 @@ export default function SignUp({ navigation, signup }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  useEffect(() => {
-    document.title = 'SignUp | Moh';
-  }, []);
-
-  const handleRegister = () => {
+  const handleRegister = useCallback(() => {
     const studentEmailRegex = /^[^\s@]+@student\.lautech\.edu\.ng$/i;
 
     if (!studentEmailRegex.test(email.trim())) {
@@ -108,7 +104,20 @@ export default function SignUp({ navigation, signup }) {
         navigation.navigate("SignIn");
       }
     )
-  };
+  }, [
+    signup,
+    navigation,
+    confirmPassword,
+    department,
+    email,
+    faculty,
+    firstname,
+    gender,
+    lastname,
+    level,
+    matricNo,
+    password
+  ]);
 
   const details = !firstname || !lastname || !matricNo || !email || !gender || !department || !faculty || !level || !password || !confirmPassword;
   

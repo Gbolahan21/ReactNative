@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
     View,
     Text,
@@ -18,7 +18,7 @@ function ForgotPassword({
     const [email, setEmail] = useState("");
     const [sending, setSending] = useState(false);
 
-    const handleSubmit = () => {
+    const handleSubmit = useCallback(() => {
         const trimmedEmail = email.trim().toLowerCase();
         setSending(true);
 
@@ -59,7 +59,7 @@ function ForgotPassword({
                 });
             }
         );
-    };
+    }, [forgotPassword, navigation, email]);
 
     return (
         <View style={styles.container}>

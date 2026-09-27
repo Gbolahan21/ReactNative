@@ -1,6 +1,5 @@
 import React from 'react';
 
-window.notification = {};
 class Notification {
   reference = React.createRef();
 

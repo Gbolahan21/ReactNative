@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import { Provider, useDispatch } from "react-redux";
@@ -31,19 +31,19 @@ function AppContent() {
 
         dispatch(
           load(
-            (error) => {
+            () => {
               dispatch({
                 type: AUTH_INITIALIZED,
               });
             },
-            (response) => {
+            () => {
               dispatch({
                 type: AUTH_INITIALIZED,
               });
             }
           )
         );
-      } catch (error) {
+      } catch {
         dispatch({
           type: AUTH_INITIALIZED,
         });

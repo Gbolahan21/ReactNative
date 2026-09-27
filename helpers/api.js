@@ -86,8 +86,7 @@ const api =
           if (decoded.exp * 1000 < Date.now()) {
             await token.remove();
           }
-        } catch (decodeError) {
-          console.log('Invalid token');
+        } catch {
           await token.remove();
         }
       }

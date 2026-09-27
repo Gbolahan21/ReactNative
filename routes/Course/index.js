@@ -1,4 +1,4 @@
-import React, {
+import {
   useCallback,
   useEffect,
   useMemo,
@@ -17,64 +17,15 @@ import {
 import { useSelector } from "react-redux";
 import Toast from "react-native-toast-message";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
 import Button from "../../components/Button";
 import { COLORS } from "../../constants/colors";
 
-export default function Course({
-  getCourses,
-  registerCourse,
-}) {
-  const student = useSelector(
-    (state) => state.student
-  );
-
-  const {
-    courses = [],
-    semester,
-  } = student;
-
-  const [selectedCourses, setSelectedCourses] =
-    useState([]);
-
-  const [loadingCourses, setLoadingCourses] =
-    useState(false);
-
-  const [submittingCourses, setSubmittingCourses] =
-    useState(false);
-
-  useEffect(() => {
-    if (!student?.id) {
-      return;
-    }
-
-    setLoadingCourses(true);
-
-    getCourses(
-      (error) => {
-        setLoadingCourses(false);
-
-        Toast.show({
-          type: "error",
-          text1: "Course Loading Failed",
-          text2:
-            error?.message ||
-            "Unable to load courses.",
-        });
-      },
-      () => {
-        setLoadingCourses(false);
-      }
-    );
-  }, [student?.id, getCourses]);
-
-  useEffect(() => {
-    const registeredCourses = courses.filter(
-      (course) => course.registered
-    );
-
-    setSelectedCourses(registeredCourses);
-  }, [courses]);
+export default function Course({getCourses, registerCourse}) {
+  const student = useSelector((state) => state.student);
+  const {courses = [], semester} = student;
+  const [selectedCourses, setSelectedCourses] = useState([]);
+  const [loadingCourses, setLoadingCourses] = useState(false);
+  const [submittingCourses, setSubmittingCourses] = useState(false);
 
   const handleCourseAction = useCallback(
     (course) => {
@@ -112,9 +63,9 @@ export default function Course({
     [selectedCourses]
   );
 
-  const handleRegisterAll = () => {
+  const handleRegisterAll = useCallback(() => {
     setSelectedCourses(courses);
-  };
+  }, [courses]);
 
   const unselectedCourses = useMemo(() => {
     return courses.filter(
@@ -126,7 +77,7 @@ export default function Course({
     );
   }, [courses, selectedCourses]);
 
-  const handleSubmitCourses = () => {
+  const handleSubmitCourses = useCallback(() => {
     if (selectedCourses.length === 0) {
       Toast.show({
         type: "error",
@@ -211,7 +162,7 @@ export default function Course({
         }
       );
     });
-  };
+  }, [selectedCourses, courses, registerCourse, getCourses]);
 
   const formatLevel = (level) => {
     if (!level) {
@@ -223,15 +174,50 @@ export default function Course({
       .replace(/\blevel\b/i, "Level");
   };
 
-  const registeredCourses = courses.filter(
-    (course) => course.registered
+  const registeredCourses = useMemo(
+    () => courses.filter((course) => course.registered),
+    [courses]
   );
 
   const hasRegisteredCourses = registeredCourses.length > 0;
  
-  const availableCourses = courses.filter(
-    (course) => !course.registered
+  const availableCourses = useMemo(
+    () => courses.filter((course) => !course.registered),
+    [courses]
   );
+
+  useEffect(() => {
+    if (!student?.id) {
+      return;
+    }
+
+    setLoadingCourses(true);
+
+    getCourses(
+      (error) => {
+        setLoadingCourses(false);
+
+        Toast.show({
+          type: "error",
+          text1: "Course Loading Failed",
+          text2:
+            error?.message ||
+            "Unable to load courses.",
+        });
+      },
+      () => {
+        setLoadingCourses(false);
+      }
+    );
+  }, [student?.id, getCourses]);
+
+  useEffect(() => {
+    const registeredCourses = courses.filter(
+      (course) => course.registered
+    );
+
+    setSelectedCourses(registeredCourses);
+  }, [courses]);
 
   return (
     <View style={styles.container}>
@@ -326,7 +312,6 @@ export default function Course({
           <View style={styles.loadingContainer}>
             <ActivityIndicator
               size="large"
-              color={COLORS.primary}
             />
 
             <Text style={styles.loadingText}>
@@ -832,9 +817,8 @@ const styles = StyleSheet.create({
 
   courseCode: {
     fontSize: 13,
-    fontWeight: "800",
-    color: COLORS.primary,
     marginBottom: 4,
+    fontWeight: "700",
   },
 
   courseTitle: {
@@ -976,92 +960,67 @@ const styles = StyleSheet.create({
   },
 
   registeredSection: {
-  marginTop: 24,
-  marginBottom: 24,
-},
+    marginTop: 24,
+    marginBottom: 24,
+  },
 
-table: {
-  width: "100%",
-  minWidth: 300,
-  backgroundColor: "#FFFFFF",
-  borderRadius: 14,
-  overflow: "hidden",
-  borderWidth: 1,
-  borderColor: "#E5E7EB",
-},
+  table: {
+    width: "100%",
+    minWidth: 300,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+  },
 
-tableRow: {
-  flexDirection: "row",
-  alignItems: "center",
-  minHeight: 52,
-  borderBottomWidth: 1,
-  borderBottomColor: "#E5E7EB",
-},
+  tableRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    minHeight: 52,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
 
-tableHeader: {
-  backgroundColor: "#F8FAFC",
-  minHeight: 46,
-},
+  tableHeader: {
+    backgroundColor: "#F8FAFC",
+    minHeight: 46,
+  },
 
-tableCell: {
-  paddingHorizontal: 14,
-  fontSize: 12,
-  color: "#374151",
-},
+  tableCell: {
+    paddingHorizontal: 14,
+    fontSize: 12,
+    color: "#374151",
+  },
 
-codeColumn: {
-  width: 100,
-},
+  codeColumn: {
+    width: 100,
+  },
 
-titleColumn: {
-  width: 260,
-},
+  titleColumn: {
+    width: 260,
+  },
 
-unitColumn: {
-  width: 100,
-  textAlign: "center",
-},
+  unitColumn: {
+    width: 100,
+    textAlign: "center",
+  },
 
-courseCode: {
-  fontWeight: "700",
-  color: "#111827",
-},
+  availableSection: {
+    marginTop: 8,
+    marginBottom: 24,
+  },
 
-availableSection: {
-  marginTop: 8,
-  marginBottom: 24,
-},
+  courseInfo: {
+    flex: 1,
+    paddingRight: 10,
+  },
 
-courseInfo: {
-  flex: 1,
-  paddingRight: 10,
-},
-
-courseTitle: {
-  marginTop: 4,
-  fontSize: 12,
-  color: "#6B7280",
-},
-
-actionButton: {
-  minWidth: 78,
-  height: 38,
-  borderRadius: 9,
-  alignItems: "center",
-  justifyContent: "center",
-},
-
-addButton: {
-  backgroundColor: COLORS.primary,
-},
-
-dropButton: {
-  backgroundColor: COLORS.danger,
-},
-
-actionText: {
-  color: "#FFFFFF",
-  fontSize: 11,
-  fontWeight: "700",
-},
+  actionButton: {
+    minWidth: 78,
+    height: 38,
+    borderRadius: 9,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });

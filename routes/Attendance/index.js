@@ -1,7 +1,8 @@
-import React, {
+import {
   useState,
   useEffect,
   useCallback,
+  useMemo
 } from "react";
 
 import {
@@ -14,6 +15,7 @@ import {
   StyleSheet,
   Modal,
   Platform,
+  ActivityIndicator
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useSelector } from "react-redux";
@@ -50,24 +52,39 @@ export default function Attendance({
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [selectedCourse, setSelectedCourse] = useState("All");
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const registeredCourses = courses.filter(
-    (course) => course.registered
+  const registeredCourses = useMemo(
+    () => courses.filter((course) => course.registered),
+    [courses]
   );
 
-  const history = attendance?.history || [];
+  const history = useMemo(
+    () => attendance?.history || [],
+    [attendance?.history]
+  );
 
   const page = attendance?.page || 1;
   const totalPages = attendance?.totalPages || 1;
   const totalRecords = filteredHistory.length;
 
-  const presentCount = filteredHistory.filter(
-    (item) => item.status === "Present"
-  ).length;
+  const { presentCount, absentCount } = useMemo(() => {
+    let present = 0;
+    let absent = 0;
 
-  const absentCount = filteredHistory.filter(
-    (item) => item.status === "Absent"
-  ).length;
+    filteredHistory.forEach((item) => {
+      if (item.status === "Present") {
+        present++;
+      } else if (item.status === "Absent") {
+        absent++;
+      }
+    });
+
+    return {
+      presentCount: present,
+      absentCount: absent,
+    };
+  }, [filteredHistory]);
 
   const attendanceRate =
     totalRecords === 0
@@ -78,32 +95,27 @@ export default function Attendance({
     (pageNumber = 1) => {
       if (!user?.id) return;
 
+      setLoading(true);
+
       attendanceHistory(
         user.id,
         pageNumber,
         10,
         () => {
+          setLoading(false);
           Toast.show({
             type: "error",
             text1: "Attendance Load Failed",
             text2: "Unable to load attendance history.",
           });
+        },
+        () => {
+          setLoading(false);
         }
       );
     },
     [attendanceHistory, user?.id]
   );
-
-  useEffect(() => {
-    if (user?.id) {
-      loadHistory(1);
-    }
-  }, [user?.id, loadHistory]);
-
-  useEffect(() => {
-    setFilteredHistory(history);
-    getCourses();
-  }, [history]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -128,7 +140,7 @@ export default function Attendance({
     ).format("hh:mm A");
   };
 
-  const handleApplyFilter = () => {
+  const handleApplyFilter = useCallback(() => {
     let filtered = history;
 
     if (selectedStatus !== "All") {
@@ -158,7 +170,7 @@ export default function Attendance({
 
     setFilteredHistory(filtered);
     setFilterVisible(false);
-  };
+  }, [history, selectedCourse, selectedStatus, selectedDate]);
 
   const handleResetFilter = () => {
     setSearch("")
@@ -169,7 +181,7 @@ export default function Attendance({
     setFilterVisible(false);
   };
 
-  const handleSearch = (text) => {
+  const handleSearch = useCallback((text) => {
     setSearch(text);
 
     if (!text.trim()) {
@@ -190,9 +202,9 @@ export default function Attendance({
     });
 
     setFilteredHistory(filtered);
-  };
+  }, [history]);
 
-  const renderAttendance = ({ item }) => {
+  const renderAttendance = useCallback(({ item }) => {
     const isPresent = item.status === "Present";
 
     return (
@@ -313,163 +325,190 @@ export default function Attendance({
         </View>
       </View>
     );
-  };
+  }, []);
 
-  const courseOptions = [
+  const courseOptions = useMemo(
+    () => [
     { id: "All", label: "All Courses" },
     ...registeredCourses.map((course) => ({
       id: course.id,
       label: course.course_code,
     })),
-  ];
+  ], [registeredCourses]);
+
+  useEffect(() => {
+    if (user?.id) {
+      loadHistory(1);
+    }
+  }, [user?.id, loadHistory]);
+
+  useEffect(() => {
+    setFilteredHistory(history);
+    getCourses();
+  }, [history, getCourses]);
 
   return (
     <View style={styles.container}>
       {/* Attendance List */}
-      <FlatList
-        data={filteredHistory}
-        keyExtractor={(item) =>
-          item.id.toString()
-        }
-        renderItem={renderAttendance}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.list}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-        }
-        ListHeaderComponent={
-          <>
-            {/* Header */}
-            <View style={styles.header}>
-              <View>
-                <Text style={styles.title}>
-                  Attendance
-                </Text>
-
-                <Text style={styles.subtitle}>
-                  Track your attendance and class participation
-                </Text>
-              </View>
-
-              <View style={styles.headerIcon}>
-                <Ionicons
-                  name="calendar"
-                  size={24}
-                  color={COLORS.primary}
-                />
-              </View>
-            </View>
-
-            {/* Summary */}
-
-            <View style={styles.summaryContainer}>
-              <SummaryCard
-                icon="stats-chart"
-                label="Total"
-                value={totalRecords}
-                iconBackground="#EEF4FF"
-                iconColor={COLORS.primary}
-              />
-
-              <SummaryCard
-                icon="checkmark-circle"
-                label="Present"
-                value={presentCount}
-                iconBackground="#ECFDF5"
-                iconColor="#16A34A"
-              />
-
-              <SummaryCard
-                icon="close-circle"
-                label="Absent"
-                value={absentCount}
-                iconBackground="#FEF2F2"
-                iconColor="#EF4444"
-              />
-
-              <SummaryCard
-                icon="trending-up"
-                label="Attendance Rate"
-                value={`${attendanceRate}%`}
-                iconBackground="#FFF7ED"
-                iconColor="#F97316"
-              />
-            </View>
-
-            {/* Search */}
-
-            <View style={styles.sectionHeader}>
-              <View>
-                <Text style={styles.sectionTitle}>
-                  Recent Attendance
-                </Text>
-
-                <Text style={styles.sectionSubtitle}>
-                  Your latest attendance records
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.toolbar}>
-              <View style={styles.searchContainer}>
-                <Ionicons
-                  name="search-outline"
-                  size={20}
-                  color="#94A3B8"
-                />
-
-                <TextInput
-                  value={search}
-                  onChangeText={handleSearch}
-                  placeholder="Search attendance by status or course code"
-                  placeholderTextColor="#94A3B8"
-                  style={styles.searchInput}
-                />
-              </View>
-
-              <Pressable
-                style={styles.filterButton}
-                onPress={() => setFilterVisible(true)}
-              >
-                <Ionicons
-                  name="options-outline"
-                  size={19}
-                  color={COLORS.primary}
-                />
-
-                <Text style={styles.filterText}>
-                  Filter
-                </Text>
-              </Pressable>
-            </View>
-          </>
-        }
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons
-              name="calendar-outline"
-              size={48}
-              color="#CBD5E1"
-            />
-
-            <Text style={styles.emptyTitle}>
-              No attendance records
+      {loading ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ActivityIndicator size="large" />
+           <Text style={styles.loadingText}>
+              Loading attendance...
             </Text>
-
-            <Text style={styles.emptyText}>
-              Your attendance records will appear here.
-            </Text>
-            <Button
-              title="Clear"
-              onPress={handleResetFilter}
-              style={styles.clearButton}
+        </View>
+      ) : (
+        <FlatList
+          data={filteredHistory}
+          keyExtractor={(item) =>
+            item.id.toString()
+          }
+          renderItem={renderAttendance}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.list}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
             />
-          </View>
-        }
-      />
+          }
+          ListHeaderComponent={
+            <>
+              {/* Header */}
+              <View style={styles.header}>
+                <View>
+                  <Text style={styles.title}>
+                    Attendance
+                  </Text>
+
+                  <Text style={styles.subtitle}>
+                    Track your attendance and class participation
+                  </Text>
+                </View>
+
+                <View style={styles.headerIcon}>
+                  <Ionicons
+                    name="calendar"
+                    size={24}
+                    color={COLORS.primary}
+                  />
+                </View>
+              </View>
+
+              {/* Summary */}
+
+              <View style={styles.summaryContainer}>
+                <SummaryCard
+                  icon="stats-chart"
+                  label="Total"
+                  value={totalRecords}
+                  iconBackground="#EEF4FF"
+                  iconColor={COLORS.primary}
+                />
+
+                <SummaryCard
+                  icon="checkmark-circle"
+                  label="Present"
+                  value={presentCount}
+                  iconBackground="#ECFDF5"
+                  iconColor="#16A34A"
+                />
+
+                <SummaryCard
+                  icon="close-circle"
+                  label="Absent"
+                  value={absentCount}
+                  iconBackground="#FEF2F2"
+                  iconColor="#EF4444"
+                />
+
+                <SummaryCard
+                  icon="trending-up"
+                  label="Attendance Rate"
+                  value={`${attendanceRate}%`}
+                  iconBackground="#FFF7ED"
+                  iconColor="#F97316"
+                />
+              </View>
+
+              {/* Search */}
+
+              <View style={styles.sectionHeader}>
+                <View>
+                  <Text style={styles.sectionTitle}>
+                    Recent Attendance
+                  </Text>
+
+                  <Text style={styles.sectionSubtitle}>
+                    Your latest attendance records
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.toolbar}>
+                <View style={styles.searchContainer}>
+                  <Ionicons
+                    name="search-outline"
+                    size={20}
+                    color="#94A3B8"
+                  />
+
+                  <TextInput
+                    value={search}
+                    onChangeText={handleSearch}
+                    placeholder="Search attendance by status or course code"
+                    placeholderTextColor="#94A3B8"
+                    style={styles.searchInput}
+                  />
+                </View>
+
+                <Pressable
+                  style={styles.filterButton}
+                  onPress={() => setFilterVisible(true)}
+                >
+                  <Ionicons
+                    name="options-outline"
+                    size={19}
+                    color={COLORS.primary}
+                  />
+
+                  <Text style={styles.filterText}>
+                    Filter
+                  </Text>
+                </Pressable>
+              </View>
+            </>
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons
+                name="calendar-outline"
+                size={48}
+                color="#CBD5E1"
+              />
+
+              <Text style={styles.emptyTitle}>
+                No attendance records
+              </Text>
+
+              <Text style={styles.emptyText}>
+                Your attendance records will appear here.
+              </Text>
+              <Button
+                title="Clear"
+                onPress={handleResetFilter}
+                style={styles.clearButton}
+              />
+            </View>
+          }
+        />
+      )}
 
       <Modal
         visible={filterVisible}
@@ -713,6 +752,12 @@ const styles = StyleSheet.create({
   listContent: {
     padding: 16,
     paddingBottom: 40,
+  },
+
+  loadingText: {
+    marginTop: 10,
+    fontSize: 13,
+    color: "#64748B",
   },
 
   courseSection: {
