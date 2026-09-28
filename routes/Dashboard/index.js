@@ -10,7 +10,6 @@ import {
   Text,
   ScrollView,
   Pressable,
-  Modal,
   TextInput
 } from "react-native";
 
@@ -20,6 +19,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 import Button from "../../components/Button";
 import Dropdown from "../../components/Dropdown";
+import AppModal from "../../components/AppModal";
 import { COLORS } from "../../constants/colors";
 import styles from "../../assets/styles/styles";
 
@@ -212,6 +212,34 @@ export default function Dashboard({
       .replace(/\blevel\b/i, "Level");
   };
 
+  const handleCheckOut = useCallback((item) => {
+    checkout(
+      item.course_id,
+
+      (error) => {
+        Toast.show({
+          type: "error",
+          text1: "Checkout Failed",
+          text2:
+            error?.message ||
+            "Unable to record checkout.",
+        });
+      },
+
+      (response) => {
+        Toast.show({
+          type: "success",
+          text1: "Checkout Recorded",
+          text2:
+            response?.message ||
+            "You have been checked out.",
+        });
+
+        todayAttendance(student.id);
+      }
+    );
+  }, [checkout, student.id, todayAttendance])
+
   useEffect(() => {
     if (!student?.id) {
       return;
@@ -360,46 +388,12 @@ export default function Dashboard({
                       </Text>
                     </View>
 
-                    <Pressable
-                      style={styles.checkOutButton}
-                      onPress={() => {
-                        checkout(
-                          item.course_id,
-
-                          (error) => {
-                            Toast.show({
-                              type: "error",
-                              text1: "Checkout Failed",
-                              text2:
-                                error?.message ||
-                                "Unable to record checkout.",
-                            });
-                          },
-
-                          (response) => {
-                            Toast.show({
-                              type: "success",
-                              text1: "Checkout Recorded",
-                              text2:
-                                response?.message ||
-                                "You have been checked out.",
-                            });
-
-                            todayAttendance(student.id);
-                          }
-                        );
-                      }}
-                    >
-                      <Ionicons
-                        name="log-out-outline"
-                        size={17}
-                        color="#FFFFFF"
-                      />
-
-                      <Text style={styles.checkOutButtonText}>
-                        Check Out
-                      </Text>
-                    </Pressable>
+                    <Button
+                      title="Check Out"
+                      onPress={handleCheckOut}
+                      iconName="log-out-outline"
+                      iconSize={17}
+                    />
                   </View>
                 );
               })}
@@ -651,105 +645,85 @@ export default function Dashboard({
         </View>
       </ScrollView>
 
-      <Modal
+      <AppModal
         visible={showCheckinModal}
-        transparent
-        animationType="fade"
-        onRequestClose={() => {
+        onClose={() => {
           if (!checkingIn) {
             setShowCheckinModal(false);
           }
         }}
+        closeOnBackdrop={!checkingIn}
       >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setShowCheckinModal(false)}
-        >
-          <View style={styles.checkinModal}>
-            <View style={styles.modalIcon}>
-              <Ionicons
-                name="keypad-outline"
-                size={28}
-                color={COLORS.primary}
-              />
-            </View>
+        <View style={styles.modalIcon}>
+          <Ionicons
+            name="keypad-outline"
+            size={28}
+            color={COLORS.primary}
+          />
+        </View>
 
-            <Text style={styles.modalTitle}>
-              Check In
-            </Text>
+        <Text style={styles.text}>
+          Check In
+        </Text>
 
-            <Text style={styles.modalDescription}>
-              Enter the 6-digit attendance code provided by your lecturer.
-            </Text>
+        <Text style={styles.modalDescription}>
+          Enter the 6-digit attendance code provided by your lecturer.
+        </Text>
 
-            <Text style={styles.modalLabel}>
-              Attendance Code
-            </Text>
+        <Text style={styles.filterLabel}>
+          Attendance Code
+        </Text>
 
-            <TextInput
-              value={sessionCode}
-              onChangeText={(text) => {
-                const numericValue = text
-                  .replace(/[^0-9]/g, "")
-                  .slice(0, 6);
+        <TextInput
+          value={sessionCode}
+          onChangeText={(text) => {
+            const numericValue = text
+              .replace(/[^0-9]/g, "")
+              .slice(0, 6);
 
-                setSessionCode(numericValue);
-              }}
-              placeholder="000000"
-              placeholderTextColor="#94A3B8"
-              keyboardType="number-pad"
-              maxLength={6}
-              editable={!checkingIn}
-              style={styles.codeInput}
-            />
+            setSessionCode(numericValue);
+          }}
+          placeholder="000000"
+          placeholderTextColor="#94A3B8"
+          keyboardType="number-pad"
+          maxLength={6}
+          editable={!checkingIn}
+          style={styles.codeInput}
+        />
 
-            <Text style={styles.codeHint}>
-              The code is provided by your lecturer during class.
-            </Text>
+        <Text style={styles.codeHint}>
+          The code is provided by your lecturer during class.
+        </Text>
 
-            <View style={styles.modalActions}>
+         <View style={styles.filterActions}>
+          <Button
+            title="Cancel"
+            disabled={checkingIn}
+            onPress={() => {
+              setShowCheckinModal(false);
+              setSessionCode("");
+            }}
+            style={styles.resetButton}
+            textStyle={styles.resetButtonText}
+          />
 
-              <Pressable
-                style={styles.cancelButton}
-                disabled={checkingIn}
-                onPress={() => {
-                  setShowCheckinModal(false);
-                  setSessionCode("");
-                }}
-              >
-                <Text style={styles.cancelButtonText}>
-                  Cancel
-                </Text>
-              </Pressable>
-
-              <Pressable
-                style={[
-                  styles.confirmCheckinButton,
-                  (sessionCode.length !== 6 || checkingIn) &&
-                    styles.disabledCheckinButton,
-                ]}
-                disabled={
-                  sessionCode.length !== 6 ||
-                  checkingIn
-                }
-                onPress={submitCheckIn}
-              >
-                <Ionicons
-                  name="finger-print-outline"
-                  size={18}
-                  color="#FFFFFF"
-                />
-
-                <Text style={styles.confirmCheckinText}>
-                  {checkingIn ? "Checking In..." : "Check In"}
-                </Text>
-              </Pressable>
-
-            </View>
-
-          </View>
-        </Pressable>
-      </Modal>
+          <Button
+            title="Check In"
+            style={[
+              styles.applyFilterButton,
+              (sessionCode.length !== 6 || checkingIn) &&
+                styles.disabledCheckinButton,
+            ]}
+            disabled={
+              sessionCode.length !== 6 ||
+              checkingIn
+            }
+            onPress={submitCheckIn}
+            iconName="finger-print-outline"
+            iconSize={18}
+          />
+        </View>
+      </AppModal>
     </View>
   );
 }

@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   Pressable,
-  Modal,
   TextInput
 } from "react-native";
 import { useSelector } from "react-redux";
@@ -13,9 +12,9 @@ import Toast from "react-native-toast-message";
 
 import Button from "../../components/Button";
 import Dropdown from "../../components/Dropdown";
+import AppModal from "../../components/AppModal"
 
 import { COLORS } from "../../constants/colors";
-import useResponsive from "../../hooks/useResponsive";
 import styles from "../../assets/styles/styles";
 
 export default function Profile({
@@ -24,7 +23,6 @@ export default function Profile({
   updateStudent,
   loadLookups,
 }) {
-  const { isDesktop } = useResponsive();
   const student = useSelector((state) => state.student);
   const {faculties, departments, levels} = student;
   const [editVisible, setEditVisible] = useState(false);
@@ -323,173 +321,136 @@ export default function Profile({
       </ScrollView>
 
       {/* Edit Profile Modal */}
-      <Modal
+      <AppModal
         visible={editVisible}
+        onClose={() => setEditVisible(false)}
         animationType="slide"
-        transparent
-        onRequestClose={() => setEditVisible(false)}
+        size="large"
       >
-        <Pressable
-          style={styles.modalContainer}
-          onPress={() => setEditVisible(false)}
-        >
-          <Pressable
-            style={[
-              styles.modalCard,
-              isDesktop && styles.desktopModalCard,
+        <Text style={styles.profileModalTitle}>
+          Edit Profile
+        </Text>
+
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.formRow}>
+            <View style={styles.formItem}>
+              <Text style={styles.formLabel}>
+                First Name
+              </Text>
+
+              <View>
+                <TextInput
+                    style={styles.input}
+                    placeholder="First Name"
+                    value={editFirstname}
+                    onChangeText={setEditFirstname}
+                />
+              </View>
+            </View>
+
+            <View style={styles.formItem}>
+              <Text style={styles.formLabel}>
+                Last Name
+              </Text>
+
+              <View>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Last Name"
+                    value={editLastname}
+                    onChangeText={setEditLastname}
+                />
+              </View>
+            </View>
+          </View>
+
+          <Dropdown
+            label="Gender"
+            value={editGender}
+            placeholder="Select Gender"
+            onSelect={setEditGender}
+            options={[
+              {
+                label: "Male",
+                value: "Male",
+              },
+              {
+                label: "Female",
+                value: "Female",
+              },
             ]}
-            onPress={(event) => event.stopPropagation()}
-          >
-            <Text style={styles.profileModalTitle}>
-              Edit Profile
-            </Text>
+          />
 
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-            >
-              <View style={styles.formRow}>
-                <View style={styles.formItem}>
-                  <Text style={styles.formLabel}>
-                    First Name
-                  </Text>
+          <Dropdown
+            label="Faculty"
+            value={editFaculty}
+            placeholder="Select Faculty"
+            onSelect={setEditFaculty}
+            options={facultyOptions}
+          />
 
-                  <View>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="First Name"
-                        value={editFirstname}
-                        onChangeText={setEditFirstname}
-                    />
-                  </View>
-                </View>
+          <Dropdown
+            label="Department"
+            value={editDepartment}
+            placeholder="Select Department"
+            onSelect={setEditDepartment}
+            options={departmentOptions}
+          />
 
-                <View style={styles.formItem}>
-                  <Text style={styles.formLabel}>
-                    Last Name
-                  </Text>
+          <Dropdown
+            label="Level"
+            value={editLevel}
+            placeholder="Select Level"
+            onSelect={setEditLevel}
+            options={levelOptions}
+          />
 
-                  <View>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Last Name"
-                        value={editLastname}
-                        onChangeText={setEditLastname}
-                    />
-                  </View>
-                </View>
-              </View>
+          <View style={styles.filterActions}>
+            <Button
+              title="Cancel"
+              onPress={() => setEditVisible(false)}
+              style={styles.resetButton}
+              textStyle={styles.resetButtonText}
+            />
 
-              <Dropdown
-                label="Gender"
-                value={editGender}
-                placeholder="Select Gender"
-                onSelect={setEditGender}
-                options={[
-                  {
-                    label: "Male",
-                    value: "Male",
-                  },
-                  {
-                    label: "Female",
-                    value: "Female",
-                  },
-                ]}
-              />
-
-              <Dropdown
-                label="Faculty"
-                value={editFaculty}
-                placeholder="Select Faculty"
-                onSelect={setEditFaculty}
-                options={facultyOptions}
-              />
-
-              <Dropdown
-                label="Department"
-                value={editDepartment}
-                placeholder="Select Department"
-                onSelect={setEditDepartment}
-                options={departmentOptions}
-              />
-
-              <Dropdown
-                label="Level"
-                value={editLevel}
-                placeholder="Select Level"
-                onSelect={setEditLevel}
-                options={levelOptions}
-              />
-
-              <View style={styles.buttonRow}>
-                <Button
-                  title="Cancel"
-                  onPress={() => setEditVisible(false)}
-                  style={{
-                    width: "48%",
-                    backgroundColor: COLORS.primaryDark,
-                  }}
-                />
-
-                <Button
-                  title="Save"
-                  onPress={handleUpdateStudent}
-                  style={{
-                    width: "48%",
-                  }}
-                />
-              </View>
-            </ScrollView>
-          </Pressable>
-        </Pressable>
-      </Modal>
+            <Button
+              title="Save"
+              onPress={handleUpdateStudent}
+              style={styles.applyFilterButton}
+            />
+          </View>
+        </ScrollView>
+      </AppModal>
 
       {/* Logout Modal */}
-      <Modal
+      <AppModal
         visible={logoutVisible}
-        animationType="fade"
-        transparent
-        onRequestClose={() => setLogoutVisible(false)}
+        onClose={() => setLogoutVisible(false)}
+        size="small"
       >
-        <Pressable
-          style={styles.modalContainer}
-          onPress={() => setLogoutVisible(false)}
-        >
-          <Pressable
-            style={[
-              styles.logoutModal,
-              isDesktop && styles.desktopLogoutModal,
-            ]}
-            onPress={(event) => event.stopPropagation()}
-          >
-            <Text style={styles.modalTitleLogOut}>
-              Log Out?
-            </Text>
+        <Text style={styles.text}>
+          Log Out?
+        </Text>
 
-            <Text style={styles.modalMessage}>
-              Are you sure you want to log out?
-            </Text>
+        <Text style={styles.modalDescription}>
+          Are you sure you want to log out?
+        </Text>
 
-            <View style={styles.buttonRow}>
-              <Button
-                title="Stay Logged In"
-                onPress={() => setLogoutVisible(false)}
-                style={{
-                  width: "48%",
-                  backgroundColor: COLORS.primaryDark,
-                }}
-              />
+        <View style={styles.filterActions}>
+          <Button
+            title="Stay Logged In"
+            onPress={() => setLogoutVisible(false)}
+            style={styles.resetButton}
+            textStyle={styles.resetButtonText}
+          />
 
-              <Button
-                title="Log Out"
-                onPress={handleLogout}
-                style={{
-                  width: "48%",
-                }}
-              />
-            </View>
-          </Pressable>
-        </Pressable>
-      </Modal>
+          <Button
+            title="Log Out"
+            onPress={handleLogout}
+            style={styles.applyFilterButton}
+          />
+        </View>
+      </AppModal>
     </View>
   );
 }

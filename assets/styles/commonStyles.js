@@ -65,6 +65,11 @@ export default StyleSheet.create({
     color: "#333",
   },
 
+  iconName: {
+    marginRight: 10,
+    marginBottom: 1 
+  },
+
   dropdown: {
     height: 55,
     borderWidth: 1,

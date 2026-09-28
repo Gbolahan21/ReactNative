@@ -12,13 +12,11 @@ import {
   TextInput,
   Pressable,
   RefreshControl,
-  Modal,
   Platform,
   ActivityIndicator
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useSelector } from "react-redux";
-import useResponsive from "../../hooks/useResponsive";
 import { Ionicons } from "@expo/vector-icons";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -26,6 +24,7 @@ import Toast from "react-native-toast-message";
 
 import Button from "../../components/Button";
 import Dropdown from "../../components/Dropdown";
+import AppModal from "../../components/AppModal";
 import Pagination from "../../components/Pagination";
 import { COLORS } from "../../constants/colors";
 import styles from "../../assets/styles/styles";
@@ -42,8 +41,6 @@ export default function Attendance({
   const {
     courses = [],
   } = user;
-  const { isDesktop } = useResponsive();
-
   const [search, setSearch] = useState("");
   const [filteredHistory, setFilteredHistory] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -510,193 +507,173 @@ export default function Attendance({
         />
       )}
 
-      <Modal
+      <AppModal
         visible={filterVisible}
-        animationType="fade"
-        transparent
-        onRequestClose={() => setFilterVisible(false)}
+        onClose={() => setFilterVisible(false)}
       >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setFilterVisible(false)}
-        >
-          <Pressable
-            style={[
-              styles.filterModal,
-              isDesktop && styles.desktopFilterModal,
-            ]}
-            onPress={(event) => event.stopPropagation()}
-          >
-
-            {/* Modal Header */}
-
-            <View style={styles.filterHeader}>
-              <View>
-                <Text style={styles.filterTitle}>
-                  Filter Attendance
-                </Text>
-
-                <Text style={styles.filterSubtitle}>
-                  Narrow down your attendance records
-                </Text>
-              </View>
-
-              <Pressable
-                style={styles.closeButton}
-                onPress={() => setFilterVisible(false)}
-              >
-                <Ionicons
-                  name="close"
-                  size={21}
-                  color="#64748B"
-                />
-              </Pressable>
-            </View>
-
-            {/* Date */}
-
-            <Text style={styles.filterLabel}>
-              Date
+        <View style={styles.filterHeader}>
+          <View>
+            <Text style={styles.filterTitle}>
+              Filter Attendance
             </Text>
 
-            {Platform.OS === "web" ? (
-              <input
-                type="date"
-                value={
-                  selectedDate
-                    ? dayjs(selectedDate).format("YYYY-MM-DD")
-                    : ""
-                }
-                onChange={(event) => {
-                  if (event.target.value) {
-                    setSelectedDate(
-                      dayjs(
-                        event.target.value,
-                        "YYYY-MM-DD"
-                      ).toDate()
-                    );
-                  } else {
-                    setSelectedDate(null);
+            <Text style={styles.filterSubtitle}>
+              Narrow down your attendance records
+            </Text>
+          </View>
+
+          <Pressable
+            style={styles.closeButton}
+            onPress={() => setFilterVisible(false)}
+          >
+            <Ionicons
+              name="close"
+              size={21}
+              color="#64748B"
+            />
+          </Pressable>
+        </View>
+
+        <Text style={styles.filterLabel}>
+          Date
+        </Text>
+
+        {Platform.OS === "web" ? (
+          <input
+            type="date"
+            value={
+              selectedDate
+                ? dayjs(selectedDate).format("YYYY-MM-DD")
+                : ""
+            }
+            onChange={(event) => {
+              if (event.target.value) {
+                setSelectedDate(
+                  dayjs(
+                    event.target.value,
+                    "YYYY-MM-DD"
+                  ).toDate()
+                );
+              } else {
+                setSelectedDate(null);
+              }
+            }}
+            style={{
+              width: "100%",
+              height: 46,
+              padding: 10,
+              marginBottom: 22,
+              border: "1px solid #E2E8F0",
+              borderRadius: 10,
+              fontSize: 14,
+              color: "#172033",
+              boxSizing: "border-box",
+              outline: "none",
+              backgroundColor: "#FFFFFF",
+            }}
+          />
+        ) : (
+          <>
+            <Pressable
+              style={styles.dateButton}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Ionicons
+                name="calendar-outline"
+                size={20}
+                color={COLORS.primary}
+              />
+
+              <Text style={styles.dateButtonText}>
+                {selectedDate
+                  ? formatDate(selectedDate)
+                  : "Select Date"}
+              </Text>
+
+              <Ionicons
+                name="chevron-down"
+                size={18}
+                color="#94A3B8"
+              />
+            </Pressable>
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={selectedDate || new Date()}
+                mode="date"
+                display="default"
+                onChange={(event, date) => {
+                  setShowDatePicker(false);
+
+                  if (date) {
+                    setSelectedDate(date);
                   }
                 }}
-                style={{
-                  width: "100%",
-                  height: 46,
-                  padding: 10,
-                  marginBottom: 22,
-                  border: "1px solid #E2E8F0",
-                  borderRadius: 10,
-                  fontSize: 14,
-                  color: "#172033",
-                  boxSizing: "border-box",
-                  outline: "none",
-                  backgroundColor: "#FFFFFF",
-                }}
               />
-            ) : (
-              <>
-                <Pressable
-                  style={styles.dateButton}
-                  onPress={() => setShowDatePicker(true)}
-                >
-                  <Ionicons
-                    name="calendar-outline"
-                    size={20}
-                    color={COLORS.primary}
-                  />
-
-                  <Text style={styles.dateButtonText}>
-                    {selectedDate
-                      ? formatDate(selectedDate)
-                      : "Select Date"}
-                  </Text>
-
-                  <Ionicons
-                    name="chevron-down"
-                    size={18}
-                    color="#94A3B8"
-                  />
-                </Pressable>
-
-                {showDatePicker && (
-                  <DateTimePicker
-                    value={selectedDate || new Date()}
-                    mode="date"
-                    display="default"
-                    onChange={(event, date) => {
-                      setShowDatePicker(false);
-
-                      if (date) {
-                        setSelectedDate(date);
-                      }
-                    }}
-                  />
-                )}
-              </>
             )}
+          </>
+        )}
 
-            {/* Status */}
+        {/* Status */}
 
-            <Text style={styles.filterLabel}>
-              Status
-            </Text>
+        <Text style={styles.filterLabel}>
+          Status
+        </Text>
 
-            <Dropdown
-              placeholder="Select status"
-              value={selectedStatus}
-              options={[
-                { label: "All", value: "All" },
-                { label: "Present", value: "Present" },
-                { label: "Absent", value: "Absent" },
-              ]}
-              onSelect={(value) => {
-                setSelectedStatus(value);
-              }}
-            />
+        <Dropdown
+          placeholder="Select status"
+          value={selectedStatus}
+          options={[
+            { label: "All", value: "All" },
+            { label: "Present", value: "Present" },
+            { label: "Absent", value: "Absent" },
+          ]}
+          onSelect={(value) => {
+            setSelectedStatus(value);
+          }}
+        />
 
-            {/* Course */}
-            <Text style={styles.filterLabel}>
-              Course
-            </Text>
+        {/* Course */}
+        <Text style={styles.filterLabel}>
+          Course
+        </Text>
 
-            <Dropdown
-              placeholder="Select a course"
-              value={
-                selectedCourse === "All"
-                  ? ""
-                  : courseOptions.find(
-                      (course) => course.id === selectedCourse
-                    )?.label
-              }
-              options={courseOptions.map((course) => ({
-                label: course.label,
-                value: course.id,
-              }))}
-              onSelect={(value) => {
-                setSelectedCourse(value);
-              }}
-            />
+        <Dropdown
+          placeholder="Select a course"
+          value={
+            selectedCourse === "All"
+              ? ""
+              : courseOptions.find(
+                  (course) => course.id === selectedCourse
+                )?.label
+          }
+          options={courseOptions.map((course) => ({
+            label: course.label,
+            value: course.id,
+          }))}
+          onSelect={(value) => {
+            setSelectedCourse(value);
+          }}
+        />
 
-            {/* Buttons */}
+        {/* Buttons */}
 
-            <View style={styles.filterActions}>
-              <Button
-                title="Reset"
-                onPress={handleResetFilter}
-                style={styles.resetButton}
-                textStyle={styles.resetButtonText}
-              />
+        <View style={styles.filterActions}>
+          <Button
+            title="Reset"
+            onPress={handleResetFilter}
+            style={styles.resetButton}
+            textStyle={styles.resetButtonText}
+          />
 
-              <Button
-                title="Apply Filter"
-                onPress={handleApplyFilter}
-                style={styles.applyFilterButton}
-              />
-            </View>
-
-          </Pressable>
-        </Pressable>
-      </Modal>
+          <Button
+            title="Apply Filter"
+            onPress={handleApplyFilter}
+            style={styles.applyFilterButton}
+          />
+        </View>
+      </AppModal>
+      
 
       {/* Pagination */}
       {totalPages > 1 && (

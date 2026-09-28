@@ -31,6 +31,7 @@ export default function Button({
             name={iconName}
             size={iconSize}
             color={COLORS.white}
+            style={styles.iconName}
           />
         )}
 

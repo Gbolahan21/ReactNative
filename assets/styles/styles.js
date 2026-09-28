@@ -255,14 +255,6 @@ listContent: {
     marginTop: 5,
   },
 
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(15, 23, 42, 0.55)",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-
   filterModal: {
     width: "100%",
     maxWidth: 430,
@@ -278,10 +270,6 @@ listContent: {
     shadowOpacity: 0.15,
     shadowRadius: 20,
     elevation: 8,
-  },
-
-  desktopFilterModal: {
-    maxWidth: 460,
   },
 
   filterHeader: {
@@ -396,11 +384,11 @@ listContent: {
 
   resetButton: {
     flex: 1,
-    backgroundColor: "#F1F5F9",
+    backgroundColor: "#ddddde",
   },
 
   resetButtonText: {
-    color: "#475569",
+    color: COLORS.text,
   },
 
   applyFilterButton: {
@@ -947,14 +935,6 @@ listContent: {
   },
 
 // Dashboard
-  checkinModal: {
-    width: "100%",
-    maxWidth: 420,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 22,
-    padding: 24,
-  },
-
   modalIcon: {
     width: 56,
     height: 56,
@@ -966,31 +946,16 @@ listContent: {
     marginBottom: 16,
   },
 
-  modalTitle: {
-    fontSize: 21,
-    fontWeight: "700",
-    color: "#0F172A",
-    textAlign: "center",
-  },
-
   modalDescription: {
     fontSize: 13,
     lineHeight: 19,
     color: "#64748B",
     textAlign: "center",
-    marginTop: 8,
-    marginBottom: 22,
-  },
-
-  modalLabel: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#0F172A",
-    marginBottom: 8,
+    marginBottom: 10,
   },
 
   codeInput: {
-    height: 58,
+    height: 55,
     borderWidth: 1,
     borderColor: "#CBD5E1",
     borderRadius: 14,
@@ -1008,68 +973,11 @@ listContent: {
     color: "#94A3B8",
     textAlign: "center",
     marginTop: 9,
-  },
-
-  modalActions: {
-    flexDirection: "row",
-    gap: 10,
-    marginTop: 22,
-  },
-
-  cancelButton: {
-    flex: 1,
-    height: 48,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  cancelButtonText: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#475569",
-  },
-
-  confirmCheckinButton: {
-    flex: 1,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: COLORS.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 7,
-  },
-
-  confirmCheckinText: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#FFFFFF",
+    marginBottom: 10
   },
 
   disabledCheckinButton: {
     opacity: 0.5,
-  },
-
-  checkOutButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: 12,
-    paddingVertical: 9,
-    borderRadius: 10,
-    minWidth: 92,
-    marginLeft: 8,
-  },
-
-  checkOutButtonText: {
-    marginLeft: 5,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    fontSize: 12,
   },
 
   attendanceGroup: {
@@ -1620,14 +1528,6 @@ listContent: {
     marginBottom: 20,
   },
 
-  modalTitleLogOut: {
-    fontSize: 21,
-    fontWeight: "800",
-    color: "#111827",
-    marginBottom: 20,
-    textAlign: "center"
-  },
-
   formRow: {
     flexDirection: "row",
     gap: 12,
@@ -1645,12 +1545,6 @@ listContent: {
     marginBottom: 7,
   },
 
-  buttonRow: {
-    flexDirection: "row",
-    gap: 10,
-    marginTop: 10,
-  },
-
   logoutModal: {
     backgroundColor: "#FFFFFF",
     borderRadius: 22,
@@ -1660,14 +1554,6 @@ listContent: {
   desktopLogoutModal: {
     width: 420,
     alignSelf: "center",
-  },
-
-  modalMessage: {
-    fontSize: 14,
-    lineHeight: 21,
-    color: "#6B7280",
-    textAlign: "center",
-    marginBottom: 8,
   },
 
 //   Reset Password        
@@ -1723,4 +1609,122 @@ listContent: {
     color: "#64748B", 
     marginBottom: 3 
   }, 
+
+  // Modal
+  overlay: {
+    flex: 1,
+    backgroundColor: COLORS.modalBackground,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+
+  modalContent: {
+    width: "100%",
+    backgroundColor: COLORS.background,
+    borderRadius: 20,
+    padding: 20,
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 8,
+  },
+
+  modalSmall: {
+    maxWidth: 360,
+  },
+
+  modalMedium: {
+    maxWidth: 430,
+  },
+
+  modalLarge: {
+    maxWidth: 600,
+  },
+
+  // SidebarMenu
+  sidebarMenuContainer: {
+    width: 240,
+    height: "100%",
+    backgroundColor: "#FFFFFF",
+    borderRightWidth: 1,
+    borderRightColor: "#E5E7EB",
+    paddingHorizontal: 16,
+    paddingTop: 25,
+  },
+
+  sidebarMenuHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 8,
+    marginBottom: 35,
+  },
+
+  sidebarMenuLogo: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "#EEF4FF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  sidebarMenuTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#172033",
+  },
+
+  menu: {
+    gap: 7,
+  },
+
+  menuItem: {
+    height: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 13,
+    paddingHorizontal: 13,
+    borderRadius: 10,
+  },
+
+  activeMenuItem: {
+    backgroundColor: "#EEF4FF",
+  },
+
+  menuText: {
+    fontSize: 14,
+    color: "#64748B",
+  },
+
+  activeMenuText: {
+    color: COLORS.primary,
+    fontWeight: "600",
+  },
+
+  bottom: {
+    marginTop: "auto",
+    paddingBottom: 20,
+  },
+
+  logout: {
+    height: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 13,
+    paddingHorizontal: 13,
+    borderRadius: 10,
+  },
+
+  sidebarMenuLogOutText: {
+    fontSize: 14,
+    color: COLORS.danger,
+    fontWeight: "500",
+  },
 })
