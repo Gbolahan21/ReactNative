@@ -5,6 +5,7 @@ import {
     TextInput,
     Pressable,
 } from "react-native";
+import { setSessionData } from "../../helpers";
 import Toast from "react-native-toast-message";
 import Button from "../../components/Button";
 import useResponsive from "../../hooks/useResponsive";
@@ -20,8 +21,7 @@ function ForgotPassword({
 
     const handleSubmit = useCallback(() => {
         const trimmedEmail = email.trim().toLowerCase();
-        setSending(true);
-
+        
         if (!trimmedEmail) {
             Toast.show({
                 type: "error",
@@ -30,7 +30,8 @@ function ForgotPassword({
             });
             return;
         }
-
+        
+        setSending(true);
 
         forgotPassword(
             { email: trimmedEmail },
@@ -46,17 +47,47 @@ function ForgotPassword({
                 });
             },
             
-            (response) => {      
-                setSending(false);  
-                Toast.show({
-                    type: "success",
-                    text1: "Code Sent",
-                    text2: response?.message || "If an account exists with this email, a password reset code has been sent to your email.",
-                });
-        
-                navigation.replace("PasswordVerification", {
-                    email: trimmedEmail,
-                });
+            async (response) => {
+                try {
+                    console.log("1. Forgot password response:", response);
+
+                    await setSessionData(
+                        "passwordReset",
+                        {
+                            email: trimmedEmail,
+                        }
+                    );
+
+                    console.log("2. Session saved");
+
+                    setSending(false);
+
+                    Toast.show({
+                        type: "success",
+                        text1: "Code Sent",
+                        text2:
+                            response?.message ||
+                            "A password reset code has been sent to your email.",
+                    });
+
+                    console.log("3. Navigating to PasswordVerification");
+
+                    navigation.replace("PasswordVerification");
+
+                    console.log("4. Navigation completed");
+                } catch (error) {
+                    console.error("ForgotPassword error:", error);
+
+                    setSending(false);
+
+                    Toast.show({
+                        type: "error",
+                        text1: "Unable to Continue",
+                        text2:
+                            error?.message ||
+                            "Unable to prepare the verification session.",
+                    });
+                }
             }
         );
     }, [forgotPassword, navigation, email]);

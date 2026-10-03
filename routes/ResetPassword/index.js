@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -8,6 +8,8 @@ import {
     Platform,
     ScrollView,
 } from "react-native";
+
+import { getSessionData, removeSessionData } from "../../helpers";
 
 import Toast from "react-native-toast-message";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -19,17 +21,30 @@ import styles from "../../assets/styles/styles";
 
 function ResetPassword({
     navigation,
-    route,
     resetPassword,
 }) {
     const { isDesktop } = useResponsive();
-    const email = route?.params?.email || "";
-    const resetToken = route?.params?.resetToken;
+    const [resetData, setResetData] = useState(null);
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+
+    useEffect(() => {
+        const loadResetData = async () => {
+            const data = await getSessionData(
+                "passwordReset"
+            );
+
+            setResetData(data);
+        };
+
+        loadResetData();
+    }, []);
+
+    const email = resetData?.email || "";
+    const resetToken = resetData?.resetToken;
 
     const validatePassword = useCallback(() => {
         if (!password) {
@@ -154,6 +169,8 @@ function ResetPassword({
 
             (response) => {
                 setSubmitting(false);
+
+                removeSessionData("passwordReset");
 
                 Toast.show({
                     type: "success",
