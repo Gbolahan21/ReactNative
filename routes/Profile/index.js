@@ -29,6 +29,7 @@ export default function Profile({
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [editFirstname, setEditFirstname] = useState("");
   const [editLastname, setEditLastname] = useState("");
+  const [editMatricNo, setEditMatricNo] = useState("");
   const [editGender, setEditGender] = useState("");
   const [editFaculty, setEditFaculty] = useState("");
   const [editDepartment, setEditDepartment] = useState("");
@@ -64,6 +65,7 @@ export default function Profile({
   const handleOpenEdit = useCallback(() => {
     setEditFirstname(student?.firstname || "");
     setEditLastname(student?.lastname || "");
+    setEditMatricNo(student?.matricNo || "");
     setEditGender(student?.gender || "");
     setEditFaculty(student?.faculty || "");
     setEditDepartment(student?.department || "");
@@ -81,6 +83,7 @@ export default function Profile({
     if (
       !editFirstname.trim() ||
       !editLastname.trim() ||
+      !editMatricNo ||
       !editGender ||
       !editFaculty ||
       !editDepartment ||
@@ -98,6 +101,7 @@ export default function Profile({
     updateStudent(
       editFirstname.trim(),
       editLastname.trim(),
+      editMatricNo,
       editGender,
       editDepartment,
       editFaculty,
@@ -133,7 +137,8 @@ export default function Profile({
     editFirstname,
     editGender,
     editLastname,
-    editLevel
+    editLevel,
+    editMatricNo
   ]);
 
   const handleLogout = useCallback(() => {
@@ -359,6 +364,21 @@ export default function Profile({
                     placeholder="Last Name"
                     value={editLastname}
                     onChangeText={setEditLastname}
+                />
+              </View>
+            </View>
+
+            <View style={styles.formItem}>
+              <Text style={styles.formLabel}>
+                Matric No
+              </Text>
+
+              <View>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Matric No"
+                    value={editMatricNo}
+                    onChangeText={setEditMatricNo}
                 />
               </View>
             </View>

@@ -55,6 +55,7 @@ export const load = (error, success) =>
 export const updateStudent = (
   firstname,
   lastname,
+  matricNo,
   gender,
   department,
   faculty,
@@ -68,6 +69,7 @@ export const updateStudent = (
     {
       firstname,
       lastname,
+      matricNo,
       gender,
       department,
       faculty,
