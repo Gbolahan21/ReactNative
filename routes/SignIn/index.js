@@ -32,9 +32,10 @@ export default function SignIn({ navigation, signin }) {
           type: "error",
           text1: "Login Failed",
           text2:
-            error?.error ||
             error?.message ||
             "Something went wrong",
+           visibilityTime: 5000,
+  position: "top",
         });
       },
 
