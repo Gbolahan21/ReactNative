@@ -34,8 +34,6 @@ export default function SignIn({ navigation, signin }) {
           text2:
             error?.message ||
             "Something went wrong",
-           visibilityTime: 5000,
-  position: "top",
         });
       },
 
