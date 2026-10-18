@@ -4,7 +4,7 @@ import { COLORS } from "../../constants/colors";
 export default StyleSheet.create({
   button: {
     backgroundColor: COLORS.danger,
-    paddingVertical: 15,
+    padding: 15,
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
