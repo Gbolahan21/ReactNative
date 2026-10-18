@@ -4,7 +4,7 @@ import { COLORS } from "../../constants/colors";
 export default StyleSheet.create({
   button: {
     backgroundColor: COLORS.danger,
-    padding: 15,
+    paddingVertical: 15,
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
@@ -67,7 +67,7 @@ export default StyleSheet.create({
 
   iconName: {
     marginRight: 10,
-    marginBottom: 1 
+    marginBottom: 1,
   },
 
   dropdown: {

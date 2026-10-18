@@ -689,6 +689,10 @@ listContent: {
     marginBottom: 10,
   },
 
+  checkoutButtonText: {
+    paddingHorizontal: 10,
+  },
+
   infoGrid: {
     flexDirection: "row",
     flexWrap: "wrap",

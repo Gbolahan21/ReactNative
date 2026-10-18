@@ -393,6 +393,7 @@ export default function Dashboard({
                       onPress={handleCheckOut}
                       iconName="log-out-outline"
                       iconSize={17}
+                      style={styles.checkoutButtonText}
                     />
                   </View>
                 );
