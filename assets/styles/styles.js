@@ -686,6 +686,7 @@ listContent: {
     fontSize: 15,
     fontWeight: "700",
     color: "#0F172A",
+    marginBottom: 10,
   },
 
   infoGrid: {
