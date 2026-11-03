@@ -34,7 +34,7 @@ function ForgotPassword({
         setSending(true);
 
         forgotPassword(
-            { email: trimmedEmail },
+            { email: trimmedEmail, role: "student" },
             (error) => {
                 setSending(false);
                 Toast.show({
@@ -55,6 +55,7 @@ function ForgotPassword({
                         "passwordReset",
                         {
                             email: trimmedEmail,
+                            role: "student",
                         }
                     );
 

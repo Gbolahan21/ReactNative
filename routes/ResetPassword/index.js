@@ -152,6 +152,7 @@ function ResetPassword({
                 email,
                 resetToken,
                 password,
+                role: "student",
             },
 
             (error) => {

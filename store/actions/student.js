@@ -124,7 +124,7 @@ export const registerCourse = (courseId, error, success) =>
 
 export const forgotPassword = (data, error, success) =>
   Helpers.api(
-    "/reset-password/student/forgot-password",
+    "/reset-password/forgot-password",
     "POST",
     data,
     { error, success },
@@ -137,7 +137,7 @@ export const forgotPassword = (data, error, success) =>
 
 export const verifyResetCode = (data, error, success) =>
   Helpers.api(
-    "/reset-password/student/verify-reset-code",
+    "/reset-password/verify-reset-code",
     "POST",
     data,
     { error, success },
@@ -150,7 +150,7 @@ export const verifyResetCode = (data, error, success) =>
 
 export const resetPassword = (data, error, success) =>
   Helpers.api(
-    "/reset-password/student/reset-password",
+    "/reset-password/reset-password",
     "POST",
     data,
     { error, success },

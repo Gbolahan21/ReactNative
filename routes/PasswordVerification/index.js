@@ -70,6 +70,7 @@ function PasswordVerification({
             {
                 email,
                 code: trimmedCode,
+                role: "student",
             },
 
             // Error
@@ -101,6 +102,7 @@ function PasswordVerification({
                         {
                             email,
                             resetToken,
+                            role: "student",
                         }
                     );
 
