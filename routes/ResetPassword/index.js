@@ -301,6 +301,7 @@ function ResetPassword({
                         title={submitting ? "Resetting..." : "Reset Password"}
                         onPress={handleSubmit}
                         disabled={submitting}
+                        loadinfg={submitting}
                         style={styles.button}
                     />
 
